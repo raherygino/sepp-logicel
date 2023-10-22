@@ -9,10 +9,7 @@ from qfluentwidgets import FluentIcon as FIF
 
 from .utils.gallery_interface import GalleryInterface
 from .utils.setting_interface import SettingInterface
-from .utils.blank_interface import BlankInterface
-from .products.product_interface import ProductInterface
-from .utils.widgets_interface import WidgetsInterface
-from .utils.table_view_interface import TableViewInterface
+from .students.students_interface import StudentInterface
 
 from .home.home_interface import HomeInterface
 
@@ -33,11 +30,14 @@ class MainWindow(FluentWindow):
         t = Translator()
 
         # create sub interface
-        self.homeInterface = HomeInterface(self)
-        self.productInterface = ProductInterface(self)
+        #self.homeInterface = HomeInterface(self)
+        self.studentInterface = StudentInterface(self)
+    
+        '''
         self.widgetsInterface = WidgetsInterface(self)
         self.tableViewInterface = TableViewInterface(self)
         self.blankInterface = BlankInterface(self)
+        '''
         self.settingInterface = SettingInterface(self)
         # initialize layout
         self.initLayout()
@@ -53,11 +53,13 @@ class MainWindow(FluentWindow):
     def initNavigation(self):
         # add navigation items
         t = Translator()
-        self.addSubInterface(self.homeInterface, FIF.HOME, "Home")
-        self.addSubInterface(self.productInterface, FIF.APPLICATION, t.products)
+       # self.addSubInterface(self.homeInterface, FIF.HOME, "Home")
+        self.addSubInterface(self.studentInterface, FIF.EMOJI_TAB_SYMBOLS, "Elèves")
+        '''
         self.addSubInterface(self.widgetsInterface, FIF.GAME, t.widgets)
         self.addSubInterface(self.tableViewInterface, FIF.LAYOUT, t.table_view)
         self.addSubInterface(self.blankInterface, FIF.DOCUMENT, t.blank)
+        '''
         self.navigationInterface.addSeparator()
         pos = NavigationItemPosition.SCROLL
         

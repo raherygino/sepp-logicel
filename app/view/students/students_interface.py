@@ -9,22 +9,22 @@ from qfluentwidgets import (isDarkTheme, FluentIcon, Action,
     CommandBar, TransparentDropDownPushButton, setFont, RoundMenu, TableWidget, LineEdit)
 
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtWidgets import QTableWidgetItem, QHeaderView, QFrame, QHBoxLayout
 from ...components.dialog.dialog import MessageBox
-from .product_dialog import DialogProduct
+from .students_dialog import DialogProduct
 
 from ...backend.controllers.UserController import UserController
 from ...backend.models.User import User
 
-class ProductInterface(GalleryInterface):
-    """ Product interface """
+class StudentInterface(GalleryInterface):
+    """ Student interface """
 
     def __init__(self, parent=None):
         t = Translator()
         self.trans = Translate(Lang().current).text
         super().__init__(
-            title=t.products,
+            title=t.name_promotion,
             subtitle='',
             parent=parent
         )
@@ -55,9 +55,11 @@ class ProductInterface(GalleryInterface):
         self.commandBar.addHiddenAction(Action(FluentIcon.SETTING, 'Settings', shortcut='Ctrl+S'))
 
         self.tableView = TableWidget(self)
+        self.tableView.clicked.connect(self.func_test)
         self.tableView.setWordWrap(False)
         self.tableView.setRowCount(5)
         self.tableView.setColumnCount(5)
+        self.tableView.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         songInfos = [
             ['data 1.1', 'data 1.2', 'data 1.3', 'data 1.4', 'data 1.5'],
             ['data 2.1', 'data 2.2', 'data 2.3', 'data 2.4', 'data 2.5'],
@@ -76,12 +78,17 @@ class ProductInterface(GalleryInterface):
         self.tableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.content.addWidget(self.tableView)
 
-        self.addCard('product card', self.content)
+        self.addCard('Liste des élèves', self.content)
 
         #self.card.setMargins(18,18,18,18)
 
         self.setObjectName('productInterface')
 
+    def func_test(self, item: QModelIndex):
+        #print(item.row())
+        print(self.tableView.itemFromIndex(item).text())
+        #self.tableView.itemAt().text()
+        #print("You clicked on {0}x{1}".format(item.column(), item.row()))
     
     def addButton(self, icon, key, text):
         action = Action(icon, text, self)

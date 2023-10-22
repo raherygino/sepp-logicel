@@ -23,5 +23,6 @@ class Translator(QObject):
         self.statusInfo = self.tr('Status & info')
         self.blank = self.tr('Blank')
         self.products = trans['products']
+        self.name_promotion = trans['promotion']
         self.widgets = trans['widgets']
         self.table_view = trans['table_view']
