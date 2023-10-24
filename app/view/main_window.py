@@ -55,7 +55,7 @@ class MainWindow(FluentWindow):
         # add navigation items
         t = Translator()
        # self.addSubInterface(self.homeInterface, FIF.HOME, "Home")
-        self.addSubInterface(self.studentInterface, FIF.EMOJI_TAB_SYMBOLS, "Elèves")
+        self.addSubInterface(self.studentInterface, FIF.PEOPLE, "Elèves")
         '''
         self.addSubInterface(self.widgetsInterface, FIF.GAME, t.widgets)
         self.addSubInterface(self.tableViewInterface, FIF.LAYOUT, t.table_view)
