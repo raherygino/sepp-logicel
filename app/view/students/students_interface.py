@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QAction, QHBoxLayout, QLabel
 from qfluentwidgets import RoundMenu, setTheme, Theme, Action, MenuAnimationType, MenuItemDelegate, CheckableMenu, MenuIndicatorType
 from qfluentwidgets import FluentIcon as FIF
 from ...components.table.TableView import Table
+from ...backend.models.Student import Student
 
 class StudentInterface(GalleryInterface):
     """ Student interface """
@@ -26,6 +27,20 @@ class StudentInterface(GalleryInterface):
             parent=parent
         )
 
+        student = Student(
+            "Georginot",
+            "Armelin",
+            "0346500700",
+            "Antsirabe",
+            "EAP",
+            2,
+            7,
+            23
+        )
+        
+        print(student.getData())
+       # student.hello()
+
         self.widgetsInCard(parent=parent)
         self.setObjectName('StudentInterface')
 
@@ -37,6 +52,15 @@ class StudentInterface(GalleryInterface):
         table.table.clicked.connect(self.func_test)
         self.container.layout.addWidget(table.widget())
         self.addCard(self.t.students, self.container)
+
+    def get_var_name(self, variable):
+        for name in globals():
+            if id(globals()[name]) == id(variable):
+                return name
+        for name in locals():
+            if id(locals()[name]) == id(variable):
+                return name
+        return None 
 
     def func_test(self, item: QModelIndex):
         print("hello world")
