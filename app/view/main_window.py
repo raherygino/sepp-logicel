@@ -49,6 +49,7 @@ class MainWindow(FluentWindow):
     def initLayout(self):
         signalBus.switchToSampleCard.connect(self.switchToSample)
         signalBus.supportSignal.connect(self.onSupport)
+        
 
     def initNavigation(self):
         # add navigation items

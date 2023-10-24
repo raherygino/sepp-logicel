@@ -9,6 +9,9 @@ class Translator(QObject):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         trans = Translate(Lang().current).text
+
+        self.students = trans['students']
+
         self.text = self.tr('Text')
         self.view = self.tr('View')
         self.menus = self.tr('Menus & toolbars')

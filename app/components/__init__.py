@@ -6,3 +6,4 @@ from .input.InputText import InputText
 from .input.Select import Select
 from .layout.inputLabel import InputLabel
 from .input.CheckBox import InputCheck
+from .table.TableView import TableView
