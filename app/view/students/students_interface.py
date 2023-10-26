@@ -26,30 +26,31 @@ class StudentInterface(GalleryInterface):
             subtitle='',
             parent=parent
         )
+        '''
+        MODELS 
+        student = Student("lastname", "firstname", "genre", "height", "weight", 
+                          "birthday", "birthplace", "phone", "address", "level",
+                          "company", "section","number")
+        '''
+        '''student = Student("Armelin", "Georginot", "M", "68", "175", "20/04/1997", "Ranotsara Nord", "034 65 007 00",
+                          "Bevokatra Antsirabe", "EAP", 2,7,23)
+        student.create() '''
+        student = Student("Armelin", "Georginot", "M", "68", "175", "20/04/1997", "Ranotsara Nord", "034 65 007 00",
+                          "Bevokatra Antsirabe", "EAP", 2,7,23)
 
-        student = Student(
-            "Georginot",
-            "Armelin",
-            "0346500700",
-            "Antsirabe",
-            "EAP",
-            2,
-            7,
-            23
-        )
-        
-        print(student.getData())
-       # student.hello()
+        rows = student.fetch(['firstname', 'lastname', 'genre', 'company', 'section', 'number'])
+        head = ['Nom', 'Prénoms', 'Genre', 'Compagnie', 'Section', 'Numéros']
 
-        self.widgetsInCard(parent=parent)
+        self.widgetsInCard(parent, head, rows)
+
         self.setObjectName('StudentInterface')
 
-    def widgetsInCard(self, parent):
+    def widgetsInCard(self, parent, header, data):
         self.container = Frame('horizontal', 'row_1', parent=parent)
-        header = ["Nom", "prénom", "Date de naissance", "Lieu de naissance", "Adresse", "N° Téléphone", "Compagnie", "Section"]
-        data = [["Georginot", "Armelin", "12/12/96", "Ranotsara Nord", "Antsirabe", "0346500700", "IIème", "7ème"]]
+       # header = ["Nom", "prénom", "Date de naissance", "Lieu de naissance", "Adresse", "N° Téléphone", "Compagnie", "Section"]
+       # data = [["Georginot", "Armelin", "12/12/96", "Ranotsara Nord", "Antsirabe", "0346500700", "IIème", "7ème"]]
         table = Table(self, header, data)
-        table.table.clicked.connect(self.func_test)
+        #table.table.clicked.connect(self.func_test)
         self.container.layout.addWidget(table.widget())
         self.addCard(self.t.students, self.container)
 
@@ -62,6 +63,6 @@ class StudentInterface(GalleryInterface):
                 return name
         return None 
 
-    def func_test(self, item: QModelIndex):
-        print("hello world")
+    ''' def func_test(self, item: QModelIndex):
+        print("hello world") '''
         

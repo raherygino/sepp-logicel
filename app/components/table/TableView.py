@@ -16,7 +16,7 @@ class Table():
         
         for i, value in enumerate(data):
             for j in range(columnCount):
-                self.table.setItem(i, j, QTableWidgetItem(value[j]))
+                self.table.setItem(i, j, QTableWidgetItem(str(value[j])))
         
         self.table.verticalHeader().hide()
         self.table.setHorizontalHeaderLabels(header)
