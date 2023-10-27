@@ -17,7 +17,7 @@ class Window(FluentWindow):
         super().__init__()
 
         # create sub interface
-        self.homeInterface = StudentInterface('Search Interface', self)
+        self.homeInterface = StudentInterface(self)
         self.musicInterface = Widget('Music Interface', self)
         self.videoInterface = Widget('Video Interface', self)
         self.folderInterface = Widget('Folder Interface', self)
@@ -46,7 +46,7 @@ class Window(FluentWindow):
         # add custom widget to bottom
         self.navigationInterface.addWidget(
             routeKey='avatar',
-            widget=NavigationAvatarWidget('zhiyiYo', 'resource/shoko.png'),
+            widget=NavigationAvatarWidget('zhiyiYo', 'resource/images/user.png'),
             onClick=self.showMessageBox,
             position=NavigationItemPosition.BOTTOM,
         )
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
 
-    setTheme(Theme.DARK)
+    #setTheme(Theme.DARK)
 
     app = QApplication(sys.argv)
     w = Window()
