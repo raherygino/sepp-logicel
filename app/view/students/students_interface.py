@@ -1,77 +1,95 @@
 # coding:utf-8
 from ..utils.gallery_interface import GalleryInterface
 from ...common.translator import Translator
+from ...common.Translate import Translate
+from ...common.config import Lang
+from ...common.keys import *
 from ...components import *
-from qfluentwidgets import BodyLabel
-from PyQt5 import QtWidgets, QtCore
-from ...components import *
-from qfluentwidgets import (isDarkTheme, FluentIcon, Action, 
-    CommandBar, TransparentDropDownPushButton, setFont, RoundMenu, TableWidget, LineEdit)
-from PyQt5.QtCore import Qt, QModelIndex
-from PyQt5.QtWidgets import QTableWidgetItem, QHeaderView, QFrame, QHBoxLayout
-
-from PyQt5.QtWidgets import QApplication, QWidget, QAction, QHBoxLayout, QLabel
-from qfluentwidgets import RoundMenu, setTheme, Theme, Action, MenuAnimationType, MenuItemDelegate, CheckableMenu, MenuIndicatorType
+from qfluentwidgets import SubtitleLabel, SearchLineEdit, PushButton, PrimaryPushButton
 from qfluentwidgets import FluentIcon as FIF
-from ...components.table.TableView import *
+from PyQt5.QtWidgets import QFrame, QVBoxLayout, QTableWidgetItem
+from PyQt5.QtCore import Qt, QSize, QCoreApplication
 from ...backend.models.Student import Student
+from ...backend.controllers.StudentController import StudentController
 
 class StudentInterface(GalleryInterface):
     """ Student interface """
 
     def __init__(self, parent=None):
-        self.t = Translator()
-        
+        t = Translator()
+        self.trans = Translate(Lang().current).text
         super().__init__(
-            title=self.t.name_promotion,
+            title='',
             subtitle='',
             parent=parent
         )
+        self.hBoxLayout = QVBoxLayout(self)
+        self.student = Student(None, None, None, None, None, None, None, None, None, None, None, None, None)
+        self.studentController = StudentController(self.student)
+        #self.student.create()
+        self.container(parent=parent)
+        self.setObjectName('studentInterface')
         
-        '''
-        MODELS 
-        student = Student("lastname", "firstname", "genre", "height", "weight", 
-                          "birthday", "birthplace", "phone", "address", "level",
-                          "company", "section","number")
-        '''
-        '''student = Student("Armelin", "Georginot", "M", "68", "175", "20/04/1997", "Ranotsara Nord", "034 65 007 00",
-                          "Bevokatra Antsirabe", "EAP", 2,7,23)
-        student.create() '''
-        student = Student("Armelin", "Georginot", "M", "68", "175", "20/04/1997", "Ranotsara Nord", "034 65 007 00",
-                          "Bevokatra Antsirabe", "EAP", 2,7,23)
-        student.create()
+    def titleContainte(self, parent):
+        row = Frame(VERTICAL, ROW+str(1), parent=parent)
+        label = SubtitleLabel("Liste", parent)
+        row.setMargins(9,0,9,0)
+        row.addWidget(label)
+        self.hBoxLayout.addWidget(row)
 
-        rows = student.fetch(['firstname', 'lastname', 'genre', 'company', 'section', 'number'])
-        head = ['Nom', 'Prénoms', 'Genre', 'Compagnie', 'Section', 'Numéros']
-
-        #self.widgetsInCard(parent, head, rows)
-        table = Table(self, head, rows)
-        self.container = Frame('horizontal', 'row_1', parent=parent)
-        self.container.layout.addWidget(table.widget())
-
-        #self.add addWidget(self.container)
-        # self.layout.addWidget(self.container)
-        self.widgetsInCard(parent, ["hello", "gfg"], [["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"]])
-        self.setObjectName('StudentInterface')
-
-    def widgetsInCard(self, parent, header, data):
-        self.container = Frame('horizontal', 'row_1', parent=parent)
-       # header = ["Nom", "prénom", "Date de naissance", "Lieu de naissance", "Adresse", "N° Téléphone", "Compagnie", "Section"]
-       # data = [["Georginot", "Armelin", "12/12/96", "Ranotsara Nord", "Antsirabe", "0346500700", "IIème", "7ème"]]
-        table = Table(self, header, data)
-        #table.table.clicked.connect(self.func_test)
-        self.container.layout.addWidget(table.widget())
-        self.addCard(self.t.students, self.container)
-
-    def get_var_name(self, variable):
-        for name in globals():
-            if id(globals()[name]) == id(variable):
-                return name
-        for name in locals():
-            if id(locals()[name]) == id(variable):
-                return name
-        return None 
-
-    ''' def func_test(self, item: QModelIndex):
-        print("hello world") '''
+    def container(self, parent):
+        self.container = Frame(VERTICAL, STUDENT+CONTAINER, parent=parent)
+        self.row_2 = Frame(HORIZONTAL, ROW+str(2), parent=parent)
+        self.searchLineStudent = SearchLineEdit(self)
+        self.searchLineStudent.setPlaceholderText(QCoreApplication.translate(FORM, u"Recherche", None))
+        self.searchLineStudent.setMaximumSize(QSize(240, 50))
         
+        col = Frame(HORIZONTAL, COL+str(1),parent=parent)
+        self.btnAdd =  PushButton('Ajouter', self, FIF.ADD)
+        self.btnAdd.setObjectName(u"PrimaryToolButton")
+        self.btnAdd.clicked.connect(self.createStudent)
+
+        self.btnFlux =  PrimaryPushButton('Mouvement', self, FIF.CHAT)
+        self.btnFlux.setObjectName(u"PrimaryToolButton")
+
+        col.layout.addWidget(self.btnAdd)
+        col.layout.addWidget(self.btnFlux)
+        col.setMargins(0,0,0,0)
+        
+        self.row_2.setMargins(0,0,0,0)
+        self.row_2.addWidget(self.searchLineStudent)
+        self.row_2.layout.addWidget(col, 0, Qt.AlignRight)
+        
+        self.container.addWidget(self.row_2)
+        self.tbStudent = self.tableStudent(parent)
+        self.table = self.tbStudent[1]
+        self.table_student = self.tbStudent[0]
+        self.container.addWidget(self.table)
+
+        self.hBoxLayout.addWidget(self.container)
+
+    def createStudent(self):
+        
+        student = Student("Georginot", "Armelin",
+                          "M", 56, 175, "20/04/1997", "Ranotsara Nord",
+                          "034 65 007 00","Bevokatra Antsirabe", "EAP", 2, 7, 23)
+        self.studentController = StudentController(student)
+        self.studentController.create()
+        data = student.fetch(['id_student', 'firstname', 'lastname', 'company', 'section', 'number'])
+        header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro']
+        self.table_student.refresh(self.table, header, data)
+        
+        
+
+    
+    def tableStudent(self, parent):
+        student = Student("Georginost", "Armelin",
+                          "M", 56, 175, "20/04/1997", "Ranotsara Nord",
+                          "034 65 007 00","Bevokatra Antsirabe", "EAP", 2, 7, 23)
+        data = student.fetch(['id_student', 'firstname', 'lastname', 'company', 'section', 'number'])
+        header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro']
+        table = Table(parent, header, data)
+        return [table,table.widget()]
+    
+    def refreshTable(self, parent):
+        self.tableStudent()
