@@ -2,11 +2,12 @@ from PyQt5.QtCore import Qt, pyqtSignal, QObject, QEvent, QSize
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QLabel, QFrame, QVBoxLayout, QHBoxLayout, QPushButton
 from qframelesswindow import FramelessDialog
-from qfluentwidgets import TextWrap, FluentStyleSheet, PrimaryPushButton, LineEdit, SubtitleLabel
+from qfluentwidgets import TextWrap, FluentStyleSheet, PrimaryPushButton, SubtitleLabel
 from ...components.dialog.mask import MaskDialogBase
 from ...components.dialog.dialog import Ui_MessageBox
 from ...components.layout.Frame import Frame
 from ...components.input.InputText import InputText
+from ...components.input.DatePicker import InputDatePicker
 from ...components.input.Select import Select
 
 from ...backend.models.Student import Student
@@ -43,11 +44,14 @@ class DialogStudent(MaskDialogBase, Ui_MessageBox):
 
         self.row_1 = Frame('horizontal', 'row_1', parent=parent)
         self.selectGenre = Select("Genre", ["Masculin", "Féminin"], self.row_1)
-        self.inputHeight = InputText("Hauteur", self.row_1)
-        self.inputWeight = InputText("Poids", self.row_1)
+        self.inputHeight = InputText("Hauteur (cm)", self.row_1)
+        self.inputWeight = InputText("Poids (kg)", self.row_1)
+        self.inputHeight.lineEdit.setMaxLength(3)
+        self.inputWeight.lineEdit.setMaxLength(3)
 
         self.row_2 = Frame('horizontal', 'row_2', parent=parent)
-        self.inputBirthday = InputText("Date de naissance", self.row_2)
+        
+        self.inputBirthday = InputDatePicker("Date de naissance", self.row_2)
         self.inputBirthplace = InputText("Lieu de naissance", self.row_2)
 
         self.row_3 = Frame('horizontal', 'row_3', parent=parent)
