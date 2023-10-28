@@ -12,6 +12,8 @@ from PyQt5.QtCore import Qt, QSize, QCoreApplication
 from ...backend.models.Student import Student
 from ...backend.controllers.StudentController import StudentController
 
+from .students_dialog import DialogProduct
+
 class StudentInterface(GalleryInterface):
     """ Student interface """
 
@@ -23,6 +25,7 @@ class StudentInterface(GalleryInterface):
             subtitle='',
             parent=parent
         )
+        self.myParent = parent
         self.hBoxLayout = QVBoxLayout(self)
         self.student = Student(None, None, None, None, None, None, None, None, None, None, None, None, None)
         self.studentController = StudentController(self.student)
@@ -70,14 +73,15 @@ class StudentInterface(GalleryInterface):
 
     def createStudent(self):
         
-        student = Student("Georginot", "Armelin",
+        ''' student = Student("Georginot", "Armelin",
                           "M", 56, 175, "20/04/1997", "Ranotsara Nord",
                           "034 65 007 00","Bevokatra Antsirabe", "EAP", 2, 7, 23)
         self.studentController = StudentController(student)
         self.studentController.create()
         data = student.fetch(['id_student', 'firstname', 'lastname', 'company', 'section', 'number'])
         header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro']
-        self.table_student.refresh(self.table, header, data)
+        self.table_student.refresh(self.table, header, data) '''
+        DialogProduct(self.myParent).show()
         
         
 
