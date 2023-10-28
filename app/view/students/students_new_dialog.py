@@ -9,6 +9,8 @@ from ...components.layout.Frame import Frame
 from ...components.input.InputText import InputText
 from ...components.input.Select import Select
 
+from ...backend.models.Student import Student
+
 class DialogStudent(MaskDialogBase, Ui_MessageBox):
 
     yesSignal = pyqtSignal()
@@ -53,6 +55,7 @@ class DialogStudent(MaskDialogBase, Ui_MessageBox):
         self.inputPhone = InputText("Téléphone", self.row_3)
 
         self.row_4 = Frame('horizontal', 'row_4', parent=parent)
+        self.selectLevel = Select("Niveau", ["Elève Agent de Police", "Elève Inspecteur de Police"], self.row_4)
         self.selectCompany = Select("Compagnie", ["1ère", "2ème", "3ème"], self.row_4)
         self.selectSection = Select("Section", ["1ère", "2ème", "3ème", "4ème", "5ème", "6ème","7ème", "8ème",], self.row_4)
         self.inputNumber = InputText("Numéro", self.row_4)
@@ -78,6 +81,24 @@ class DialogStudent(MaskDialogBase, Ui_MessageBox):
 
     def getYesBtn(self):
         return self.yesButton
+    
+    def studentData(self):
+        return Student(
+            self.inputLastname.text(),
+            self.inputFirstname.text(),
+            self.selectGenre.text(),
+            self.inputHeight.text(),
+            self.inputWeight.text(),
+            self.inputBirthday.text(),
+            self.inputBirthplace.text(),
+            self.inputPhone.text(),
+            self.inputAddress.text(),
+            self.selectLevel.text(),
+            self.selectCompany.text(),
+            self.selectSection.text(),
+            self.inputNumber.text()
+        )
+        
 
     def eventFilter(self, obj, e: QEvent):
         if obj is self.window():

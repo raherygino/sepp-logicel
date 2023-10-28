@@ -33,8 +33,11 @@ class Student():
     def getData(self):
         return self.data
     
-    def create(self):
+    def initTable(self):
         self.db.createTable("student", self.cols)
+
+    def create(self):
+        self.initTable()
         self.db.insert("student", self.cols)
 
 

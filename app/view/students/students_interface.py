@@ -28,6 +28,7 @@ class StudentInterface(GalleryInterface):
         self.myParent = parent
         self.hBoxLayout = QVBoxLayout(self)
         self.student = Student(None, None, None, None, None, None, None, None, None, None, None, None, None)
+        self.student.initTable()
         self.studentController = StudentController(self.student)
         #self.student.create()
         self.container(parent=parent)
@@ -50,7 +51,7 @@ class StudentInterface(GalleryInterface):
         col = Frame(HORIZONTAL, COL+str(1),parent=parent)
         self.btnAdd =  PushButton('Ajouter', self, FIF.ADD)
         self.btnAdd.setObjectName(u"PrimaryToolButton")
-        self.btnAdd.clicked.connect(self.createStudent)
+        self.btnAdd.clicked.connect(self.showDialog)
 
         self.btnFlux =  PrimaryPushButton('Mouvement', self, FIF.CHAT)
         self.btnFlux.setObjectName(u"PrimaryToolButton")
@@ -71,7 +72,9 @@ class StudentInterface(GalleryInterface):
 
         self.hBoxLayout.addWidget(self.container)
 
-    def createStudent(self):
+        self.dialog = DialogStudent(self.myParent)
+
+    def showDialog(self):
         
         ''' student = Student("Georginot", "Armelin",
                           "M", 56, 175, "20/04/1997", "Ranotsara Nord",
@@ -81,16 +84,24 @@ class StudentInterface(GalleryInterface):
         data = student.fetch(['id_student', 'firstname', 'lastname', 'company', 'section', 'number'])
         header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro']
         self.table_student.refresh(self.table, header, data) '''
-        DialogStudent(self.myParent).show()
         
-        
+        self.dialog.yesButton.clicked.connect(self.createStudent)
+        self.dialog.show()
 
+    def createStudent(self):
+        student = self.dialog.studentData()
+        student.create()
+        data = student.fetch(['id_student', 'lastname', 'firstname', 'company', 'section', 'number'])
+        header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro']
+        self.table_student.refresh(self.table, header, data)
+        self.dialog.accept()
+        
     
     def tableStudent(self, parent):
         student = Student("Georginost", "Armelin",
                           "M", 56, 175, "20/04/1997", "Ranotsara Nord",
                           "034 65 007 00","Bevokatra Antsirabe", "EAP", 2, 7, 23)
-        data = student.fetch(['id_student', 'firstname', 'lastname', 'company', 'section', 'number'])
+        data = student.fetch(['id_student', 'lastname', 'firstname', 'company', 'section', 'number'])
         header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro']
         table = Table(parent, header, data)
         return [table,table.widget()]
