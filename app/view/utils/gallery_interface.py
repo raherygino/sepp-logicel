@@ -75,7 +75,7 @@ class GalleryInterface(ScrollArea):
 
     def addExampleCard(self, title, widget, sourcePath: str, stretch=0):
         card = ExampleCard(title, widget, sourcePath, stretch, self.view)
-        self.vBoxLayout.addWidget(card, 0, Qt.AlignTop)
+        self.vBoxLayout.addWidget(card)
         return card
         
     def addCard(self, title, widget) -> Card:

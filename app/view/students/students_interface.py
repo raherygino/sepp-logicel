@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import QTableWidgetItem, QHeaderView, QFrame, QHBoxLayout
 from PyQt5.QtWidgets import QApplication, QWidget, QAction, QHBoxLayout, QLabel
 from qfluentwidgets import RoundMenu, setTheme, Theme, Action, MenuAnimationType, MenuItemDelegate, CheckableMenu, MenuIndicatorType
 from qfluentwidgets import FluentIcon as FIF
-from ...components.table.TableView import Table
+from ...components.table.TableView import *
 from ...backend.models.Student import Student
 
 class StudentInterface(GalleryInterface):
@@ -21,11 +21,13 @@ class StudentInterface(GalleryInterface):
 
     def __init__(self, parent=None):
         self.t = Translator()
+        
         super().__init__(
             title=self.t.name_promotion,
             subtitle='',
             parent=parent
         )
+        
         '''
         MODELS 
         student = Student("lastname", "firstname", "genre", "height", "weight", 
@@ -37,12 +39,19 @@ class StudentInterface(GalleryInterface):
         student.create() '''
         student = Student("Armelin", "Georginot", "M", "68", "175", "20/04/1997", "Ranotsara Nord", "034 65 007 00",
                           "Bevokatra Antsirabe", "EAP", 2,7,23)
+        student.create()
 
         rows = student.fetch(['firstname', 'lastname', 'genre', 'company', 'section', 'number'])
         head = ['Nom', 'Prénoms', 'Genre', 'Compagnie', 'Section', 'Numéros']
 
-        self.widgetsInCard(parent, head, rows)
+        #self.widgetsInCard(parent, head, rows)
+        table = Table(self, head, rows)
+        self.container = Frame('horizontal', 'row_1', parent=parent)
+        self.container.layout.addWidget(table.widget())
 
+        #self.add addWidget(self.container)
+        # self.layout.addWidget(self.container)
+        self.widgetsInCard(parent, ["hello", "gfg"], [["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"],["dsfd","sdfd"]])
         self.setObjectName('StudentInterface')
 
     def widgetsInCard(self, parent, header, data):

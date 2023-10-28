@@ -17,7 +17,7 @@
         "Language": "fr_FR"
     },
     "QFluentWidgets": {
-        "ThemeColor": "#ffaa0b5d",
-        "ThemeMode": "Light"
+        "ThemeColor": "#ff009faa",
+        "ThemeMode": "Dark"
     }
 }
