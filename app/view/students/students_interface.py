@@ -12,7 +12,7 @@ from PyQt5.QtCore import Qt, QSize, QCoreApplication
 from ...backend.models.Student import Student
 from ...backend.controllers.StudentController import StudentController
 
-from .students_dialog import DialogProduct
+from .students_new_dialog import DialogStudent
 
 class StudentInterface(GalleryInterface):
     """ Student interface """
@@ -81,7 +81,7 @@ class StudentInterface(GalleryInterface):
         data = student.fetch(['id_student', 'firstname', 'lastname', 'company', 'section', 'number'])
         header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro']
         self.table_student.refresh(self.table, header, data) '''
-        DialogProduct(self.myParent).show()
+        DialogStudent(self.myParent).show()
         
         
 
