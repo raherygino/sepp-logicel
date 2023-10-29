@@ -40,9 +40,35 @@ class Student():
         self.initTable()
         self.db.insert("student", self.cols)
 
-
     def fetch(self, cols):
         return self.db.fetch("student", cols)
+    
+    def fetchById(self, id):
+
+        data = self.db.fetchById("student", id, [
+            "firstname", "lastname", "genre",
+            "height", "weight", "birthday","birthplace", "phone", "address",
+            "level", "company", "section", "number"
+        ])
+
+        return {
+            "id": id,
+            "firstname" : data[0],
+            "lastname": data[1],
+            "genre": data[2],
+            "height": data[3],
+            "weight": data[4],
+            "birthday": data[5],
+            "birthplace": data[6],
+            "phone": data[7],
+            "address": data[8],
+            "level": data[9],
+            "company": data[10],
+            "section": data[11],
+            "number": data[12]
+        }
+        
+
     
     def column(self):
         return self.db.ff()

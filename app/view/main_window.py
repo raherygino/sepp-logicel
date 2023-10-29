@@ -21,7 +21,8 @@ from ..common import resource
 from qfluentwidgets import isDarkTheme
 
 class MainWindow(FluentWindow):
-
+    
+        
     def __init__(self):
         super().__init__()
         self.initWindow()

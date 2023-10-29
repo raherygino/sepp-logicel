@@ -80,7 +80,6 @@ class DialogStudent(MaskDialogBase, Ui_MessageBox):
         self.content.addWidget(self.row_4)
 
     def yesBtnEvent(self):
-        print(self.inputCode.text())
         self.accept()
 
     def getYesBtn(self):

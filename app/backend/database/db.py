@@ -38,6 +38,19 @@ class Database():
         self.CURSOR.execute(query)
         return self.CURSOR.fetchall()
     
+    def fetchById(self, table:str, id, cols:list):
+        '''
+        query = f"SELECT * FROM {table} WHERE id_{table} = '{id}'"
+        '''
+        query = "SELECT "
+        for col in cols:
+            query += col+","
+        query = query[0:len(query)-1]
+        query += f" FROM {table} WHERE id_{table} = '{id}'"
+
+        self.CURSOR.execute(query)
+        return self.CURSOR.fetchone()
+    
     def ff(self):
         return list(map(lambda x: x[0], self.CURSOR.description))
 
