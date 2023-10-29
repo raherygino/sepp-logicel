@@ -50,21 +50,16 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         self.row.addWidget(self.ImageLabel)
 
         self.col = Frame('vertical', 'col', parent=parent)
-        self.col.addWidget(StrongBodyLabel('Nom'))
-        self.col.addWidget(CaptionLabel(self.student.get('lastname')))
-        self.col.addWidget(StrongBodyLabel('Prénom'))
-        self.col.addWidget(CaptionLabel(self.student.get('firstname')))
-        self.col.addWidget(StrongBodyLabel('Genre'))
-        self.col.addWidget(CaptionLabel(self.student.get('genre')))
+        self.showData(self.col, "Nom", "lastname")
+        self.showData(self.col, "Prénom", "firstname")
+        self.showData(self.col, "Genre", "genre")
         self.row.layout.addWidget(self.col, 0, Qt.AlignTop)
 
         self.col_2 = Frame('vertical', 'col', parent=parent)
         self.col_2.addWidget(StrongBodyLabel('Date et lieu de naissance'))
         self.col_2.addWidget(CaptionLabel(self.student.get('birthday')+" à "+self.student.get('birthplace')))
-        self.col_2.addWidget(StrongBodyLabel('Adresse'))
-        self.col_2.addWidget(CaptionLabel(self.student.get('address')))
-        self.col_2.addWidget(StrongBodyLabel('Phone'))
-        self.col_2.addWidget(CaptionLabel(self.student.get('phone')))
+        self.showData(self.col_2, "Adresse", "address")
+        self.showData(self.col_2, "Phone", "phone")
         self.row.layout.addWidget(self.col_2, 0, Qt.AlignTop)
 
         self.col_3 = Frame('vertical', 'col', parent=parent)
@@ -82,6 +77,10 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         #self.layoutTitle.addWidget(self.title)
         #self.content.addWidget(self.layoutTitle)
         self.content.addWidget(self.row)
+
+    def showData(self, parent, title:str, key:str):
+        parent.addWidget(StrongBodyLabel(title))
+        parent.addWidget(CaptionLabel(self.student.get(key)))
 
     def yesBtnEvent(self):
         self.accept()

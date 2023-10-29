@@ -40,10 +40,37 @@ class Student():
         self.initTable()
         self.db.insert("student", self.cols)
 
+    def seed(self, obj:dict):
+        cols = [
+            ["lastname", "TEXT", obj.get("lastname")],
+            ["firstname", "TEXT", obj.get("firstname")],
+            ["genre", "TEXT", obj.get("genre")],
+            ["height", "TEXT", obj.get("height")],
+            ["weight", "TEXT", obj.get("weight")],
+            ["birthday", "TEXT", obj.get("birthday")],
+            ["birthplace", "TEXT", obj.get("birthplace")],
+            ["phone", "TEXT", obj.get("phone")],
+            ["level", "TEXT", obj.get("level")],
+            ["company", "TEXT", obj.get("company")],
+            ["section", "TEXT", obj.get("section")],
+            ["number", "TEXT", obj.get("number")]
+        ]
+        return cols
+    
+    def seeds(self, lenght):
+        lastname = ["RAKOTO", "RABE", "RANDRIA", "RASOA", "ANDRIANINA", "RAKOTOMALALA", "RANAIVOSON",
+                    "RAHERY", "RANDRIANARIVO", "NARISON", "MAHERINIANA", "HERINIAINA", "RASOLOMALALA"
+                    "SOLOMALALA", "RAKOTOBE", "RAVAO"]
+        firstname = ["Jean Yves", "Michel", "Michael", "Georges", "Grégoire", "Lianah", "Dina", "Malala",
+                     "Prisca", "Tiana", "Mahefa", "Haigotiana", "Malalatiana", "Faramalala", "Rado", 
+                     "Jean Jacques"]
+    
+
     def fetch(self, cols):
         return self.db.fetch("student", cols)
     
     def fetchById(self, id):
+
 
         data = self.db.fetchById("student", id, [
             "firstname", "lastname", "genre",
@@ -68,7 +95,8 @@ class Student():
             "number": data[12]
         }
         
-
+    def delete(self, id):
+        self.db.delete("student", id)
     
     def column(self):
         return self.db.ff()

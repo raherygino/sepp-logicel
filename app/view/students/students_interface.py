@@ -5,7 +5,8 @@ from ...common.Translate import Translate
 from ...common.config import Lang
 from ...common.keys import *
 from ...components import *
-from qfluentwidgets import SubtitleLabel, SearchLineEdit, PushButton,MenuAnimationType, PrimaryPushButton, RoundMenu, Action
+from qfluentwidgets import (SubtitleLabel, SearchLineEdit, PushButton,MenuAnimationType, 
+                            PrimaryPushButton, RoundMenu, Action, MessageBox)
 from qfluentwidgets import FluentIcon as FIF
 from PyQt5.QtWidgets import QFrame, QVBoxLayout, QTableWidgetItem, QAction
 from PyQt5.QtCore import Qt, QSize, QCoreApplication, QModelIndex, QPoint
@@ -82,7 +83,7 @@ class StudentInterface(GalleryInterface):
         menu.addAction(Action(FIF.EDIT, 'Modifier'))
         menu.addAction(Action(FIF.SCROLL, 'Mouvement'))
         menu.addSeparator()
-        menu.addAction(Action(FIF.DELETE, 'Supprimer'))
+        menu.addAction(Action(FIF.DELETE, 'Supprimer', triggered=lambda:self.confirmDeleteItem(item)))
         menu.menuActions()[-2].setCheckable(True)
         menu.menuActions()[-2].setChecked(True)
 
@@ -94,6 +95,17 @@ class StudentInterface(GalleryInterface):
         id = self.table.item(item.row(), 0).text()
         DialogStudentShow(id, self.myParent).show()
 
+    def confirmDeleteItem(self, item: QModelIndex):
+        confirm = MessageBox("Confirmation", "Voulez vous supprimer vraiment", self.myParent)
+        confirm.accepted.connect(lambda:self.deleteItem(item))
+        confirm.show()
+
+    def deleteItem(self, item:QModelIndex):
+        id = self.table.item(item.row(), 0).text()
+        self.student.delete(id)
+        self.refreshTable(self.student)
+
+
     def showDialog(self):
         self.dialog.yesButton.clicked.connect(self.createStudent)
         self.dialog.show()
@@ -101,12 +113,9 @@ class StudentInterface(GalleryInterface):
     def createStudent(self):
         student = self.dialog.studentData()
         student.create()
-        data = student.fetch(['id_student', 'lastname', 'firstname', 'company', 'section', 'number'])
-        header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro']
-        self.table_student.refresh(self.table, header, data)
+        self.refreshTable(student)
         self.dialog.accept()
         
-    
     def tableStudent(self, parent):
         student = Student("Georginost", "Armelin",
                           "M", 56, 175, "20/04/1997", "Ranotsara Nord",
@@ -116,5 +125,7 @@ class StudentInterface(GalleryInterface):
         table = Table(parent, header, data)
         return [table,table.widget()]
     
-    def refreshTable(self, parent):
-        self.tableStudent()
+    def refreshTable(self, student):
+        data = student.fetch(['id_student', 'lastname', 'firstname', 'company', 'section', 'number'])
+        header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro']
+        self.table_student.refresh(self.table, header, data)

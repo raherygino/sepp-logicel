@@ -15,4 +15,7 @@ class StudentController(Controller):
 
     def findById(self, id):
         return self.student.fetchById(id)
+    
+    def delete(self, id):
+        self.student.delete(id)
 

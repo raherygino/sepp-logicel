@@ -39,9 +39,6 @@ class Database():
         return self.CURSOR.fetchall()
     
     def fetchById(self, table:str, id, cols:list):
-        '''
-        query = f"SELECT * FROM {table} WHERE id_{table} = '{id}'"
-        '''
         query = "SELECT "
         for col in cols:
             query += col+","
@@ -51,7 +48,8 @@ class Database():
         self.CURSOR.execute(query)
         return self.CURSOR.fetchone()
     
-    def ff(self):
-        return list(map(lambda x: x[0], self.CURSOR.description))
+    def delete(self, table:str, id):
+        self.CURSOR.execute(f"DELETE FROM {table} WHERE id_{table} = '{id}'")
+        self.CONN.commit()
 
 
