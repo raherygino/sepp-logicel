@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import QFrame, QVBoxLayout, QTableWidgetItem, QAction
 from PyQt5.QtCore import Qt, QSize, QCoreApplication, QModelIndex, QPoint
 from ...backend.models.Student import Student
 from ...backend.controllers.StudentController import StudentController
-import random
+from ...backend.models.keys import * 
 
 from .students_new_dialog import DialogStudent
 from .students_show_dialog import DialogStudentShow
@@ -77,13 +77,12 @@ class StudentInterface(GalleryInterface):
         self.table_student = self.tbStudent[0]
         self.container.addWidget(self.table)
         self.hBoxLayout.addWidget(self.container)
-
         self.dialog = DialogStudent(self.myParent)
 
     def searchStudent(self, text:str):
         if '\'' not in text:
-            header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro', 'Niveau']
-            data = self.student.search(['id_student', 'lastname', 'firstname', 'company', 'section', 'number', 'level'], text)
+            header = LABEL_COL
+            data = self.student.search(IMPORTANT_COL, text)
             self.table_student.refresh(self.table, header, data)
 
     def selectItem(self, item: QModelIndex):
@@ -126,15 +125,11 @@ class StudentInterface(GalleryInterface):
         self.dialog.accept()
         
     def tableStudent(self, parent):
-        student = Student("Georginost", "Armelin",
-                          "M", 56, 175, "20/04/1997", "Ranotsara Nord",
-                          "034 65 007 00","Bevokatra Antsirabe", "EAP", 2, 7, 23)
-        data = student.fetch(['id_student', 'lastname', 'firstname', 'company', 'section', 'number', 'level'])
-        header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro', 'Niveau']
-        table = Table(parent, header, data)
+        student = Student(None, None, None, None, None, None, None, None, None, None, None, None, None)
+        data = student.fetch(IMPORTANT_COL)
+        table = Table(parent, LABEL_COL, data)
         return [table,table.widget()]
     
     def refreshTable(self, student):
-        data = student.fetch(['id_student', 'lastname', 'firstname', 'company', 'section', 'number', 'level'])
-        header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro', 'Niveau']
-        self.table_student.refresh(self.table, header, data)
+        data = student.fetch(IMPORTANT_COL)
+        self.table_student.refresh(self.table, LABEL_COL, data)
