@@ -36,7 +36,7 @@ class StudentInterface(GalleryInterface):
         #self.student.create()
         self.container(parent=parent)
         self.setObjectName('studentInterface')
-        #self.student.seeds(150)
+        #self.student.seeds(6)
         
     def titleContainte(self, parent):
         row = Frame(VERTICAL, ROW+str(1), parent=parent)
@@ -51,6 +51,7 @@ class StudentInterface(GalleryInterface):
         self.searchLineStudent = SearchLineEdit(self)
         self.searchLineStudent.setPlaceholderText(QCoreApplication.translate(FORM, u"Recherche", None))
         self.searchLineStudent.setMaximumSize(QSize(240, 50))
+        self.searchLineStudent.textChanged.connect(self.searchStudent)
         
         col = Frame(HORIZONTAL, COL+str(1),parent=parent)
         self.btnAdd =  PushButton('Ajouter', self, FIF.ADD)
@@ -78,6 +79,12 @@ class StudentInterface(GalleryInterface):
         self.hBoxLayout.addWidget(self.container)
 
         self.dialog = DialogStudent(self.myParent)
+
+    def searchStudent(self, text:str):
+        if '\'' not in text:
+            header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro', 'Niveau']
+            data = self.student.search(['id_student', 'lastname', 'firstname', 'company', 'section', 'number', 'level'], text)
+            self.table_student.refresh(self.table, header, data)
 
     def selectItem(self, item: QModelIndex):
         menu = RoundMenu(parent=self)

@@ -38,6 +38,16 @@ class Database():
         self.CURSOR.execute(query)
         return self.CURSOR.fetchall()
     
+    def search(self, table:str, cols:list, condition:str):
+        query = "SELECT "
+        for col in cols:
+            query += col+","
+        query = query[0:len(query)-1]
+        query += " FROM "+table+ " WHERE "+ condition
+        self.CURSOR.execute(query)
+        return self.CURSOR.fetchall()
+
+    
     def fetchById(self, table:str, id, cols:list):
         query = "SELECT "
         for col in cols:

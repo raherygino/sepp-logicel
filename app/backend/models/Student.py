@@ -40,6 +40,13 @@ class Student():
     def create(self):
         self.initTable()
         self.db.insert("student", self.cols)
+    
+    def search(self,cols, q):
+        cond = ""
+        for col in cols:
+            cond += f"{col} like '%{q}%' OR "
+        cond = cond[0:len(cond) - 4]
+        return self.db.search("student", cols, cond)
 
     def seed(self, obj:dict):
         cols = [
