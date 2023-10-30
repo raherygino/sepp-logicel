@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import QFrame, QVBoxLayout, QTableWidgetItem, QAction
 from PyQt5.QtCore import Qt, QSize, QCoreApplication, QModelIndex, QPoint
 from ...backend.models.Student import Student
 from ...backend.controllers.StudentController import StudentController
+import random
 
 from .students_new_dialog import DialogStudent
 from .students_show_dialog import DialogStudentShow
@@ -35,6 +36,7 @@ class StudentInterface(GalleryInterface):
         #self.student.create()
         self.container(parent=parent)
         self.setObjectName('studentInterface')
+        #self.student.seeds(150)
         
     def titleContainte(self, parent):
         row = Frame(VERTICAL, ROW+str(1), parent=parent)
@@ -88,7 +90,7 @@ class StudentInterface(GalleryInterface):
         menu.menuActions()[-2].setChecked(True)
 
         x = self.table.width()
-        pos = self.table.mapToGlobal(QPoint(50, (item.row()+1)*50))
+        pos = self.table.mapToGlobal(QPoint(50, (item.row()+1)*34))
         menu.exec(pos, aniType=MenuAnimationType.DROP_DOWN)
 
     def showItem(self, item: QModelIndex):
@@ -120,12 +122,12 @@ class StudentInterface(GalleryInterface):
         student = Student("Georginost", "Armelin",
                           "M", 56, 175, "20/04/1997", "Ranotsara Nord",
                           "034 65 007 00","Bevokatra Antsirabe", "EAP", 2, 7, 23)
-        data = student.fetch(['id_student', 'lastname', 'firstname', 'company', 'section', 'number'])
-        header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro']
+        data = student.fetch(['id_student', 'lastname', 'firstname', 'company', 'section', 'number', 'level'])
+        header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro', 'Niveau']
         table = Table(parent, header, data)
         return [table,table.widget()]
     
     def refreshTable(self, student):
-        data = student.fetch(['id_student', 'lastname', 'firstname', 'company', 'section', 'number'])
-        header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro']
+        data = student.fetch(['id_student', 'lastname', 'firstname', 'company', 'section', 'number', 'level'])
+        header = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro', 'Niveau']
         self.table_student.refresh(self.table, header, data)
