@@ -19,10 +19,10 @@ from ..common.translator import Translator
 from ..common.Translate import Translate
 from ..common import resource
 from qfluentwidgets import isDarkTheme
+from pynput.mouse import Listener
 
 class MainWindow(FluentWindow):
     
-        
     def __init__(self):
         super().__init__()
         self.initWindow()

@@ -10,12 +10,14 @@ from qfluentwidgets import (SubtitleLabel, SearchLineEdit, PushButton,MenuAnimat
 from qfluentwidgets import FluentIcon as FIF
 from PyQt5.QtWidgets import QFrame, QVBoxLayout, QTableWidgetItem, QAction
 from PyQt5.QtCore import Qt, QSize, QCoreApplication, QModelIndex, QPoint
+from PyQt5.QtGui import QCursor
 from ...backend.models.Student import Student
 from ...backend.controllers.StudentController import StudentController
 from ...backend.models.keys import * 
 
 from .students_new_dialog import DialogStudent
 from .students_show_dialog import DialogStudentShow
+from ...common.config import *
 
 class StudentInterface(GalleryInterface):
     """ Student interface """
@@ -28,6 +30,7 @@ class StudentInterface(GalleryInterface):
             subtitle='',
             parent=parent
         )
+        
         self.myParent = parent
         self.hBoxLayout = QVBoxLayout(self)
         self.student = Student(None, None, None, None, None, None, None, None, None, None, None, None, None)
@@ -36,7 +39,7 @@ class StudentInterface(GalleryInterface):
         #self.student.create()
         self.container(parent=parent)
         self.setObjectName('studentInterface')
-        #self.student.seeds(6)
+        #self.student.seeds(140)
         
     def titleContainte(self, parent):
         row = Frame(VERTICAL, ROW+str(1), parent=parent)
@@ -44,6 +47,7 @@ class StudentInterface(GalleryInterface):
         row.setMargins(9,0,9,0)
         row.addWidget(label)
         self.hBoxLayout.addWidget(row)
+        
 
     def container(self, parent):
         self.container = Frame(VERTICAL, STUDENT+CONTAINER, parent=parent)
@@ -56,7 +60,6 @@ class StudentInterface(GalleryInterface):
         col = Frame(HORIZONTAL, COL+str(1),parent=parent)
         self.btnAdd =  PushButton('Ajouter', self, FIF.ADD)
         self.btnAdd.setObjectName(u"PrimaryToolButton")
-        #print(self.btnAdd.event.po)
         self.btnAdd.clicked.connect(self.showDialog)
 
         self.btnFlux =  PrimaryPushButton('Mouvement', self, FIF.CHAT)
@@ -95,9 +98,11 @@ class StudentInterface(GalleryInterface):
         menu.menuActions()[-2].setCheckable(True)
         menu.menuActions()[-2].setChecked(True)
 
-        x = self.table.width()
-        pos = self.table.mapToGlobal(QPoint(50, (item.row()+1)*34))
-        menu.exec(pos, aniType=MenuAnimationType.DROP_DOWN)
+        self.posCur = QCursor().pos()
+        cur_x = self.posCur.x()
+        cur_y = self.posCur.y()
+
+        menu.exec(QPoint(cur_x, cur_y), aniType=MenuAnimationType.DROP_DOWN)
 
     def showItem(self, item: QModelIndex):
         id = self.table.item(item.row(), 0).text()

@@ -9,6 +9,7 @@ from qfluentwidgets import FluentTranslator
 
 from app.common.config import cfg
 from app.view.main_window import MainWindow
+from pynput import mouse
 
 
 # enable dpi scale
@@ -38,5 +39,4 @@ app.installTranslator(galleryTranslator)
 # create main window
 w = MainWindow()
 w.show()
-
 app.exec_()
