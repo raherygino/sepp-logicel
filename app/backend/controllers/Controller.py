@@ -2,27 +2,21 @@ from ..database.db import Database as DB
 
 class Controller():
     
-    def __init__(self, name, cols):
-        db = DB()
-        db.createTable(name, cols)
-        self.CURSOR = db.CURSOR
-        self.CONN = db.CONN
-        self.TABLE_NAME = name
-        self.COLS = cols
+    def __init__(self, model, cols):
+        self.model = model
+        self.cols = cols
 
-    def query(self, query:str):
-        self.CURSOR.execute(query)
-        self.CONN.commit()
-        
-    def insert(self, values):
-        query = "INSERT INTO "+self.TABLE_NAME+"("
+    def store(self, model):
+        model.create()
 
-        for col in self.COLS:
-            query += col[0]+", "
-        query += "created_at) VALUES ("
-        
-        for val in values:
-            query += "'"+val+"', "
-        query += "'')"
-
-        self.query(query)
+    def fetch(self):
+        return self.model.all(self.cols)
+    
+    def show(self, id):
+        return self.model.get(id)
+    
+    def search(self, q):
+        return self.model.search(self.cols, q)
+    
+    def delete(self, id):
+        self.model.delete(id)

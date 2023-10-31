@@ -32,23 +32,11 @@ class StudentInterface(GalleryInterface):
             subtitle='',
             parent=parent
         )
-
-        ex = Example("Rakoto", "Zaho")
-        ctrl = ExampleController()
-        #ctrl.store(ex)
-        #ctrl.delete("6")
-        print(ctrl.fetch())
-        #print(ctrl.show("1"))
-        #print(ctrl.search("zaka"))
+        self.studentCtrl = StudentController()
         self.myParent = parent
         self.hBoxLayout = QVBoxLayout(self)
-        self.student = Student(None, None, None, None, None, None, None, None, None, None, None, None, None)
-        self.student.initTable()
-        self.studentController = StudentController(self.student)
-        #self.student.create()
         self.container(parent=parent)
         self.setObjectName('studentInterface')
-        #self.student.seeds(140)
         
     def titleContainte(self, parent):
         row = Frame(VERTICAL, ROW+str(1), parent=parent)
@@ -57,7 +45,6 @@ class StudentInterface(GalleryInterface):
         row.addWidget(label)
         self.hBoxLayout.addWidget(row)
         
-
     def container(self, parent):
         self.container = Frame(VERTICAL, STUDENT+CONTAINER, parent=parent)
         self.row_2 = Frame(HORIZONTAL, ROW+str(2), parent=parent)
@@ -93,9 +80,9 @@ class StudentInterface(GalleryInterface):
 
     def searchStudent(self, text:str):
         if '\'' not in text:
-            header = LABEL_COL
-            data = self.student.search(IMPORTANT_COL, text)
-            self.table_student.refresh(self.table, header, data)
+            self.table_student.refresh(self.table,
+                                       self.studentCtrl.label,
+                                       self.studentCtrl.search(text))
 
     def selectItem(self, item: QModelIndex):
         menu = RoundMenu(parent=self)
@@ -124,26 +111,27 @@ class StudentInterface(GalleryInterface):
 
     def deleteItem(self, item:QModelIndex):
         id = self.table.item(item.row(), 0).text()
-        self.student.delete(id)
-        self.refreshTable(self.student)
-
+        self.studentCtrl.delete(id)
+        self.refreshTable()
 
     def showDialog(self):
         self.dialog.yesButton.clicked.connect(self.createStudent)
         self.dialog.show()
         
     def createStudent(self):
-        student = self.dialog.studentData()
-        student.create()
-        self.refreshTable(student)
+        ### DEBUG: HERE
+        self.studentCtrl.store(self.dialog.studentData())
+        self.refreshTable()
         self.dialog.accept()
         
     def tableStudent(self, parent):
-        student = Student(None, None, None, None, None, None, None, None, None, None, None, None, None)
-        data = student.fetch(IMPORTANT_COL)
-        table = Table(parent, LABEL_COL, data)
+        data = self.studentCtrl.fetch()
+        header = self.studentCtrl.label
+        table = Table(parent, header, data)
         return [table,table.widget()]
     
-    def refreshTable(self, student):
-        data = student.fetch(IMPORTANT_COL)
-        self.table_student.refresh(self.table, LABEL_COL, data)
+    def refreshTable(self):
+        self.table_student.refresh(
+            self.table, 
+            self.studentCtrl.label,
+            self.studentCtrl.fetch())

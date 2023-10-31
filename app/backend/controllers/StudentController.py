@@ -3,19 +3,10 @@ from ..models.Student import Student
 
 class StudentController(Controller):
 
-    def __init__(self, student: Student):
-        if student == None:
-            self.student = Student(None,None,None,None,None,None,None,
-                                   None,None,None,None,None,None)
-        else:
-            self.student = student
+    def __init__(self):
+        self.student = Student(None,None,None,None,None,None,None,None,None,None,None,None,None)
+        self.label = ['ID', 'Nom', 'prénom', 'Compagnie', 'Section', 'Numéro', 'Niveau']
+        self.cols = ['id_student', 'lastname', 'firstname', 'company', 'section', 'number', 'level']
+        super().__init__(self.student, self.cols)
 
-    def create(self):
-        self.student.create()
-
-    def findById(self, id):
-        return self.student.fetchById(id)
-    
-    def delete(self, id):
-        self.student.delete(id)
 
