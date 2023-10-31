@@ -70,11 +70,6 @@ class CurrentTheme():
         else :
             return False
 
-def cursorPos():
-    f = open("app/config/cursor.cfg", "r")
-    return f.read().split(",")
-        
-
 YEAR = 2023
 AUTHOR = "zhiyiYo"
 VERSION = __version__

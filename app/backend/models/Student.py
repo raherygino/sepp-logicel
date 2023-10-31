@@ -115,7 +115,6 @@ class Student():
     
     def fetchById(self, id):
 
-
         data = self.db.fetchById("student", id, [
             "firstname", "lastname", "genre",
             "height", "weight", "birthday","birthplace", "phone", "address",

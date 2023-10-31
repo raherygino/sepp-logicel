@@ -12,7 +12,9 @@ from PyQt5.QtWidgets import QFrame, QVBoxLayout, QTableWidgetItem, QAction
 from PyQt5.QtCore import Qt, QSize, QCoreApplication, QModelIndex, QPoint
 from PyQt5.QtGui import QCursor
 from ...backend.models.Student import Student
+from ...backend.models.Example import Example
 from ...backend.controllers.StudentController import StudentController
+from ...backend.controllers.ExampleController import ExampleController
 from ...backend.models.keys import * 
 
 from .students_new_dialog import DialogStudent
@@ -30,7 +32,14 @@ class StudentInterface(GalleryInterface):
             subtitle='',
             parent=parent
         )
-        
+
+        ex = Example("Rakoto", "Zaho")
+        ctrl = ExampleController()
+        #ctrl.store(ex)
+        #ctrl.delete("6")
+        print(ctrl.fetch())
+        #print(ctrl.show("1"))
+        #print(ctrl.search("zaka"))
         self.myParent = parent
         self.hBoxLayout = QVBoxLayout(self)
         self.student = Student(None, None, None, None, None, None, None, None, None, None, None, None, None)
