@@ -76,7 +76,7 @@ class StudentInterface(GalleryInterface):
         self.table_student = self.tbStudent[0]
         self.container.addWidget(self.table)
         self.hBoxLayout.addWidget(self.container)
-        self.dialog = DialogStudent(self.myParent)
+        self.dialog = None
 
     def searchStudent(self, text:str):
         if '\'' not in text:
@@ -115,14 +115,15 @@ class StudentInterface(GalleryInterface):
         self.refreshTable()
 
     def showDialog(self):
+        self.dialog = DialogStudent(self.myParent)
         self.dialog.yesButton.clicked.connect(self.createStudent)
         self.dialog.show()
         
     def createStudent(self):
-        ### DEBUG: HERE
         self.studentCtrl.store(self.dialog.studentData())
         self.refreshTable()
         self.dialog.accept()
+        self.dialog = None
         
     def tableStudent(self, parent):
         data = self.studentCtrl.fetch()
