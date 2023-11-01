@@ -7,6 +7,7 @@ from ...components.dialog.mask import MaskDialogBase
 from ...components.dialog.dialog import Ui_MessageBox
 from ...components.layout.Frame import Frame
 from ...components.input.InputText import InputText
+from ...components.input.SpinBox import InputSpinBox
 from ...components.input.DatePicker import InputDatePicker
 from ...components.input.Select import Select
 
@@ -44,10 +45,10 @@ class DialogStudent(MaskDialogBase, Ui_MessageBox):
 
         self.row_1 = Frame('horizontal', 'row_1', parent=parent)
         self.selectGenre = Select("Genre", ["Masculin", "Féminin"], self.row_1)
-        self.inputHeight = InputText("Hauteur (cm)", self.row_1)
-        self.inputWeight = InputText("Poids (kg)", self.row_1)
-        self.inputHeight.lineEdit.setMaxLength(3)
-        self.inputWeight.lineEdit.setMaxLength(3)
+        self.inputHeight = InputSpinBox("Hauteur (m)", True, self.row_1)
+        self.inputWeight = InputSpinBox("Poids (kg)",False, self.row_1)
+        #self.inputHeight.lineEdit.setMaxLength(3)
+        #self.inputWeight.lineEdit.setMaxLength(3)
 
         self.row_2 = Frame('horizontal', 'row_2', parent=parent)
         
@@ -62,7 +63,7 @@ class DialogStudent(MaskDialogBase, Ui_MessageBox):
         self.selectLevel = Select("Niveau", ["Elève Agent de Police", "Elève Inspecteur de Police"], self.row_4)
         self.selectCompany = Select("Compagnie", ["1ère", "2ème", "3ème"], self.row_4)
         self.selectSection = Select("Section", ["1ère", "2ème", "3ème", "4ème", "5ème", "6ème","7ème", "8ème",], self.row_4)
-        self.inputNumber = InputText("Numéro", self.row_4)
+        self.inputNumber = InputSpinBox("Numéro",False, self.row_4)
 
         self.layoutTitle.setMargins(8,4,0,0)
         self.row.setMargins(0,0,0,0)

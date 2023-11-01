@@ -1,12 +1,15 @@
 from PyQt5.QtWidgets import QFrame
-from qfluentwidgets import DateEdit
+from qfluentwidgets import SpinBox, DoubleSpinBox
 from ..layout.inputLabel import InputLabel
 
-class InputDatePicker(QFrame):
+class InputSpinBox(QFrame):
 
-    def __init__(self, label: str, parent):
+    def __init__(self, label: str, isDouble:bool, parent):
         self.inputLabel = InputLabel(label, parent)
-        self.lineEdit = DateEdit(self.inputLabel)
+        if isDouble :
+            self.lineEdit = DoubleSpinBox(self.inputLabel)
+        else :
+            self.lineEdit = SpinBox(self.inputLabel)
         self.inputLabel.addWidget(self.lineEdit)
         parent.addWidget(self.inputLabel)
     
