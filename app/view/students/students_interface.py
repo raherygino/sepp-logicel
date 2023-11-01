@@ -12,7 +12,9 @@ from PyQt5.QtWidgets import QFrame, QVBoxLayout, QTableWidgetItem, QAction
 from PyQt5.QtCore import Qt, QSize, QCoreApplication, QModelIndex, QPoint
 from PyQt5.QtGui import QCursor
 from ...backend.controllers.StudentController import StudentController
+from ...backend.controllers.MovementController import MovementController
 from ...backend.models.keys import * 
+from ...backend.models.Movement import Movement
 
 from .students_new_dialog import DialogStudent
 from .students_show_dialog import DialogStudentShow
@@ -128,9 +130,18 @@ class StudentInterface(GalleryInterface):
         self.dialog.accept()
         self.dialog = None
 
-    def showDialogMove(self, id):
+    def showDialogMove(self,  item:QModelIndex):
+        id = self.table.item(item.row(), 0).text()
         self.dialogMove = DialogStudentMove(self.myParent)
+        self.dialogMove.yesButton.clicked.connect(lambda: self.createMove(id))
         self.dialogMove.show()
+
+    def createMove(self, id):
+        dataMove = self.dialogMove.Data()
+        self.moveCtrl = MovementController()
+        self.moveCtrl.store(Movement(id, dataMove['dateStart'], dataMove['motif'], dataMove['day']))
+        self.dialogMove.accept()
+        self.dialogMove = None
         
     def tableStudent(self, parent):
         data = self.studentCtrl.fetch()

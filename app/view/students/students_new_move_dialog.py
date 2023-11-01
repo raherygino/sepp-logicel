@@ -83,22 +83,12 @@ class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
     def getYesBtn(self):
         return self.yesButton
     
-    def studentData(self):
-        return Student(
-            self.inputLastname.text(),
-            self.inputFirstname.text(),
-            self.selectGenre.text(),
-            self.inputHeight.text(),
-            self.inputWeight.text(),
-            self.inputBirthday.text(),
-            self.inputBirthplace.text(),
-            self.inputPhone.text(),
-            self.inputAddress.text(),
-            self.selectLevel.text(),
-            self.selectCompany.text(),
-            self.selectSection.text(),
-            self.inputNumber.text()
-        )
+    def Data(self):
+        return {
+            "motif": self.inputMotif.text(),
+            "dateStart": self.inputDateStart.text(),
+            "day": self.inputDayNb.text()
+        }
         
     def eventFilter(self, obj, e: QEvent):
         if obj is self.window():
