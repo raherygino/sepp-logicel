@@ -60,6 +60,7 @@ class StudentInterface(GalleryInterface):
 
         self.btnFlux =  PrimaryPushButton('Mouvement', self, FIF.CHAT)
         self.btnFlux.setObjectName(u"PrimaryToolButton")
+        self.btnFlux.clicked.connect(self.seed)
 
         col.layout.addWidget(self.btnAdd)
         col.layout.addWidget(self.btnFlux)
@@ -77,6 +78,10 @@ class StudentInterface(GalleryInterface):
         self.container.addWidget(self.table)
         self.hBoxLayout.addWidget(self.container)
         self.dialog = None
+
+    def seed(self):
+        self.studentCtrl.seed(12)
+        self.refreshTable()
 
     def searchStudent(self, text:str):
         if '\'' not in text:

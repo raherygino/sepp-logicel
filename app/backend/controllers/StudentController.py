@@ -9,4 +9,6 @@ class StudentController(Controller):
         self.cols = ['id_student', 'lastname', 'firstname', 'company', 'section', 'number', 'level']
         super().__init__(self.student, self.cols)
 
+    def seed(self, count:int):
+        self.student.seeds(count)
 
