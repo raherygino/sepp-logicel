@@ -16,6 +16,7 @@ from ...backend.models.keys import *
 
 from .students_new_dialog import DialogStudent
 from .students_show_dialog import DialogStudentShow
+from .students_new_move_dialog import DialogStudentMove
 from ...common.config import *
 
 class StudentInterface(GalleryInterface):
@@ -90,7 +91,7 @@ class StudentInterface(GalleryInterface):
         menu = RoundMenu(parent=self)
         menu.addAction(Action(FIF.FOLDER, 'Ouvrir', triggered=lambda:self.showItem(item)))
         menu.addAction(Action(FIF.EDIT, 'Modifier'))
-        menu.addAction(Action(FIF.SCROLL, 'Mouvement'))
+        menu.addAction(Action(FIF.SCROLL, 'Mouvement', triggered=lambda:self.showDialogMove(item)))
         menu.addSeparator()
         menu.addAction(Action(FIF.DELETE, 'Supprimer', triggered=lambda:self.confirmDeleteItem(item)))
         menu.menuActions()[-2].setCheckable(True)
@@ -126,6 +127,10 @@ class StudentInterface(GalleryInterface):
         self.refreshTable()
         self.dialog.accept()
         self.dialog = None
+
+    def showDialogMove(self, id):
+        self.dialogMove = DialogStudentMove(self.myParent)
+        self.dialogMove.show()
         
     def tableStudent(self, parent):
         data = self.studentCtrl.fetch()

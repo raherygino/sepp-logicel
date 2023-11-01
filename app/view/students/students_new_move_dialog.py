@@ -13,7 +13,7 @@ from ...components.input.Select import Select
 
 from ...backend.models.Student import Student
 
-class DialogStudent(MaskDialogBase, Ui_MessageBox):
+class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
 
     yesSignal = pyqtSignal()
     cancelSignal = pyqtSignal()
@@ -33,46 +33,49 @@ class DialogStudent(MaskDialogBase, Ui_MessageBox):
 
         self.content = Frame('vertical', 'content_dial', parent=parent)
         self.layoutTitle = Frame('horizontal', 'row', parent=parent)
-        self.title = SubtitleLabel('Ajouter un(e) élève')
+        self.title = SubtitleLabel('Mouvement')
 
         self.row = Frame('horizontal', 'row', parent=parent)
         self.inputLastname = InputText("Nom", self.row)
+        self.inputLastname.lineEdit.setText("RAKOTO")
+        self.inputLastname.lineEdit.setReadOnly(True)
+
         self.inputFirstname = InputText("Prénom", self.row)
+        self.inputFirstname.lineEdit.setText("Armelin")
+        self.inputFirstname.lineEdit.setReadOnly(True)
 
-        self.row_1 = Frame('horizontal', 'row_1', parent=parent)
-        self.selectGenre = Select("Genre", ["Masculin", "Féminin"], self.row_1)
-        self.inputHeight = InputSpinBox("Hauteur (m)", True, self.row_1)
-        self.inputWeight = InputSpinBox("Poids (kg)",False, self.row_1)
+        self.row_1 = Frame('horizontal', 'row_2', parent=parent)
+        self.selectLevel = InputText("Niveau", self.row_1)
+        self.selectLevel.setText("EAP")
+        self.selectLevel.lineEdit.setReadOnly(True)
 
-        self.row_2 = Frame('horizontal', 'row_2', parent=parent)
+        self.selectCompany = InputText("Compagnie", self.row_1)
+        self.selectCompany.setText("1ère")
+        self.selectCompany.lineEdit.setReadOnly(True)
+
+        self.selectSection = InputText("Section", self.row_1)
+        self.selectSection.setText("1ère")
+        self.selectSection.lineEdit.setReadOnly(True)
+
+        self.inputNumber = InputText("Numéro", self.row_1)
+        self.inputNumber.setText("23")
+        self.inputNumber.lineEdit.setReadOnly(True)
         
-        self.inputBirthday = InputDatePicker("Date de naissance", self.row_2)
-        self.inputBirthplace = InputText("Lieu de naissance", self.row_2)
-
-        self.row_3 = Frame('horizontal', 'row_3', parent=parent)
-        self.inputAddress = InputText("Adresse", self.row_3)
-        self.inputPhone = InputText("Téléphone", self.row_3)
-
-        self.row_4 = Frame('horizontal', 'row_4', parent=parent)
-        self.selectLevel = Select("Niveau", ["Elève Agent de Police", "Elève Inspecteur de Police"], self.row_4)
-        self.selectCompany = Select("Compagnie", ["1ère", "2ème", "3ème"], self.row_4)
-        self.selectSection = Select("Section", ["1ère", "2ème", "3ème", "4ème", "5ème", "6ème","7ème", "8ème",], self.row_4)
-        self.inputNumber = InputSpinBox("Numéro",False, self.row_4)
+        self.row_2 = Frame('horizontal', 'row_2', parent=parent)
+        self.inputMotif = Select("Motif",["Repos médical", "Permission"], self.row_2)
+        self.inputDateStart = InputDatePicker("Date de debut", self.row_2)
+        self.inputDayNb= InputSpinBox("Nombre de jour",False, self.row_2)
 
         self.layoutTitle.setMargins(8,4,0,0)
         self.row.setMargins(0,0,0,0)
         self.row_1.setMargins(0,0,0,0)
         self.row_2.setMargins(0,0,0,0)
-        self.row_3.setMargins(0,0,0,0)
-        self.row_4.setMargins(0,0,0,0)
 
         self.layoutTitle.addWidget(self.title)
         self.content.addWidget(self.layoutTitle)
         self.content.addWidget(self.row)
         self.content.addWidget(self.row_1)
         self.content.addWidget(self.row_2)
-        self.content.addWidget(self.row_3)
-        self.content.addWidget(self.row_4)
 
     def yesBtnEvent(self):
         self.accept()

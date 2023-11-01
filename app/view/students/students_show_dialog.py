@@ -30,19 +30,11 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         self._hBoxLayout.removeWidget(self.widget)
         self._hBoxLayout.addWidget(self.widget, 1, Qt.AlignCenter)
         self.buttonGroup.setMinimumWidth(340)
-        #self.yesButton.clicked.connect(self.yesBtnEvent)
 
     def initWidgets(self, parent):
-        '''
-        lastname:str, firstname:str,  genre:str,  height:int,  weight:int, birthday:str,  birthplace:str, 
-        phone:str,  address:str,  level:str, company:int, section:int,  number:int'''
 
         self.content = Frame('vertical', 'content_dial', parent=parent)
-        # self.layoutTitle = Frame('horizontal', 'row', parent=parent)
-        #self.title = SubtitleLabel('Ajouter un(e) élève')
-
         self.row = Frame('horizontal', 'row', parent=parent)
-        
         self.ImageLabel = ImageLabel(self.row)
         self.ImageLabel.setImage("app/resource/images/user.bmp")
         self.ImageLabel.setFixedSize(QSize(120,120))
@@ -71,11 +63,7 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         self.col_3.addWidget(StrongBodyLabel('Numéros'))
         self.col_3.addWidget(CaptionLabel(self.student.get('number')))
         self.row.layout.addWidget(self.col_3, 0, Qt.AlignTop)
-
-
         self.row.setMargins(0,0,0,0)
-        #self.layoutTitle.addWidget(self.title)
-        #self.content.addWidget(self.layoutTitle)
         self.content.addWidget(self.row)
 
     def showData(self, parent, title:str, key:str):
@@ -105,7 +93,6 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
             self.inputNumber.text()
         )
         
-
     def eventFilter(self, obj, e: QEvent):
         if obj is self.window():
             if e.type() == QEvent.Resize:
