@@ -10,4 +10,10 @@ class MovementController(Controller):
         self.cols = ["idStudent", "startDate", "motif", "day"]
         super().__init__(self.movement, self.cols)
 
+    def getByIdStudent(self, id):
+        return self.movement.getByCol("idStudent", id, ["startDate", "motif", "day"])
+    
+    def sumOfDay(self, id):
+        return self.movement.sumCol(id)
+
 

@@ -33,6 +33,8 @@ class Student(Model):
         self.company = company
         self.section = section
         self.number = number
+        if company != None:
+            self.number = f"{company[0]+section[0]+str(number)}"
 
         super().__init__(self.tableName,dir())
     

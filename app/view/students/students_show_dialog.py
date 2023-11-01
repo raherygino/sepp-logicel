@@ -2,16 +2,17 @@ from PyQt5.QtCore import Qt, pyqtSignal, QObject, QEvent, QSize
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QLabel, QFrame, QVBoxLayout, QHBoxLayout, QPushButton
 from qframelesswindow import FramelessDialog
-from qfluentwidgets import TextWrap, FluentStyleSheet, PrimaryPushButton,StrongBodyLabel,  BodyLabel, CaptionLabel, SubtitleLabel, ImageLabel
+from qfluentwidgets import TextWrap, FluentStyleSheet, SubtitleLabel,StrongBodyLabel,  TitleLabel, CaptionLabel, SubtitleLabel, ImageLabel
 from ...components.dialog.mask import MaskDialogBase
 from ...components.dialog.dialog import Ui_MessageBox
 from ...components.layout.Frame import Frame
 from ...components.input.InputText import InputText
 from ...components.input.DatePicker import InputDatePicker
-from ...components.input.Select import Select
+from ...components.table.TableView import Table
 
 from ...backend.models.Student import Student
 from ...backend.controllers.StudentController import StudentController
+from ...backend.controllers.MovementController import MovementController
 
 class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
 
@@ -22,6 +23,7 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         super().__init__(parent=parent)
         self.id = idStudent
         self.controller = StudentController()
+        self.controllerMove = MovementController()
         self.student = self.controller.get(idStudent)
         self.initWidgets(parent=parent)
         self._setUpUi(self.content, self.widget)
@@ -37,7 +39,7 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         self.row = Frame('horizontal', 'row', parent=parent)
         self.ImageLabel = ImageLabel(self.row)
         self.ImageLabel.setImage("app/resource/images/user.bmp")
-        self.ImageLabel.setFixedSize(QSize(120,120))
+        self.ImageLabel.setFixedSize(QSize(130,130))
         self.ImageLabel.setObjectName(u"ImageLabel")
         self.row.addWidget(self.ImageLabel)
 
@@ -65,6 +67,14 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         self.row.layout.addWidget(self.col_3, 0, Qt.AlignTop)
         self.row.setMargins(0,0,0,0)
         self.content.addWidget(self.row)
+        
+        
+        sumOfDay = self.controllerMove.sumOfDay(self.id)
+        if sumOfDay != 0:
+            data = self.controllerMove.getByIdStudent(self.id)
+            data.append(["Total", "", sumOfDay])
+            self.table = Table(self.content, ["Date","Motif","Jour"], data).widget()
+            self.content.layout.addWidget(self.table)
 
     def showData(self, parent, title:str, key:str):
         parent.addWidget(StrongBodyLabel(title))

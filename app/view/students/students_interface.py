@@ -92,7 +92,7 @@ class StudentInterface(GalleryInterface):
     def selectItem(self, item: QModelIndex):
         menu = RoundMenu(parent=self)
         menu.addAction(Action(FIF.FOLDER, 'Ouvrir', triggered=lambda:self.showItem(item)))
-        menu.addAction(Action(FIF.EDIT, 'Modifier'))
+        #menu.addAction(Action(FIF.EDIT, 'Modifier'))
         menu.addAction(Action(FIF.SCROLL, 'Mouvement', triggered=lambda:self.showDialogMove(item)))
         menu.addSeparator()
         menu.addAction(Action(FIF.DELETE, 'Supprimer', triggered=lambda:self.confirmDeleteItem(item)))

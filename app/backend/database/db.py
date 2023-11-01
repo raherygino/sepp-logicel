@@ -49,6 +49,30 @@ class Database():
 
             self.cursor.execute(query)
             return self.cursor.fetchone()
+
+        def getByCol(self, column, val, cols):
+            query = "SELECT "
+            for col in cols:
+                query += col+","
+            query = query[0:len(query)-1]
+            query += f" FROM {self.name} WHERE {column} = '{val}'"
+
+            self.cursor.execute(query)
+            return self.cursor.fetchall()
+        
+        def sumCol(self, **kwargs):
+            query = f"SELECT sum({kwargs.get('col')}) as total FROM {self.name}"
+            for cond in kwargs.keys():
+                if cond == "col_cond":
+                    query += f" WHERE {kwargs.get(cond)} = "
+                elif cond == "val_cond":
+                    query += f" '{kwargs.get(cond)}' "
+            self.cursor.execute(query)
+            total = self.cursor.fetchone()[0]
+            if total == None:
+                total = 0
+            return total
+
     
         def search(self, cols:list, condition:str):
             query = "SELECT "

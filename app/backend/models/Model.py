@@ -25,6 +25,12 @@ class Model(dict):
     def get(self, id):
         return self.db.table(self.tableName).get(id, self.cols)
     
+    def getByCol(self, col, val, cols):
+        return self.db.table(self.tableName).getByCol(col, val, cols)
+    
+    def sumCol(self, id):
+        return self.db.table(self.tableName).sumCol(col="day", col_cond = "idStudent", val_cond=id)
+    
     def search(self,cols, query:str):
         cond = ""
         for col in cols:
