@@ -21,8 +21,8 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
     def __init__(self,idStudent: int, parent=None):
         super().__init__(parent=parent)
         self.id = idStudent
-        self.controller = StudentController(None)
-        self.student = self.controller.findById(idStudent)
+        self.controller = StudentController()
+        self.student = self.controller.get(idStudent)
         self.initWidgets(parent=parent)
         self._setUpUi(self.content, self.widget)
         self.setShadowEffect(60, (0, 10), QColor(0, 0, 0, 50))

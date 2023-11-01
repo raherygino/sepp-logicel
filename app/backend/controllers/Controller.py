@@ -20,3 +20,6 @@ class Controller():
     
     def delete(self, id):
         self.model.delete(id)
+
+    def get(self, id):
+        return self.model.get(id)

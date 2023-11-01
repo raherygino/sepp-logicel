@@ -93,8 +93,6 @@ class Student(Model):
 
             date_naissance = f"{random.randint(1, 28)}-{random.randint(1,12)}-19{random.randint(90,99)}"
             lieu_naissance = "-"
-
-            
             student = Student(lastName,
                               firstName, 
                               ['M', 'L'][random.randint(0,1)],
@@ -102,3 +100,28 @@ class Student(Model):
                               lieu_naissance, f"03{random.randint(2,4)} {random.randint(11, 99)} {random.randint(111, 999)} {random.randint(11, 99)}",
                               "-", level, comp, sect, number)
             student.create()
+
+    def get(self, id):
+
+        data = self.db.table(self.tableName).get(id, [
+            "firstname", "lastname", "genre",
+            "height", "weight", "birthday","birthplace", "phone", "address",
+            "level", "company", "section", "number"
+        ])
+
+        return {
+            "id": id,
+            "firstname" : data[0],
+            "lastname": data[1],
+            "genre": data[2],
+            "height": data[3],
+            "weight": data[4],
+            "birthday": data[5],
+            "birthplace": data[6],
+            "phone": data[7],
+            "address": data[8],
+            "level": data[9],
+            "company": data[10],
+            "section": data[11],
+            "number": data[12]
+        }
