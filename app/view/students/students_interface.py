@@ -11,10 +11,7 @@ from qfluentwidgets import FluentIcon as FIF
 from PyQt5.QtWidgets import QFrame, QVBoxLayout, QTableWidgetItem, QAction
 from PyQt5.QtCore import Qt, QSize, QCoreApplication, QModelIndex, QPoint
 from PyQt5.QtGui import QCursor
-from ...backend.models.Student import Student
-from ...backend.models.Example import Example
 from ...backend.controllers.StudentController import StudentController
-from ...backend.controllers.ExampleController import ExampleController
 from ...backend.models.keys import * 
 
 from .students_new_dialog import DialogStudent
@@ -58,7 +55,7 @@ class StudentInterface(GalleryInterface):
         self.btnAdd.setObjectName(u"PrimaryToolButton")
         self.btnAdd.clicked.connect(self.showDialog)
 
-        self.btnFlux =  PrimaryPushButton('Mouvement', self, FIF.CHAT)
+        self.btnFlux =  PrimaryPushButton('Seed', self, FIF.DEVELOPER_TOOLS)
         self.btnFlux.setObjectName(u"PrimaryToolButton")
         self.btnFlux.clicked.connect(self.seed)
 
