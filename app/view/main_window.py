@@ -81,7 +81,7 @@ class MainWindow(FluentWindow):
         self.resize(960, 670)
         self.setMinimumWidth(760)
         self.setWindowIcon(QIcon('app/resource/images/logo.png'))
-        self.setWindowTitle('PyQt-Fluent-Widgets')
+        self.setWindowTitle('ENIAP Soft')
         
         # create splash screen
         self.splashScreen = SplashScreen(self.windowIcon(), self)

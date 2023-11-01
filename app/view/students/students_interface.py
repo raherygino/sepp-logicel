@@ -35,12 +35,13 @@ class StudentInterface(GalleryInterface):
         self.studentCtrl = StudentController()
         self.myParent = parent
         self.hBoxLayout = QVBoxLayout(self)
+        self.titleContainte(parent=parent)
         self.container(parent=parent)
         self.setObjectName('studentInterface')
         
     def titleContainte(self, parent):
         row = Frame(VERTICAL, ROW+str(1), parent=parent)
-        label = SubtitleLabel("Liste", parent)
+        label = SubtitleLabel("Liste des élèves", parent)
         row.setMargins(9,0,9,0)
         row.addWidget(label)
         self.hBoxLayout.addWidget(row)
@@ -132,7 +133,7 @@ class StudentInterface(GalleryInterface):
 
     def showDialogMove(self,  item:QModelIndex):
         id = self.table.item(item.row(), 0).text()
-        self.dialogMove = DialogStudentMove(self.myParent)
+        self.dialogMove = DialogStudentMove(id, self.myParent)
         self.dialogMove.yesButton.clicked.connect(lambda: self.createMove(id))
         self.dialogMove.show()
 

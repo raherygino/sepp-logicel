@@ -12,15 +12,17 @@ from ...components.input.DatePicker import InputDatePicker
 from ...components.input.Select import Select
 
 from ...backend.models.Student import Student
+from ...backend.controllers.StudentController import StudentController
 
 class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
 
     yesSignal = pyqtSignal()
     cancelSignal = pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(self,idStudent, parent=None):
         super().__init__(parent=parent)
-
+        self.controller = StudentController()
+        self.student = self.controller.get(idStudent)
         self.initWidgets(parent=parent)
         self._setUpUi(self.content, self.widget)
         self.setShadowEffect(60, (0, 10), QColor(0, 0, 0, 50))
@@ -37,28 +39,28 @@ class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
 
         self.row = Frame('horizontal', 'row', parent=parent)
         self.inputLastname = InputText("Nom", self.row)
-        self.inputLastname.lineEdit.setText("RAKOTO")
+        self.inputLastname.lineEdit.setText(self.student.get('lastname'))
         self.inputLastname.lineEdit.setReadOnly(True)
 
         self.inputFirstname = InputText("Prénom", self.row)
-        self.inputFirstname.lineEdit.setText("Armelin")
+        self.inputFirstname.lineEdit.setText(self.student.get('firstname'))
         self.inputFirstname.lineEdit.setReadOnly(True)
 
         self.row_1 = Frame('horizontal', 'row_2', parent=parent)
         self.selectLevel = InputText("Niveau", self.row_1)
-        self.selectLevel.setText("EAP")
+        self.selectLevel.setText(self.student.get('level'))
         self.selectLevel.lineEdit.setReadOnly(True)
 
         self.selectCompany = InputText("Compagnie", self.row_1)
-        self.selectCompany.setText("1ère")
+        self.selectCompany.setText(self.student.get('company'))
         self.selectCompany.lineEdit.setReadOnly(True)
 
         self.selectSection = InputText("Section", self.row_1)
-        self.selectSection.setText("1ère")
+        self.selectSection.setText(self.student.get('section'))
         self.selectSection.lineEdit.setReadOnly(True)
 
         self.inputNumber = InputText("Numéro", self.row_1)
-        self.inputNumber.setText("23")
+        self.inputNumber.setText(self.student.get('number'))
         self.inputNumber.lineEdit.setReadOnly(True)
         
         self.row_2 = Frame('horizontal', 'row_2', parent=parent)
