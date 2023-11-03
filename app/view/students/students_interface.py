@@ -6,7 +6,7 @@ from ...common.config import Lang
 from ...common.keys import *
 from ...components import *
 from qfluentwidgets import (SubtitleLabel, SearchLineEdit, PushButton,MenuAnimationType, 
-                            PrimaryPushButton, RoundMenu, Action, MessageBox)
+                            PrimaryPushButton, RoundMenu, Action, MessageBox, InfoBar, InfoBarPosition)
 from qfluentwidgets import FluentIcon as FIF
 from PyQt5.QtWidgets import QFrame, QVBoxLayout, QTableWidgetItem, QAction
 from PyQt5.QtCore import Qt, QSize, QCoreApplication, QModelIndex, QPoint
@@ -79,6 +79,7 @@ class StudentInterface(GalleryInterface):
         self.container.addWidget(self.table)
         self.hBoxLayout.addWidget(self.container)
         self.dialog = None
+        
 
     def seed(self):
         self.studentCtrl.seed(12)
@@ -118,6 +119,7 @@ class StudentInterface(GalleryInterface):
     def deleteItem(self, item:QModelIndex):
         id = self.table.item(item.row(), 0).text()
         self.studentCtrl.delete(id)
+        self.infoMessage(self.myParent, "Succès", "Données supprimées!")
         self.refreshTable()
 
     def showDialog(self):
@@ -130,6 +132,7 @@ class StudentInterface(GalleryInterface):
         self.refreshTable()
         self.dialog.accept()
         self.dialog = None
+        self.infoMessage(self.myParent, "Succès", "Données sauvegardées!")
 
     def showDialogMove(self,  item:QModelIndex):
         id = self.table.item(item.row(), 0).text()
@@ -143,6 +146,7 @@ class StudentInterface(GalleryInterface):
         self.moveCtrl.store(Movement(id, dataMove['dateStart'], dataMove['motif'], dataMove['day']))
         self.dialogMove.accept()
         self.dialogMove = None
+        self.infoMessage(self.myParent, "Succès", "Mise à jour des données")
         
     def tableStudent(self, parent):
         data = self.studentCtrl.fetch()
@@ -155,3 +159,14 @@ class StudentInterface(GalleryInterface):
             self.table, 
             self.studentCtrl.label,
             self.studentCtrl.fetch())
+        
+    def infoMessage(self, parent, title:str, message:str):
+        InfoBar.success(
+            title=title,
+            content=message,
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.TOP,
+            duration=2000,
+            parent=parent
+        )
