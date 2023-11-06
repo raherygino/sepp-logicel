@@ -1,2 +1,2 @@
 # python-gui-sandratra-soft
-Sandratra
+Sandratra database
