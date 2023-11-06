@@ -9,7 +9,7 @@ from qfluentwidgets import FluentTranslator
 
 from app.common.config import cfg
 from app.view.main_window import MainWindow
-from pynput import mouse
+
 
 
 # enable dpi scale
@@ -22,6 +22,7 @@ else:
     os.environ["QT_SCALE_FACTOR"] = str(cfg.get(cfg.dpiScale))
 
 QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
+
 
 # create application
 app = QApplication(sys.argv)

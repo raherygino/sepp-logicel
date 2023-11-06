@@ -10,7 +10,7 @@
       "language": "Langue",
       "settings": "Paramètres",
       "personalization": "Préférences",
-      "app_name": "Invoice app",
+      "app_name": "Python GUI CRUD app",
       "app_theme_title": "Thème de l'application",
       "app_theme_details": "Changer l'apparence de votre application",
       "light": "Lumière",
@@ -46,7 +46,8 @@
       "date_picker": "Date picker",
       "switch_button": "Switch button",
       "table_view": "TableView",
+      "products" : "Produits",
 
-      "products" : "Produits"
+      "btn_add" : "Ajouter"
     }
 }

@@ -38,31 +38,6 @@ class BannerWidget(QWidget):
             self.tr('Créer votre meilleur interface avec PyQt Fluents'),
             HELP_URL
         ) 
-        '''
-
-        self.linkCardView.addCard(
-            FluentIcon.GITHUB,
-            self.tr('GitHub repo'),
-            self.tr(
-                'The latest fluent design controls and styles for your applications.'),
-            REPO_URL
-        )
-
-        self.linkCardView.addCard(
-            FluentIcon.CODE,
-            self.tr('Code samples'),
-            self.tr(
-                'Find samples that demonstrate specific tasks, features and APIs.'),
-            EXAMPLE_URL
-        )
-
-        self.linkCardView.addCard(
-            FluentIcon.FEEDBACK,
-            self.tr('Send feedback'),
-            self.tr('Help us improve PyQt-Fluent-Widgets by providing feedback.'),
-            FEEDBACK_URL
-        ) '''
-
     def paintEvent(self, e):
         super().paintEvent(e)
         painter = QPainter(self)

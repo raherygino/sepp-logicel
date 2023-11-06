@@ -20,15 +20,17 @@ from ..common.Translate import Translate
 from ..common import resource
 from qfluentwidgets import isDarkTheme
 from pynput.mouse import Listener
+from app.common.database.db_initializer import DBInitializer as DB
 
 class MainWindow(FluentWindow):
     
     def __init__(self):
         super().__init__()
+        self.trans = Translate(Lang().current).text
         self.initWindow()
-        #self.trans = Translate(Lang().current).text
-        
-        t = Translator()
+        #Initilize DATABASE 
+        self.db = DB
+        self.db.init()
 
         # create sub interface
         #self.homeInterface = HomeInterface(self)
@@ -56,7 +58,7 @@ class MainWindow(FluentWindow):
         # add navigation items
         t = Translator()
        # self.addSubInterface(self.homeInterface, FIF.HOME, "Home")
-        self.addSubInterface(self.studentInterface, FIF.PEOPLE, "Elèves")
+        self.addSubInterface(self.studentInterface, FIF.PEOPLE, "Students")
         '''
         self.addSubInterface(self.widgetsInterface, FIF.GAME, t.widgets)
         self.addSubInterface(self.tableViewInterface, FIF.LAYOUT, t.table_view)
@@ -81,7 +83,7 @@ class MainWindow(FluentWindow):
         self.resize(960, 670)
         self.setMinimumWidth(760)
         self.setWindowIcon(QIcon('app/resource/images/logo.png'))
-        self.setWindowTitle('ENIAP Soft')
+        self.setWindowTitle(self.trans['app_name'])
         
         # create splash screen
         self.splashScreen = SplashScreen(self.windowIcon(), self)
@@ -98,12 +100,12 @@ class MainWindow(FluentWindow):
     def onSupport(self):
         
         w = MessageBox(
-            'Voir mon profile',
-            'Vous voulez voir mon profil dans le web ?',
+            'Profile',
+            'You want to see my profile?',
             self
         )
-        w.yesButton.setText('Oui')
-        w.cancelButton.setText('Non')
+        w.yesButton.setText('Yes')
+        w.cancelButton.setText('No')
         if w.exec():
             QDesktopServices.openUrl(QUrl(SUPPORT_URL))
         
