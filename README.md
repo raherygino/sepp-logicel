@@ -1,1 +1,2 @@
-# Sandratra Soft
+# python-gui-sandratra-soft
+Sandratra
