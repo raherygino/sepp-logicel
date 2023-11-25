@@ -15,6 +15,7 @@ build/
 develop-eggs/
 dist/
 downloads/
+parse/
 oc_fluent_widgets/
 eggs/
 .eggs/
