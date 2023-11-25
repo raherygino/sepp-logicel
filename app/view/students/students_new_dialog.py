@@ -42,35 +42,43 @@ class DialogStudent(MaskDialogBase, Ui_MessageBox):
         self.title = SubtitleLabel('Ajouter un(e) élève')
 
         self.row = Frame('horizontal', 'row', parent=parent)
-        self.inputLastname = InputText("Lastname", self.row)
+        self.inputLastname = InputText("Nom", self.row)
         self.inputLastname.setText(self.student.lastname)
-        self.inputFirstname = InputText("Firstname", self.row)
+
+        self.inputFirstname = InputText("Prénom", self.row)
         self.inputFirstname.setText(self.student.firstname)
 
-        self.row_1 = Frame('horizontal', 'row_1', parent=parent)
-        self.selectGenre = Select("Genre", ["Male", "Female"], self.row_1)
+        self.selectGenre = Select("Genre", ["M", "F"], self.row)
         self.selectGenre.comboBox.setCurrentText(self.student.gender)
-        self.inputBirthday = InputDatePicker("Birthday", self.row_1)
-        self.inputBirthday.lineEdit.dateTimeFromText(self.student.birthday)
-        self.inputBirthplace = InputText("Birthplace", self.row_1)
-        self.inputBirthplace.setText(self.student.birthplace)
 
-        self.row_3 = Frame('horizontal', 'row_3', parent=parent)
-        self.inputAddress = InputText("Address", self.row_3)
-        self.inputAddress.setText(self.student.address)
-        self.inputPhone = InputText("Phone", self.row_3)
-        self.inputPhone.setText(self.student.phone)
+        self.row_1 = Frame('horizontal', 'row_1', parent=parent)
+        self.inputLevel = InputText("Niveau", self.row_1)
+        self.inputLevel.setText(self.student.level)
 
-        self.layoutTitle.setMargins(8,4,0,0)
+        self.inputMatricule = InputText("Matricule", self.row_1)
+        self.inputMatricule.setText(self.student.matricule)
+
+        self.inputCompany = InputText("Compagnie", self.row_1)
+        self.inputCompany.setText(self.student.company)
+        self.inputCompany.lineEdit.setReadOnly(True)
+
+        self.inputSection = InputText("Section", self.row_1)
+        self.inputSection.setText(self.student.section)
+        self.inputSection.lineEdit.setReadOnly(True)
+
+        self.inputNumber = InputText("Numéro", self.row_1)
+        self.inputNumber.setText(self.student.matricule[2:])
+        self.inputNumber.lineEdit.setReadOnly(True)
+        
+
+        #self.layoutTitle.setMargins(8,4,0,0)
         self.row.setMargins(0,0,0,0)
         self.row_1.setMargins(0,0,0,0)
-        self.row_3.setMargins(0,0,0,0)
 
         self.layoutTitle.addWidget(self.title)
         self.content.addWidget(self.layoutTitle)
         self.content.addWidget(self.row)
         self.content.addWidget(self.row_1)
-        self.content.addWidget(self.row_3)
 
     def yesBtnEvent(self):
         self.accept()
@@ -82,14 +90,16 @@ class DialogStudent(MaskDialogBase, Ui_MessageBox):
         return self.studentId
 
     def studentData(self) -> Student:
+        matricule = self.inputMatricule.text()
         return Student(
             self.inputLastname.text(),
             self.inputFirstname.text(),
             self.selectGenre.text(),
-            self.inputBirthday.text(),
-            self.inputBirthplace.text(),
-            self.inputAddress.text(),
-            self.inputPhone.text()
+            self.inputLevel.text(),
+            matricule[0],
+            matricule[1],
+            matricule[2:],
+            matricule
         )
     def eventFilter(self, obj, e: QEvent):
         if obj is self.window():

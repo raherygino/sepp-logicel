@@ -152,7 +152,7 @@ class StudentInterface(GalleryInterface):
         menu = RoundMenu(parent=self)
         menu.addAction(Action(FIF.FOLDER, 'Show', triggered=lambda:self.showItem(item)))
         menu.addAction(Action(FIF.EDIT, 'Edit', triggered=lambda:self.showDialogView(item)))
-        #menu.addAction(Action(FIF.SCROLL, 'Mouvement', triggered=lambda:self.showDialogMove(item)))
+        menu.addAction(Action(FIF.SCROLL, 'Mouvement', triggered=lambda:self.showDialogMove(item)))
         menu.addSeparator()
         menu.addAction(Action(FIF.DELETE, 'Delete', triggered=lambda:self.confirmDeleteItem(item)))
         menu.menuActions()[-2].setCheckable(True)
@@ -168,6 +168,9 @@ class StudentInterface(GalleryInterface):
         confirm = MessageBox("Confirmation", "You want to delete it?", self.parent)
         confirm.accepted.connect(lambda:self.deleteItem(item))
         confirm.show()
+
+    def showDialogMove(self, item: QModelIndex):
+        print(item.row())
     
     def showItem(self, item: QModelIndex):
         id = self.table.item(item.row(), 0).text()
