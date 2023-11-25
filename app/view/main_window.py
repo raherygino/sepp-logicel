@@ -3,6 +3,7 @@ from PyQt5.QtCore import QUrl, QSize
 from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtWidgets import QApplication
 from PyQt5 import QtWidgets
+from PyQt5.QtSql import QSqlDatabase
 
 from qfluentwidgets import NavigationAvatarWidget, NavigationItemPosition, MessageBox, FluentWindow, SplashScreen
 from qfluentwidgets import FluentIcon as FIF
@@ -20,7 +21,10 @@ from ..common.Translate import Translate
 from ..common import resource
 from qfluentwidgets import isDarkTheme
 from pynput.mouse import Listener
+
 from app.common.database.db_initializer import DBInitializer as DB
+from app.common.database.service.student_service import StudentService
+from app.common.database.entity.student import Student
 
 class MainWindow(FluentWindow):
     
@@ -36,6 +40,8 @@ class MainWindow(FluentWindow):
         #self.homeInterface = HomeInterface(self)
         self.studentInterface = StudentInterface(self)
     
+        
+        self.readData("all")   
         '''
         self.widgetsInterface = WidgetsInterface(self)
         self.tableViewInterface = TableViewInterface(self)
@@ -52,7 +58,44 @@ class MainWindow(FluentWindow):
     def initLayout(self):
         signalBus.switchToSampleCard.connect(self.switchToSample)
         signalBus.supportSignal.connect(self.onSupport)
-        
+
+    def readData(self, name):
+        f = open("app/resource/data/"+name+".csv", "r")
+        lines = f.readlines()
+        count = 0
+        newFile = open("app/resource/data/"+name+"_formated.csv", "w")
+        database = QSqlDatabase.database(self.db.CONNECTION_NAME, True)
+        service = StudentService(database)
+        for line in lines:
+            count += 1
+            data = line.strip().split(";")
+            name = data[1].split(" ")
+            lastname = name[0]
+            firstname =  ' '.join([f'{i}' for i in name[1:]])
+            company = data[0][0]
+            section = data[0][1]
+            level = "EAP"
+            if company in ["1", "2", "3"] and section == "1":
+                level = "EIP"
+            elif company == "1" and section == "2":
+                level = "EIP"
+    
+            #student = Student(lastname, firstname, data[2], level, company, section, data[0][2:3], data[0])
+            #service.create(student)
+            '''
+            student = {
+                "level": level,
+                "company": company,
+                "section": section,
+                "numero": f"{data[0][2]}{data[0][3]}",
+                "matricule": data[0],
+                "lastname": lastname,
+                "firstname": firstname,
+                "gender": data[2]
+            }
+            #print(student)
+            newFile.write(str(student)+"\n") '''
+     
 
     def initNavigation(self):
         # add navigation items

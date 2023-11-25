@@ -9,7 +9,8 @@ class Student(Entity):
     lastname: str = None
     firstname: str = None
     gender: str = None
-    birthday: str = None
-    birthplace: str = None
-    address: str = None
-    phone: str = None
+    level: str = None
+    company: str = None
+    section: str = None
+    number: str = None
+    matricule: str = None

@@ -8,7 +8,7 @@ class DBInitializer:
     """ Database initializer """
 
     CONNECTION_NAME = "main"
-    CACHE_FILE = str("student.db")
+    CACHE_FILE = str("sandratra.db")
 
     @classmethod
     def init(cls):

@@ -82,16 +82,14 @@ class StudentInterface(GalleryInterface):
         self.dialog = None
 
     def listStudent(self, data):
-        header = ["ID", "Lastname", "Firstname", "Gender", "Birthday", "Birthplace", "Address", "phone"]
+        header = ["ID","Matricule", "Niveau", "Nom", "Prénom", "Genre"]
         listStudent = [[
                 student.get("id_tbl_student"),
+                student.get("matricule"),
+                student.get("level"),
                 student.get("lastname"),
                 student.get("firstname"),
-                student.get("gender"),
-                student.get("birthday"),
-                student.get("birthplace"),
-                student.get("address"),
-                student.get("phone")]
+                student.get("gender")]
                     for student in data]
         return {
             "header": header,
