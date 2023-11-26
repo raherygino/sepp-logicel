@@ -19,5 +19,8 @@ class InputSpinBox(QFrame):
     def setText(self, text:str):
         self.lineEdit.setText(text)
 
+    def setEnabledLineEdit(self, a0: bool) -> None:
+        return self.lineEdit.setEnabled(a0)
+
     def setMargins(self, left:int, top:int, right:int, bottom:int):
         self.inputLabel.setMargins(left, top, right, bottom)

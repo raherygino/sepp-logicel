@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QFrame
+from PyQt5.QtWidgets import QFrame, QLayout
 from qfluentwidgets import ComboBox
 from ..layout.inputLabel import InputLabel
 

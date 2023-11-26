@@ -14,6 +14,7 @@ from PyQt5.QtGui import QCursor
 from ...common.config import *
 from .students_new_dialog import DialogStudent
 from .student_show import DialogStudentShow
+from .student_move import DialogStudentMove
 from ...common.database.service.student_service import StudentService
 from PyQt5.QtSql import QSqlDatabase
 from ...common.database.db_initializer import DBInitializer as DB
@@ -170,11 +171,12 @@ class StudentInterface(GalleryInterface):
         confirm.show()
 
     def showDialogMove(self, item: QModelIndex):
-        print(item.row())
+        id = self.table.item(item.row(), 0).text()
+        self.dialog = DialogStudentMove(self.studentService, id, self.parent)
+        self.dialog.show()
     
     def showItem(self, item: QModelIndex):
         id = self.table.item(item.row(), 0).text()
-        #DialogStudentShow(id, self.myParent).show()
         self.showDialogItem(id)
         
 
