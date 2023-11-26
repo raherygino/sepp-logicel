@@ -1,6 +1,6 @@
 from .entity import Entity
 from .student import Student
-
+from .mouvement import Mouvement
 
 class EntityFactory:
     """ Entity factory """
@@ -20,7 +20,8 @@ class EntityFactory:
             entity instance
         """
         tables = {
-            "tbl_student": Student
+            "tbl_student": Student,
+            "tbl_mouvement": Mouvement
         }
         if table not in tables:
             raise ValueError(f"Table name `{table}` is illegal")

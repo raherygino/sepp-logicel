@@ -15,6 +15,7 @@ from ...components.input.DatePicker import InputDatePicker
 from ...components.input.Select import Select
 from ...common.database.entity.student import Student
 from .student_show import DialogStudentShow
+from ...common.database.entity.mouvement import Mouvement
 
 class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
 
@@ -84,6 +85,7 @@ class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
         self.row_2.addWidget(self.row_3)
         
         self.content.addWidget(self.row_2)
+
     def subTypeChanged(self, current):
         comb = self.subTypeMove.comboBox
         comb.items.clear()
@@ -112,6 +114,15 @@ class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
             comb.clear()
             comb.setDisabled(True)
             self.dayMove.setEnabledLineEdit(True)
+
+    def dataMouvement(self):
+        return Mouvement(
+            self.studentId,
+            self.typeMove.text(),
+            self.subTypeMove.text(),
+            self.dateMove.text(),
+            self.dayMove.text()
+        )
 
     def yesBtnEvent(self):
         self.accept()

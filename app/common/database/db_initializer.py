@@ -3,6 +3,7 @@ from PyQt5.QtSql import QSqlDatabase
 from PyQt5.QtWidgets import qApp
 
 from .service.student_service import StudentService
+from .service.mouvement_service import MouvementService
 
 class DBInitializer:
     """ Database initializer """
@@ -20,3 +21,4 @@ class DBInitializer:
             qApp.exit()
 
         StudentService(db).createTable()
+        MouvementService(db).createTable()

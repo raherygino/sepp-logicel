@@ -77,6 +77,16 @@ class DaoBase:
 
         return self.iterRecords()
     
+    def listByField(self, field, value) -> List[Entity]:
+        """ query all records """
+        sql = f"SELECT * FROM {self.table} WHERE {field} = {value}"
+        
+        
+        if not self.query.exec(sql):
+            return []
+
+        return self.iterRecords()
+    
     def search(self, query) -> List[Entity]:
         """search query records """
 

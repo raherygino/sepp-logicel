@@ -19,6 +19,8 @@ from ...common.database.service.student_service import StudentService
 from PyQt5.QtSql import QSqlDatabase
 from ...common.database.db_initializer import DBInitializer as DB
 from ...common.database.dao.student_dao import Student
+from ...common.database.entity import Mouvement
+from ...common.database.service.mouvement_service import MouvementService
 
 class StudentInterface(GalleryInterface):
     """ Student interface """
@@ -173,7 +175,14 @@ class StudentInterface(GalleryInterface):
     def showDialogMove(self, item: QModelIndex):
         id = self.table.item(item.row(), 0).text()
         self.dialog = DialogStudentMove(self.studentService, id, self.parent)
+        btn = self.dialog.yesButton
+        btn.clicked.connect(lambda: self.newMouvement(self.dialog.dataMouvement()))
         self.dialog.show()
+    
+    def newMouvement(self, mouvement:Mouvement):
+        service = MouvementService(self.db)
+        service.create(mouvement)
+        self.dialog.accept()
     
     def showItem(self, item: QModelIndex):
         id = self.table.item(item.row(), 0).text()
