@@ -100,7 +100,7 @@ class MainWindow(FluentWindow):
         # add navigation items
         t = Translator()
        # self.addSubInterface(self.homeInterface, FIF.HOME, "Home")
-        self.addSubInterface(self.studentInterface, FIF.PEOPLE, "Students")
+        self.addSubInterface(self.studentInterface, FIF.PEOPLE, "Elèves")
         '''
         self.addSubInterface(self.widgetsInterface, FIF.GAME, t.widgets)
         self.addSubInterface(self.tableViewInterface, FIF.LAYOUT, t.table_view)
@@ -110,12 +110,13 @@ class MainWindow(FluentWindow):
         pos = NavigationItemPosition.SCROLL
         
         # add custom widget to bottom
+        '''
         self.navigationInterface.addWidget(
             routeKey='avatar',
             widget=NavigationAvatarWidget('Georginot', 'app/resource/images/user.png'),
             onClick=self.onSupport,
             position=NavigationItemPosition.BOTTOM
-        )
+        ) '''
         
         self.addSubInterface(
             self.settingInterface, FIF.SETTING, self.tr('Settings'), NavigationItemPosition.BOTTOM)

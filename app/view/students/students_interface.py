@@ -48,7 +48,7 @@ class StudentInterface(GalleryInterface):
 
     def titleContainte(self, parent):
         row = Frame(VERTICAL, ROW+str(1), parent=parent)
-        label = SubtitleLabel("List students", parent)
+        label = SubtitleLabel("Liste des élèves de la promotion Sandratra", parent)
         row.setMargins(9,0,9,0)
         row.addWidget(label)
         self.hBoxLayout.addWidget(row)
@@ -57,7 +57,7 @@ class StudentInterface(GalleryInterface):
         self.container = Frame(VERTICAL, STUDENT+CONTAINER, parent=parent)
         self.row_2 = Frame(HORIZONTAL, ROW+str(2), parent=parent)
         self.searchLineStudent = SearchLineEdit(self)
-        self.searchLineStudent.setPlaceholderText(QCoreApplication.translate(FORM, u"Search", None))
+        self.searchLineStudent.setPlaceholderText(QCoreApplication.translate(FORM, u"Recherche", None))
         self.searchLineStudent.setMaximumSize(QSize(240, 50))
         self.searchLineStudent.textChanged.connect(self.searchStudent)
         
@@ -181,6 +181,7 @@ class StudentInterface(GalleryInterface):
         else:
             # add table ------------------
             table = document.add_table(1, 3)
+            table.style = "Table Grid"
 
             # populate header row --------
             heading_cells = table.rows[0].cells
@@ -198,8 +199,8 @@ class StudentInterface(GalleryInterface):
         # Save the document
         filename = f"{os.path.expanduser('~')}\Documents\{student.level}-{student.matricule}.docx";
         document.save(filename)
-        os.startfile(filename)  
         self.dialog.yesButton.setVisible(False)
+        os.startfile(filename)  
         
 
     
