@@ -52,6 +52,7 @@ class MainWindow(FluentWindow):
 
         # add items to navigation interface
         self.initNavigation()
+        
         self.splashScreen.finish()
 
     def initLayout(self):
@@ -130,7 +131,7 @@ class MainWindow(FluentWindow):
         
         # create splash screen
         self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIconSize(QSize(106, 106))
+        self.splashScreen.setIconSize(QSize(206, 206))
         self.splashScreen.raise_()
         
 
