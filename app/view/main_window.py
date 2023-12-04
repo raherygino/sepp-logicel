@@ -126,12 +126,12 @@ class MainWindow(FluentWindow):
     def initWindow(self):
         self.resize(960, 670)
         self.setMinimumWidth(760)
-        self.setWindowIcon(QIcon('app/resource/images/logo.png'))
+        self.setWindowIcon(QIcon('app/resource/images/logo-eniap.png'))
         self.setWindowTitle(self.trans['app_name'])
         
         # create splash screen
         self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIconSize(QSize(206, 206))
+        self.splashScreen.setIconSize(QSize(220, 220))
         self.splashScreen.raise_()
         
 
