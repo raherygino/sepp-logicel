@@ -153,6 +153,18 @@ class MainWindow(FluentWindow):
         if w.exec():
             QDesktopServices.openUrl(QUrl(SUPPORT_URL))
         
+    def closeEvent(self, event):
+        
+        exitDialog = MessageBox(
+            'Quitter', 'Voulez vous quitter vraiment?',
+            self
+        )
+        exitDialog.yesButton.setText('Oui')
+        exitDialog.cancelButton.setText('Non')
+        if exitDialog.exec():
+            event.accept()
+        else:
+            event.ignore()
 
     def switchToSample(self, routeKey, index):
         """ switch to sample """
