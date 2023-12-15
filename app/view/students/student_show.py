@@ -13,25 +13,28 @@ from ...components.label.LabelData import LabelData
 from ...components.input.SpinBox import InputSpinBox
 from ...components.input.DatePicker import InputDatePicker
 from ...components.input.Select import Select
+from ...components.table.TableView import Table
 from ...common.database.entity.student import Student
+from ...common.database.service.mouvement_service import MouvementService
 
 class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
 
     yesSignal = pyqtSignal()
     cancelSignal = pyqtSignal()
 
-    def __init__(self, service, id, parent=None):
+    def __init__(self, service, serviceMove, id, parent=None):
         super().__init__(parent=parent)
         self.studentId = id
         self.service = service
         self.student = self.service.findById(self.studentId)
+        self.serviceMove = serviceMove
         self.initWidgets(parent=parent)
         self._setUpUi(self.content, self.widget)
         self.setShadowEffect(60, (0, 10), QColor(0, 0, 0, 50))
         self.setMaskColor(QColor(0, 0, 0, 76))
         self._hBoxLayout.removeWidget(self.widget)
         self._hBoxLayout.addWidget(self.widget, 1, Qt.AlignCenter)
-        self.buttonGroup.setMinimumWidth(280)
+        #self.buttonGroup.setMinimumWidth(480)
         self.yesButton.setText("Ok")
 
     def initWidgets(self, parent):
@@ -69,16 +72,22 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         self.col_3.setSpacing(0)
 
         self.level = LabelData(self.col_3, "Niveau", self.student.level)
-        self.matricule = LabelData(self.col_3, "Matricule", self.student.matricule)
+        ''' self.matricule = LabelData(self.col_3, "Matricule", self.student.matricule)
         self.company = LabelData(self.col_3, "Compagnie", self.student.company)
-        self.section = LabelData(self.col_3, "Section", self.student.section)
+        self.section = LabelData(self.col_3, "Section", self.student.section) '''
         self.col.addWidget(self.col_3)
         self.row.addWidget(self.col)
         
         self.row_2 = Frame('vertical', 'row_2', parent=parent)
         self.row_2.addWidget(SubtitleLabel('Mouvement'))
-        self.row_2.addWidget(BodyLabel(f'{self.student.level} {self.student.firstname} n\'a pas de mouvement'))
+        self.d = self.serviceMove.listByStudentId(self.studentId)
         
+        list = [[]]
+        list.clear()
+        for mv in self.d:
+            list.append([mv.date, f"{mv.type} {mv.subType}", mv.day])
+        table = Table(self.row_2, ["Date", "Mouvement", "Nombre de jour"], list)
+        self.row_2.addWidget(table.widget())
         self.layoutTitle.addWidget(self.title)
         self.content.addWidget(self.layoutTitle)
         self.content.addWidget(self.row)

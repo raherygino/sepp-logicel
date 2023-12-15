@@ -20,7 +20,7 @@ from ..common.translator import Translator
 from ..common.Translate import Translate
 from ..common import resource
 from qfluentwidgets import isDarkTheme
-from pynput.mouse import Listener
+#from pynput.mouse import Listener
 
 from app.common.database.db_initializer import DBInitializer as DB
 from app.common.database.service.student_service import StudentService

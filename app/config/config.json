@@ -6,18 +6,15 @@
         "CheckUpdateAtStartUp": false
     },
     "Folders": {
-        "Download": "C:/Users/Ginot/Downloads",
-        "LocalMusic": [
-            "C:/Users/Ginot/Music",
-            "C:/Users/Ginot"
-        ]
+        "Download": "E:/DISQUE LOCAL C/PythonProject/python-gui-sandratra-soft/app/download",
+        "LocalMusic": []
     },
     "MainWindow": {
-        "DpiScale": 1,
+        "DpiScale": "Auto",
         "Language": "fr_FR"
     },
     "QFluentWidgets": {
-        "ThemeColor": "#ff781aaa",
-        "ThemeMode": "Light"
+        "ThemeColor": "#ff009faa",
+        "ThemeMode": "Dark"
     }
 }

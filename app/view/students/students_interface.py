@@ -37,6 +37,7 @@ class StudentInterface(GalleryInterface):
         
         self.db = QSqlDatabase.database(self.db.CONNECTION_NAME, True)
         self.studentService = StudentService(self.db)
+        self.moveService = MouvementService(self.db)
         self.parent = parent
         self.hBoxLayout = QVBoxLayout(self)
         self.titleContainte(parent)
@@ -59,15 +60,15 @@ class StudentInterface(GalleryInterface):
         self.searchLineStudent.textChanged.connect(self.searchStudent)
         
         col = Frame(HORIZONTAL, COL+str(1),parent=parent)
-        self.btnAdd =  PrimaryPushButton('Add new student', self, FIF.ADD)
-        self.btnAdd.setObjectName(u"ButtonAdd")
-        self.btnAdd.clicked.connect(self.showDialog)
+        #self.btnAdd =  PrimaryPushButton('Add new student', self, FIF.ADD)
+        #self.btnAdd.setObjectName(u"ButtonAdd")
+        #self.btnAdd.clicked.connect(self.showDialog)
 
         #self.btnFlux =  PrimaryPushButton('Seed', self, FIF.DEVELOPER_TOOLS)
         #self.btnFlux.setObjectName(u"PrimaryToolButton")
         #self.btnFlux.clicked.connect(self.seed)
 
-        col.layout.addWidget(self.btnAdd)
+        #col.layout.addWidget(self.btnAdd)
         #col.layout.addWidget(self.btnFlux)
         col.setMargins(0,0,0,0)
         
@@ -78,6 +79,7 @@ class StudentInterface(GalleryInterface):
 
         students = self.listStudent(self.studentService.listAll())
         self.tbStudent = Table(parent, students.get("header"), students.get("data"))
+        self.tbStudent.setRisizeMode(len(students.get("header")) - 1)
         self.table = self.tbStudent.widget()
         self.table.clicked.connect(self.selectItem)
         self.container.addWidget(self.tbStudent.widget())
@@ -85,14 +87,14 @@ class StudentInterface(GalleryInterface):
         self.dialog = None
 
     def listStudent(self, data):
-        header = ["ID","Matricule", "Niveau", "Nom", "Prénom", "Genre"]
+        header = ["ID","Matricule", "Niveau", "Nom", "Prénom", "Genre",""]
         listStudent = [[
                 student.get("id_tbl_student"),
                 student.get("matricule"),
                 student.get("level"),
                 student.get("lastname"),
                 student.get("firstname"),
-                student.get("gender")]
+                student.get("gender"), ""]
                     for student in data]
         return {
             "header": header,
@@ -116,7 +118,7 @@ class StudentInterface(GalleryInterface):
         self.dialog.show()
 
     def showDialogItem(self, id):
-        self.dialog = DialogStudentShow(self.studentService, id, self.parent)
+        self.dialog = DialogStudentShow(self.studentService, self.moveService, id, self.parent)
         self.dialog.yesButton.clicked.connect(lambda: self.dialog.accept())
         self.dialog.show()
     
@@ -174,7 +176,7 @@ class StudentInterface(GalleryInterface):
 
     def showDialogMove(self, item: QModelIndex):
         id = self.table.item(item.row(), 0).text()
-        self.dialog = DialogStudentMove(self.studentService, id, self.parent)
+        self.dialog = DialogStudentMove(self.studentService, self.moveService, id, self.parent)
         btn = self.dialog.yesButton
         btn.clicked.connect(lambda: self.newMouvement(self.dialog.dataMouvement()))
         self.dialog.show()

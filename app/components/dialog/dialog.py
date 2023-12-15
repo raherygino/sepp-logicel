@@ -115,6 +115,8 @@ class MessageBox(MaskDialogBase, Ui_MessageBox):
         self.widget.setFixedSize(width, height)
         '''
 
+    def setWidth(self, width:int):
+        self.buttonGroup.setMinimumWidth(width)
 
     def eventFilter(self, obj, e: QEvent):
         if obj is self.window():
