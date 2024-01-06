@@ -77,10 +77,51 @@ class DaoBase:
 
         return self.iterRecords()
     
+
+    def listByConditions(self, **kwargs):
+        
+        sql = f"SELECT * FROM {self.table}"
+
+        for i, key in enumerate(kwargs.keys()):
+            if i == 0:
+                sql += f" WHERE {key} = '{kwargs.get(key)}' "
+            else:
+                sql += f"AND {key} = '{kwargs.get(key)}' "
+        
+        if not self.query.exec(sql):
+            return []
+
+        return self.iterRecords()
+    
+    def sumColumn(self, field, **condition) -> int:
+        sql = f"SELECT sum({field}) as total FROM {self.table}"
+        for i, key in enumerate(condition):
+            value = condition.get(key)
+            if i == 0:
+                sql += f" WHERE {key} = \"{value}\" "
+            else:
+                sql += f"AND {key} = \"{value}\" "
+
+        entity = {}
+        #print(sql)
+        self.query.exec(sql)
+        while self.query.next():
+            #entities.append(entity)
+            record = self.query.record()
+            for i in range(record.count()):
+                field = record.fieldName(i)
+                entity[field] = record.value(i)
+
+        if len(entity.keys()) == 0:
+            return 0
+        else:
+            return str(entity['total']).replace(".0", "")
+
+        
+
     def listByField(self, field, value) -> List[Entity]:
         """ query all records """
-        sql = f"SELECT * FROM {self.table} WHERE {field} = {value}"
-        
+        sql = f"SELECT * FROM {self.table} WHERE {field} = '{value}'"
         
         if not self.query.exec(sql):
             return []

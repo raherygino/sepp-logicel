@@ -21,6 +21,7 @@ from ...common.database.db_initializer import DBInitializer as DB
 from ...common.database.dao.student_dao import Student
 from ...common.database.entity import Mouvement
 from ...common.database.service.mouvement_service import MouvementService
+from ...common.database.utils.constants import *
 from docx import Document
 import os
 
@@ -89,21 +90,54 @@ class StudentInterface(GalleryInterface):
         self.dialog = None
 
     def listStudent(self, data):
+        stude = self.studentService
+
+        RM = TYPE_MOVE["RM_CONV"]
+        EX = SUB_TYPE_MOVE["EX_PHYS"]
+        PERM = TYPE_MOVE["PERMISSION"]
+        CODIS = SUB_TYPE_MOVE["CODIS"]
+        HORS_TOUR = SUB_TYPE_MOVE["HORS_TOUR"]
+        BEM = SUB_TYPE_MOVE["BEM"]
+        PEP = SUB_TYPE_MOVE["PEP"]
+        ANM = TYPE_MOVE["ANM"]
+        LETTRE_FEL = SUB_TYPE_MOVE["LETTRE_FEL"]
+        OTHER_SAC = f'{SUB_TYPE_MOVE["OTHER"]} {TYPE_MOVE["SACT_DISC"]}'
+        OTHER_REM_POS = f'{SUB_TYPE_MOVE["OTHER"]} {TYPE_MOVE["REM_POS"]}'
+
         header = [
             "ID","Matricule", "Niveau", "Nom",
-            "Prénom", "Genre","Repos médical ou convalescence",
-            "Exant d'effort physique", "Permission", "CODIS", "Hors tour",
-            "Bemolenge", "Perte effet policier", 
-            "Autre sanction", "Absent non motivé", 
-            "Lettre de féliciation", "Autre remarque positive"]
-        listStudent = [[
-                student.get("id_tbl_student"),
+            "Prénom", "Genre",RM,
+            EX, PERM, CODIS, HORS_TOUR,
+            BEM, PEP, 
+            OTHER_SAC, ANM, 
+            LETTRE_FEL, OTHER_REM_POS]
+        listStudent = [[]]
+        listStudent.clear()
+
+        for student in data:
+            idStudent = student.get("id_tbl_student")
+            listStudent.append([
+                idStudent,
                 student.get("matricule"),
                 student.get("level"),
                 student.get("lastname"),
                 student.get("firstname"),
-                student.get("gender"),"", "","","","","","","","","",""]
-                    for student in data]
+                student.get("gender"),
+                stude.sumOfDayTypeMove(idStudent, RM), 
+                stude.sumOfDaySubTypeMove(idStudent, EX),
+                stude.sumOfDayTypeMove(idStudent, PERM),
+                stude.countSubTypeMove(idStudent, CODIS),
+                stude.sumOfDayTypeMove(idStudent, HORS_TOUR),
+                stude.countSubTypeMove(idStudent, BEM),
+                stude.countSubTypeMove(idStudent, PEP),
+                stude.countSubTypeMove(idStudent, OTHER_SAC),
+                stude.countTypeMove(idStudent, ANM),
+                stude.countSubTypeMove(idStudent, LETTRE_FEL),
+                stude.countSubTypeMove(idStudent, OTHER_REM_POS)
+                ])
+
+        '''listStudent = [
+                    for student in data]'''
         return {
             "header": header,
             "data": listStudent
@@ -125,9 +159,9 @@ class StudentInterface(GalleryInterface):
         btnOk.clicked.connect(lambda: self.createStudent(self.dialog.studentData()))
         self.dialog.show()
 
+
     def showDialogItem(self, id):
         self.dialog = DialogStudentShow(self.studentService, self.moveService, id, self.parent)
-        
         self.dialog.yesButton.clicked.connect(lambda: self.exportData(self.dialog.student, self.dialog.d))
         self.dialog.show()
     

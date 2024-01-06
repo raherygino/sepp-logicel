@@ -3,7 +3,7 @@ from typing import List
 
 from PyQt5.QtSql import QSqlDatabase
 
-from ..dao import StudentDao
+from ..dao import StudentDao,MouvementDao
 from ..entity import Student
 
 from.service_base import ServiceBase
@@ -15,6 +15,7 @@ class StudentService(ServiceBase):
     def __init__(self, db: QSqlDatabase = None):
         super().__init__()
         self.studentDao = StudentDao(db)
+        self.moveDao = MouvementDao(db)
 
     def createTable(self) -> bool:
         return self.studentDao.createTable()
@@ -36,5 +37,25 @@ class StudentService(ServiceBase):
     
     def search(self, value:str):
         return self.studentDao.search(value)
+    
+    def countTypeMove(self, idStudent, type):
+        countType = len(self.moveDao.listByConditions(idStudent = idStudent, type = type))
+        if countType == 0:
+            return ""
+        else:
+            return countType
+    
+    def countSubTypeMove(self, idStudent,subType):
+        countSubType = len(self.moveDao.listByConditions(idStudent = idStudent, subType = subType))
+        if countSubType == 0:
+            return ""
+        else:
+            return countSubType
+    
+    def sumOfDayTypeMove(self, idStudent, type):
+        return self.moveDao.sumColumn("day", idStudent=idStudent, type=type)
+    
+    def sumOfDaySubTypeMove(self, idStudent, subType):
+        return self.moveDao.sumColumn("day", idStudent=idStudent, subType=subType)
 
     

@@ -7,6 +7,7 @@ from ..dao import MouvementDao
 from ..entity import Mouvement
 
 from.service_base import ServiceBase
+from ..utils.constants import *
 
 
 class MouvementService(ServiceBase):

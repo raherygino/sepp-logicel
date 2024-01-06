@@ -16,6 +16,7 @@ from ...components.input.Select import Select
 from ...common.database.entity.student import Student
 from .student_show import DialogStudentShow
 from ...common.database.entity.mouvement import Mouvement
+from ...common.database.utils.constants import *
 
 class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
 
@@ -100,13 +101,13 @@ class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
             self.dayMove.setEnabledLineEdit(True)
             
         elif (current == self.typesMove[2]):
-            sanction = ["CODIS", "Hors Tour", "Bemolenge", "Perte effet policier", "Autres"]
+            sanction = ["CODIS", "Hors Tour", "Bemolenge", "Perte effet policier", "Autre"]
             comb.insertItems(0, sanction)
             comb.setCurrentIndex(0)
             self.dayMove.setEnabledLineEdit(False)
 
         elif (current == self.typesMove[4]):
-            remPositive = ["Lettre de felicitation", "Autres"]
+            remPositive = ["Lettre de felicitation", "Autre"]
             comb.insertItems(0, remPositive)
             comb.setCurrentIndex(0)
             self.dayMove.setEnabledLineEdit(False)
@@ -116,10 +117,17 @@ class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
             self.dayMove.setEnabledLineEdit(True)
 
     def dataMouvement(self):
+        typeMove = self.typeMove.text()
+        subTypeMove =  self.subTypeMove.text()
+        if typeMove == TYPE_MOVE["REM_POS"] and subTypeMove == SUB_TYPE_MOVE['OTHER']:
+            subTypeMove = f'{subTypeMove} {typeMove}'
+        if typeMove == TYPE_MOVE["SACT_DISC"] and subTypeMove == SUB_TYPE_MOVE["OTHER"]:
+            subTypeMove = f'{subTypeMove} {typeMove}'
+
         return Mouvement(
             self.studentId,
-            self.typeMove.text(),
-            self.subTypeMove.text(),
+            typeMove,
+            subTypeMove,
             self.dateMove.text(),
             self.dayMove.text()
         )
