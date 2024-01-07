@@ -6,7 +6,7 @@ from ...common.config import Lang
 from ...common.keys import *
 from ...components import *
 from qfluentwidgets import (SubtitleLabel, SearchLineEdit, PushButton,MenuAnimationType, 
-                            PrimaryPushButton, RoundMenu, Action, MessageBox, InfoBar, InfoBarPosition)
+                            PrimaryToolButton,ComboBox, RoundMenu, Action, MessageBox, InfoBar, InfoBarPosition)
 from qfluentwidgets import FluentIcon as FIF
 from PyQt5.QtWidgets import QFrame, QVBoxLayout, QTableWidgetItem, QAction
 from PyQt5.QtCore import Qt, QSize, QCoreApplication, QModelIndex, QPoint
@@ -31,6 +31,8 @@ class StudentInterface(GalleryInterface):
     def __init__(self, parent=None):
         self.db = parent.db
         self.trans = Translate(Lang().current).text
+        self.companySelected = 0
+        self.sectionSelected = 0
 
         super().__init__(
             title='',
@@ -63,8 +65,7 @@ class StudentInterface(GalleryInterface):
         self.searchLineStudent.textChanged.connect(self.searchStudent)
         
         col = Frame(HORIZONTAL, COL+str(1),parent=parent)
-        #self.btnAdd =  PrimaryPushButton('Add new student', self, FIF.ADD)
-        #self.btnAdd.setObjectName(u"ButtonAdd")
+        
         #self.btnAdd.clicked.connect(self.showDialog)
 
         #self.btnFlux =  PrimaryPushButton('Seed', self, FIF.DEVELOPER_TOOLS)
@@ -73,6 +74,45 @@ class StudentInterface(GalleryInterface):
 
         #col.layout.addWidget(self.btnAdd)
         #col.layout.addWidget(self.btnFlux)
+
+        self.comboBoxCompany = ComboBox(self)
+
+        companies = []
+        for company in self.studentService.companies():
+            if company == "1":
+                companies.append(f'{company}ère Compagnie')
+            else:
+                companies.append(f'{company}ème Compagnie')
+
+        companies.insert(0, "Companie")
+        self.comboBoxCompany.addItems(companies)
+        self.comboBoxCompany.setCurrentIndex(0)
+        self.comboBoxCompany.currentTextChanged.connect(self.textChangedCombox)
+        self.comboBoxCompany.move(200, 200)
+
+        self.comboBoxSection = ComboBox(self)
+
+        sections = []
+        sections.clear()
+        for section in self.studentService.sections():
+            if section == "1":
+                sections.append(f'{section}ère Section')
+            else:
+                sections.append(f'{section}ème Section')
+        sections.insert(0, "Section")
+
+        self.comboBoxSection.addItems(sections)
+        self.comboBoxSection.setCurrentIndex(0)
+        self.comboBoxSection.currentTextChanged.connect(self.textChangedCombox)
+        self.comboBoxSection.move(200, 200)
+
+        self.btnClear =  PrimaryToolButton(FIF.CLOSE, self)
+        self.btnClear.setObjectName(u"ButtonClear")
+
+        col.layout.addWidget(self.comboBoxCompany)
+        col.layout.addWidget(self.comboBoxSection)
+        col.layout.addWidget(self.btnClear)
+
         col.setMargins(0,0,0,0)
         
         self.row_2.setMargins(0,0,0,0)
@@ -88,6 +128,39 @@ class StudentInterface(GalleryInterface):
         self.container.addWidget(self.tbStudent.widget())
         self.hBoxLayout.addWidget(self.container)
         self.dialog = None
+
+    def textChangedCombox(self, text:str):
+        value = ""
+        pos = text.find("è")
+        name = text
+        isSelected = pos != -1
+
+        if isSelected:
+            name = text.split(" ")[1]
+            value = text[0:pos]
+
+        if name == "Compagnie":
+            self.companySelected = value
+            if isSelected == False:
+                self.companySelected = 0
+
+        elif name == "Section":
+            self.sectionSelected = value
+            if isSelected == False:
+                self.sectionSelected = 0
+
+        data = self.studentService.listByFields(
+            company=self.companySelected, 
+            section=self.sectionSelected)
+        
+        if self.companySelected == "0" and self.sectionSelected == "0":
+            data = self.studentService.listAll()
+
+        listStudent = self.listStudent(data)
+        self.tbStudent.refresh(self.table, listStudent.get("header"), listStudent.get("data"))
+
+        #print(self.companySelected)
+        #print(self.sectionSelected)
 
     def listStudent(self, data):
         stude = self.studentService

@@ -23,6 +23,9 @@ class StudentService(ServiceBase):
     def listAll(self) -> List[Student]:
         return self.studentDao.listAll()
     
+    def listByFields(self, **fields):
+        return self.studentDao.findByFields(**fields)
+    
     def create(self, student:Student):
         return self.studentDao.create(student)
     
@@ -37,6 +40,12 @@ class StudentService(ServiceBase):
     
     def search(self, value:str):
         return self.studentDao.search(value)
+    
+    def companies(self):
+        return self.studentDao.listGroupBy("company")
+    
+    def sections(self):
+        return self.studentDao.listGroupBy("section")
     
     def countTypeMove(self, idStudent, type):
         countType = len(self.moveDao.listByConditions(idStudent = idStudent, type = type))

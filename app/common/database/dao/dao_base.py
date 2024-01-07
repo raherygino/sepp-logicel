@@ -77,6 +77,18 @@ class DaoBase:
 
         return self.iterRecords()
     
+    def listGroupBy(self, field):
+        data = []
+        data.clear()
+        sql = f"SELECT {field} FROM {self.table} GROUP BY {field}"
+        self.query.exec(sql)
+        while self.query.next():
+            #entities.append(entity)
+            record = self.query.record()
+            data.append(record.value(0))
+
+        return data
+
 
     def listByConditions(self, **kwargs):
         
@@ -122,6 +134,22 @@ class DaoBase:
     def listByField(self, field, value) -> List[Entity]:
         """ query all records """
         sql = f"SELECT * FROM {self.table} WHERE {field} = '{value}'"
+        
+        if not self.query.exec(sql):
+            return []
+
+        return self.iterRecords()
+        
+
+    def findByFields(self, **fields) -> List[Entity]:
+        """ query all records """
+        sql = f"SELECT * FROM {self.table}"
+        for i, field in enumerate(fields.keys()):
+            if i == 0:
+                sql += f" WHERE {field} = '{fields.get(field)}' "
+            else:
+                sql += f"AND {field} = '{fields.get(field)}' "
+
         
         if not self.query.exec(sql):
             return []
