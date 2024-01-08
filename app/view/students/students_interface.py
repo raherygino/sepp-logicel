@@ -5,8 +5,8 @@ from ...common.Translate import Translate
 from ...common.config import Lang
 from ...common.keys import *
 from ...components import *
-from qfluentwidgets import (SubtitleLabel, SearchLineEdit, PushButton,MenuAnimationType, 
-                            PrimaryToolButton,ComboBox, RoundMenu, Action, MessageBox, InfoBar, InfoBarPosition)
+from qfluentwidgets import (SubtitleLabel, SearchLineEdit, ToolButton,MenuAnimationType, 
+                            ToggleToolButton,ComboBox, RoundMenu, Action, MessageBox, InfoBar, InfoBarPosition)
 from qfluentwidgets import FluentIcon as FIF
 from PyQt5.QtWidgets import QFrame, QVBoxLayout, QTableWidgetItem, QAction
 from PyQt5.QtCore import Qt, QSize, QCoreApplication, QModelIndex, QPoint
@@ -33,6 +33,7 @@ class StudentInterface(GalleryInterface):
         self.trans = Translate(Lang().current).text
         self.companySelected = 0
         self.sectionSelected = 0
+        self.isSelection = False
 
         super().__init__(
             title='',
@@ -89,7 +90,6 @@ class StudentInterface(GalleryInterface):
         self.comboBoxCompany.setCurrentIndex(0)
         self.comboBoxCompany.currentTextChanged.connect(self.textChangedCombox)
         self.comboBoxCompany.move(200, 200)
-
         self.comboBoxSection = ComboBox(self)
 
         sections = []
@@ -106,12 +106,21 @@ class StudentInterface(GalleryInterface):
         self.comboBoxSection.currentTextChanged.connect(self.textChangedCombox)
         self.comboBoxSection.move(200, 200)
 
-        self.btnClear =  PrimaryToolButton(FIF.CLOSE, self)
-        self.btnClear.setObjectName(u"ButtonClear")
+        # toggle tool button
+        self.toggleSelection = ToggleToolButton(FIF.FILTER, self)
+        self.toggleSelection.toggled.connect(self.setSelection)
+        #self.toggleSelection.toggle()
+        
+        # tool button
+        self.toolButton = ToolButton(FIF.SAVE, self)
+
+        self.comboBoxCompany.setEnabled(False)
+        self.comboBoxSection.setEnabled(False)
 
         col.layout.addWidget(self.comboBoxCompany)
         col.layout.addWidget(self.comboBoxSection)
-        col.layout.addWidget(self.btnClear)
+        col.layout.addWidget(self.toggleSelection)
+        col.layout.addWidget(self.toolButton)
 
         col.setMargins(0,0,0,0)
         
@@ -129,6 +138,21 @@ class StudentInterface(GalleryInterface):
         self.hBoxLayout.addWidget(self.container)
         self.dialog = None
 
+    def setSelection(self):
+        if self.isSelection:
+            self.comboBoxCompany.setCurrentIndex(0)
+            self.comboBoxCompany.setEnabled(False)
+            self.comboBoxSection.setCurrentIndex(0)
+            self.comboBoxSection.setEnabled(False)
+            self.toggleSelection.setIcon(FIF.FILTER)
+            self.refreshTable()
+            self.isSelection = False
+        else:
+            self.comboBoxCompany.setEnabled(True)
+            self.comboBoxSection.setEnabled(True)
+            self.toggleSelection.setIcon(FIF.CLOSE)
+            self.isSelection = True
+
     def textChangedCombox(self, text:str):
         value = ""
         pos = text.find("è")
@@ -141,13 +165,9 @@ class StudentInterface(GalleryInterface):
 
         if name == "Compagnie":
             self.companySelected = value
-            if isSelected == False:
-                self.companySelected = 0
 
         elif name == "Section":
             self.sectionSelected = value
-            if isSelected == False:
-                self.sectionSelected = 0
 
         data = self.studentService.listByFields(
             company=self.companySelected, 
