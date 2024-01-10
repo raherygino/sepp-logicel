@@ -121,7 +121,8 @@ class StudentInterface(GalleryInterface):
 
     def showDialogItem(self, id):
         self.dialog = DialogStudentShow(self.studentService, self.moveService, id, self.parent)
-        self.dialog.yesButton.clicked.connect(lambda: self.exportData(self.dialog.student))
+        
+        self.dialog.yesButton.clicked.connect(lambda: self.exportData(self.dialog.student, self.dialog.d))
         self.dialog.show()
     
     def showDialogView(self, item:QModelIndex):
@@ -154,7 +155,7 @@ class StudentInterface(GalleryInterface):
         if '\'' not in text:
             self.refreshTable(query=text)
         
-    def exportData(self, student: Student):
+    def exportData(self, student: Student, mouvement):
         document = Document()
         document.add_heading(f'Informations', level=1)
         pData = f'Nom: {student.lastname}\n'
@@ -165,11 +166,15 @@ class StudentInterface(GalleryInterface):
         document.add_heading(f'Mouvements', level=1)
         
         # get table data -------------
-        items = (
-            (7, '1024', 'Plush kittens'),
-            (3, '2042', 'Furbees'),
-            (1, '1288', 'French Poodle Collars, Deluxe'),
-        )
+        items = [[]]
+        items.clear()
+        day = "0"
+        for mouv in mouvement:
+            items.append([mouv.date, f"{mouv.type} {mouv.subType}", mouv.day])
+            if(len(mouv.day) != 0):
+                day +=  "+"+mouv.day
+        items.append(["Total", "",str(eval(day))])
+        
 
         # add table ------------------
         table = document.add_table(1, 3)
@@ -188,7 +193,7 @@ class StudentInterface(GalleryInterface):
             cells[2].text = item[2]
         
         # Save the document
-        filename = f"{student.level} {student.matricule}.docx";
+        filename = f"{os.path.expanduser('~')}\Documents\{student.level}-{student.matricule}.docx";
         document.save(filename)
         os.startfile(filename)  
 
