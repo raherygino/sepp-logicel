@@ -35,7 +35,6 @@ class MainWindow(FluentWindow):
         #Initilize DATABASE 
         self.db = DB
         self.db.init()
-
         # create sub interface
         #self.homeInterface = HomeInterface(self)
         self.studentInterface = StudentInterface(self)

@@ -21,6 +21,8 @@ from ...common.database.db_initializer import DBInitializer as DB
 from ...common.database.dao.student_dao import Student
 from ...common.database.entity import Mouvement
 from ...common.database.service.mouvement_service import MouvementService
+from docx import Document
+import os
 
 class StudentInterface(GalleryInterface):
     """ Student interface """
@@ -119,7 +121,7 @@ class StudentInterface(GalleryInterface):
 
     def showDialogItem(self, id):
         self.dialog = DialogStudentShow(self.studentService, self.moveService, id, self.parent)
-        self.dialog.yesButton.clicked.connect(lambda: self.dialog.accept())
+        self.dialog.yesButton.clicked.connect(lambda: self.exportData(self.dialog.student))
         self.dialog.show()
     
     def showDialogView(self, item:QModelIndex):
@@ -152,14 +154,52 @@ class StudentInterface(GalleryInterface):
         if '\'' not in text:
             self.refreshTable(query=text)
         
+    def exportData(self, student: Student):
+        document = Document()
+        document.add_heading(f'Informations', level=1)
+        pData = f'Nom: {student.lastname}\n'
+        pData += f'Prénoms: {student.firstname}\n'
+        pData += f'Genre: {student.gender}\n'
+        pData += f'Niveau: {student.level}\n'
+        document.add_paragraph(pData)
+        document.add_heading(f'Mouvements', level=1)
+        
+        # get table data -------------
+        items = (
+            (7, '1024', 'Plush kittens'),
+            (3, '2042', 'Furbees'),
+            (1, '1288', 'French Poodle Collars, Deluxe'),
+        )
+
+        # add table ------------------
+        table = document.add_table(1, 3)
+
+        # populate header row --------
+        heading_cells = table.rows[0].cells
+        heading_cells[0].text = 'Date'
+        heading_cells[1].text = 'Mouvement'
+        heading_cells[2].text = 'Nombre de jour'
+
+        # add a data row for each item
+        for item in items:
+            cells = table.add_row().cells
+            cells[0].text = str(item[0])
+            cells[1].text = item[1]
+            cells[2].text = item[2]
+        
+        # Save the document
+        filename = f"{student.level} {student.matricule}.docx";
+        document.save(filename)
+        os.startfile(filename)  
+
     
     def selectItem(self, item: QModelIndex):
         menu = RoundMenu(parent=self)
-        menu.addAction(Action(FIF.FOLDER, 'Show', triggered=lambda:self.showItem(item)))
-        menu.addAction(Action(FIF.EDIT, 'Edit', triggered=lambda:self.showDialogView(item)))
+        menu.addAction(Action(FIF.FOLDER, 'Voir', triggered=lambda:self.showItem(item)))
+        menu.addAction(Action(FIF.EDIT, 'Modifier', triggered=lambda:self.showDialogView(item)))
         menu.addAction(Action(FIF.SCROLL, 'Mouvement', triggered=lambda:self.showDialogMove(item)))
         menu.addSeparator()
-        menu.addAction(Action(FIF.DELETE, 'Delete', triggered=lambda:self.confirmDeleteItem(item)))
+       # menu.addAction(Action(FIF.DELETE, 'Delete', triggered=lambda:self.confirmDeleteItem(item)))
         menu.menuActions()[-2].setCheckable(True)
         menu.menuActions()[-2].setChecked(True)
 

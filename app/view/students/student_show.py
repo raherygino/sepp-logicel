@@ -35,7 +35,7 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         self._hBoxLayout.removeWidget(self.widget)
         self._hBoxLayout.addWidget(self.widget, 1, Qt.AlignCenter)
         #self.buttonGroup.setMinimumWidth(480)
-        self.yesButton.setText("Ok")
+        self.yesButton.setText("Exporter")
 
     def initWidgets(self, parent):
 
@@ -84,15 +84,23 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         
         list = [[]]
         list.clear()
+        day = "0"
         for mv in self.d:
             list.append([mv.date, f"{mv.type} {mv.subType}", mv.day])
+            day +=  "+"+mv.day
+        list.append(["Total", "",str(eval(day))])
         table = Table(self.row_2, ["Date", "Mouvement", "Nombre de jour"], list)
         self.row_2.addWidget(table.widget())
+        noMove = BodyLabel('Aucun mouvement')
+        self.row_2.addWidget(noMove)
+        noMove.setVisible(False)
         self.layoutTitle.addWidget(self.title)
         self.content.addWidget(self.layoutTitle)
         self.content.addWidget(self.row)
         self.content.addWidget(self.row_2)
-
+        if len(list) == 1:
+            table.widget().setVisible(False)
+            noMove.setVisible(True)
 
     def yesBtnEvent(self):
         self.accept()
