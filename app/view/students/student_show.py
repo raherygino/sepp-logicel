@@ -85,9 +85,11 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         list = [[]]
         list.clear()
         day = "0"
+        print()
         for mv in self.d:
             list.append([mv.date, f"{mv.type} {mv.subType}", mv.day])
-            day +=  "+"+mv.day
+            if(len(mv.day) != 0):
+                day +=  "+"+mv.day
         list.append(["Total", "",str(eval(day))])
         table = Table(self.row_2, ["Date", "Mouvement", "Nombre de jour"], list)
         self.row_2.addWidget(table.widget())
