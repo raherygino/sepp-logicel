@@ -173,29 +173,34 @@ class StudentInterface(GalleryInterface):
             items.append([mouv.date, f"{mouv.type} {mouv.subType}", mouv.day])
             if(len(mouv.day) != 0):
                 day +=  "+"+mouv.day
-        items.append(["Total", "",str(eval(day))])
-        
+        valDay = eval(day)
+        items.append(["Total", "",str(valDay)])
 
-        # add table ------------------
-        table = document.add_table(1, 3)
+        if valDay == 0:
+            document.add_paragraph("Aucun mouvement")
+        else:
+            # add table ------------------
+            table = document.add_table(1, 3)
 
-        # populate header row --------
-        heading_cells = table.rows[0].cells
-        heading_cells[0].text = 'Date'
-        heading_cells[1].text = 'Mouvement'
-        heading_cells[2].text = 'Nombre de jour'
+            # populate header row --------
+            heading_cells = table.rows[0].cells
+            heading_cells[0].text = 'Date'
+            heading_cells[1].text = 'Mouvement'
+            heading_cells[2].text = 'Nombre de jour'
 
-        # add a data row for each item
-        for item in items:
-            cells = table.add_row().cells
-            cells[0].text = str(item[0])
-            cells[1].text = item[1]
-            cells[2].text = item[2]
-        
+            # add a data row for each item
+            for item in items:
+                cells = table.add_row().cells
+                cells[0].text = str(item[0])
+                cells[1].text = item[1]
+                cells[2].text = item[2]
+                
         # Save the document
         filename = f"{os.path.expanduser('~')}\Documents\{student.level}-{student.matricule}.docx";
         document.save(filename)
         os.startfile(filename)  
+        self.dialog.yesButton.setVisible(False)
+        
 
     
     def selectItem(self, item: QModelIndex):
