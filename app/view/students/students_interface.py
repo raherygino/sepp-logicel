@@ -8,9 +8,10 @@ from ...components import *
 from qfluentwidgets import (SubtitleLabel, SearchLineEdit, ToolButton,MenuAnimationType, 
                             ToggleToolButton,ComboBox, RoundMenu, Action, MessageBox, InfoBar, InfoBarPosition)
 from qfluentwidgets import FluentIcon as FIF
-from PyQt5.QtWidgets import QFrame, QVBoxLayout, QTableWidgetItem, QAction
+from PyQt5.QtWidgets import QFrame, QVBoxLayout, QTableWidgetItem, QAction, QFileDialog
 from PyQt5.QtCore import Qt, QSize, QCoreApplication, QModelIndex, QPoint
 from PyQt5.QtGui import QCursor
+
 from ...common.config import *
 from .students_new_dialog import DialogStudent
 from .student_show import DialogStudentShow
@@ -113,6 +114,7 @@ class StudentInterface(GalleryInterface):
         
         # tool button
         self.toolButton = ToolButton(FIF.SAVE, self)
+        self.toolButton.clicked.connect(self.dialogSaveFile)
 
         self.comboBoxCompany.setEnabled(False)
         self.comboBoxSection.setEnabled(False)
@@ -140,12 +142,13 @@ class StudentInterface(GalleryInterface):
 
     def setSelection(self):
         if self.isSelection:
+            if self.comboBoxCompany.currentIndex() != 0 and self.comboBoxSection.currentIndex() != 0:  
+                self.refreshTable()
             self.comboBoxCompany.setCurrentIndex(0)
             self.comboBoxCompany.setEnabled(False)
             self.comboBoxSection.setCurrentIndex(0)
             self.comboBoxSection.setEnabled(False)
             self.toggleSelection.setIcon(FIF.FILTER)
-            self.refreshTable()
             self.isSelection = False
         else:
             self.comboBoxCompany.setEnabled(True)
@@ -208,6 +211,7 @@ class StudentInterface(GalleryInterface):
         listStudent.clear()
 
         for student in data:
+            
             idStudent = student.get("id_tbl_student")
             listStudent.append([
                 idStudent,
@@ -227,10 +231,7 @@ class StudentInterface(GalleryInterface):
                 stude.countTypeMove(idStudent, ANM),
                 stude.countSubTypeMove(idStudent, LETTRE_FEL),
                 stude.countSubTypeMove(idStudent, OTHER_REM_POS)
-                ])
-
-        '''listStudent = [
-                    for student in data]'''
+                ]) 
         return {
             "header": header,
             "data": listStudent
@@ -287,6 +288,45 @@ class StudentInterface(GalleryInterface):
     def searchStudent(self, text:str):
         if '\'' not in text:
             self.refreshTable(query=text)
+
+
+    def dialogSaveFile(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        data = ""
+
+        listData = self.tbStudent.latestData
+        for val in listData:
+            line = ""
+            for i, value in enumerate(val):
+                line += f"{value};"
+            data += f"{line}\n"
+        dir_recent = f"{os.path.expanduser('~')}\Documents"
+        fileName, _ = QFileDialog.getSaveFileName(self,"Exporter",dir_recent,"CSV File (*.CSV)", options=options)
+        if fileName:
+            #print(data)
+            if fileName.find('.csv') == -1:
+                fileName += '.csv'
+            self.saveFile(data, fileName)
+    
+    def saveFile(self, data, filename):
+        with open(filename, "w") as file:
+            file.write(data)
+     
+    def dialogOpenFile(self):
+        '''
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        dir_recent = f"{os.path.expanduser('~')}\Documents"
+        fileName, _ = QFileDialog.getOpenFileName(self,"Importer", dir_recent,"CSV Files (*.xlsx);;All Files (*)", options=options)
+        '''
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        data = 'hello'
+        dir_recent = f"{os.path.expanduser('~')}\Documents"
+        fileName, _ = QFileDialog.getSaveFileName(self,"Exporter",dir_recent+"\""+data[1],"CSV File (*.CSV)", options=options)
+        if fileName:
+            print("ok")
         
     def exportData(self, student: Student, mouvement):
         document = Document()
@@ -341,8 +381,8 @@ class StudentInterface(GalleryInterface):
         menu = RoundMenu(parent=self)
         menu.addAction(Action(FIF.FOLDER, 'Voir', triggered=lambda:self.showItem(item)))
         menu.addAction(Action(FIF.EDIT, 'Modifier', triggered=lambda:self.showDialogView(item)))
-        menu.addAction(Action(FIF.SCROLL, 'Mouvement', triggered=lambda:self.showDialogMove(item)))
         menu.addSeparator()
+        menu.addAction(Action(FIF.SCROLL, 'Mouvement', triggered=lambda:self.showDialogMove(item)))
        # menu.addAction(Action(FIF.DELETE, 'Delete', triggered=lambda:self.confirmDeleteItem(item)))
         menu.menuActions()[-2].setCheckable(True)
         menu.menuActions()[-2].setChecked(True)
