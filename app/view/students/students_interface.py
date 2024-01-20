@@ -181,7 +181,7 @@ class StudentInterface(GalleryInterface):
 
         listStudent = self.listStudent(data)
         self.tbStudent.refresh(self.table, listStudent.get("header"), listStudent.get("data"))
-
+        
         #print(self.companySelected)
         #print(self.sectionSelected)
 
@@ -296,10 +296,15 @@ class StudentInterface(GalleryInterface):
         data = ""
 
         listData = self.tbStudent.latestData
+        for i, h in enumerate(self.tbStudent.h):
+            if i > 0:
+                data += f"{h};"
+        data += "\n"
         for val in listData:
             line = ""
             for i, value in enumerate(val):
-                line += f"{value};"
+                if i > 0:
+                    line += f"{value};"
             data += f"{line}\n"
         dir_recent = f"{os.path.expanduser('~')}\Documents"
         fileName, _ = QFileDialog.getSaveFileName(self,"Exporter",dir_recent,"CSV File (*.CSV)", options=options)
@@ -312,6 +317,7 @@ class StudentInterface(GalleryInterface):
     def saveFile(self, data, filename):
         with open(filename, "w") as file:
             file.write(data)
+        os.startfile(filename)
      
     def dialogOpenFile(self):
         '''

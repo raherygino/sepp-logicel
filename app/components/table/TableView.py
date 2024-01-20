@@ -6,6 +6,7 @@ class Table():
     
     def __init__(self, parent, header: list, data: list):
         self.latestData = data
+        self.h = header
         self.table = TableWidget(parent)
         self.table.setWordWrap(False)
         self.setData(self.table, header, data)
@@ -26,6 +27,7 @@ class Table():
     def setData(self, tableUpdated:TableWidget, header:list, data:list):
         columnCount = len(header)
         tableUpdated.setColumnCount(columnCount)
+        self.latestData = data
         self.table.setRowCount(len(data))
         for i, value in enumerate(data):
             for j in range(columnCount):
