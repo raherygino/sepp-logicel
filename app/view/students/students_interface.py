@@ -105,7 +105,7 @@ class StudentInterface(GalleryInterface):
         
         # tool button
         self.toolButton = ToolButton(FIF.SAVE, self)
-        self.toolButton.clicked.connect(self.dialogSaveFile)
+        self.toolButton.clicked.connect(self.exportExcel)
 
         self.comboBoxCompany.setEnabled(False)
         self.comboBoxSection.setEnabled(False)
@@ -285,29 +285,28 @@ class StudentInterface(GalleryInterface):
             self.comboBoxSection.setEnabled(False)
             self.toggleSelection.setIcon(FIF.FILTER)
             self.toggleSelection.setChecked(False)
-            #print(self.toggleSelection.isChecked())
 
 
-    def dialogSaveFile(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+    def exportExcel(self):
         data = ""
-
         listData = self.tbStudent.latestData
+        
         for i, h in enumerate(self.tbStudent.h):
             if i > 0:
                 data += f"{h};"
         data += "\n"
+
         for val in listData:
             line = ""
             for i, value in enumerate(val):
                 if i > 0:
                     line += f"{value};"
             data += f"{line}\n"
+
         dir_recent = f"{os.path.expanduser('~')}\Documents"
-        fileName, _ = QFileDialog.getSaveFileName(self,"Exporter",dir_recent,"CSV File (*.CSV)", options=options)
+        fileName = self.dialogSaveFile("Exporter", dir_recent, "CSV File (*.CSV)")
+
         if fileName:
-            #print(data)
             if fileName.find('.csv') == -1:
                 fileName += '.csv'
             self.saveFile(data, fileName)
@@ -316,6 +315,15 @@ class StudentInterface(GalleryInterface):
         with open(filename, "w") as file:
             file.write(data)
         os.startfile(filename)
+
+
+    def dialogSaveFile(self, title:str, dir:str, typeFile:str):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self,title,dir,typeFile, options=options)
+        return fileName
+      
+
      
     def dialogOpenFile(self):
         '''
@@ -351,9 +359,10 @@ class StudentInterface(GalleryInterface):
             if(len(mouv.day) != 0):
                 day +=  "+"+mouv.day
         valDay = eval(day)
-        items.append(["Total", "",str(valDay)])
+        if valDay > 0:
+            items.append(["Total", "",str(valDay)])
 
-        if valDay == 0:
+        if len(items) == 0:
             document.add_paragraph("Aucun mouvement")
         else:
             # add table ------------------
@@ -372,12 +381,14 @@ class StudentInterface(GalleryInterface):
                 cells[0].text = str(item[0])
                 cells[1].text = item[1]
                 cells[2].text = item[2]
-                
+    
         # Save the document
         filename = f"{os.path.expanduser('~')}\Documents\{student.level}-{student.matricule}.docx";
-        document.save(filename)
-        self.dialog.yesButton.setVisible(False)
-        os.startfile(filename)  
+        fileName = self.dialogSaveFile("Exporter", filename, "Document Word (*.docx)")
+        if fileName:
+            document.save(filename)
+            self.dialog.yesButton.setVisible(False)
+            os.startfile(filename)  
         
 
     
