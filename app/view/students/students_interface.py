@@ -68,15 +68,6 @@ class StudentInterface(GalleryInterface):
         
         col = Frame(HORIZONTAL, COL+str(1),parent=parent)
         
-        #self.btnAdd.clicked.connect(self.showDialog)
-
-        #self.btnFlux =  PrimaryPushButton('Seed', self, FIF.DEVELOPER_TOOLS)
-        #self.btnFlux.setObjectName(u"PrimaryToolButton")
-        #self.btnFlux.clicked.connect(self.seed)
-
-        #col.layout.addWidget(self.btnAdd)
-        #col.layout.addWidget(self.btnFlux)
-
         self.comboBoxCompany = ComboBox(self)
 
         companies = []
@@ -288,6 +279,13 @@ class StudentInterface(GalleryInterface):
     def searchStudent(self, text:str):
         if '\'' not in text:
             self.refreshTable(query=text)
+            self.sectionSelected = 0
+            self.companySelected = 0
+            self.comboBoxCompany.setEnabled(False)
+            self.comboBoxSection.setEnabled(False)
+            self.toggleSelection.setIcon(FIF.FILTER)
+            self.toggleSelection.setChecked(False)
+            #print(self.toggleSelection.isChecked())
 
 
     def dialogSaveFile(self):
@@ -414,6 +412,18 @@ class StudentInterface(GalleryInterface):
     def newMouvement(self, mouvement:Mouvement):
         service = MouvementService(self.db)
         service.create(mouvement)
+        searchQuery = self.searchLineStudent.text()
+        if searchQuery != "":
+            self.refreshTable(query=searchQuery)
+        else:
+            if self.companySelected != 0 and self.sectionSelected != 0:
+                data = self.studentService.listByFields(
+                    company=self.companySelected, 
+                    section=self.sectionSelected)
+                listStudent = self.listStudent(data)
+                self.tbStudent.refresh(self.table, listStudent.get("header"), listStudent.get("data"))
+            else:
+                self.refreshTable()
         self.dialog.accept()
     
     def showItem(self, item: QModelIndex):
