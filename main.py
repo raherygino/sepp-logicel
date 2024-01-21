@@ -41,5 +41,5 @@ galleryTranslator.load(locale, "gallery", ".", ":/gallery/i18n")
 
 # create main window
 w = MainWindow()
-w.show()
+w.showMaximized()
 app.exec_()
