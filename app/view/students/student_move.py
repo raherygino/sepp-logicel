@@ -23,11 +23,11 @@ class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
     yesSignal = pyqtSignal()
     cancelSignal = pyqtSignal()
 
-    def __init__(self, service, serviceMove, id, parent=None):
+    def __init__(self,interface, service, serviceMove, id, parent=None):
         super().__init__(parent=parent)
         self.studentId = id
         self.service = service
-        self.row = DialogStudentShow(service, serviceMove, id, parent).row
+        self.row = DialogStudentShow(interface, service, serviceMove, id, parent).row
         self.student = self.service.findById(self.studentId)
         self.initWidgets(parent=parent)
         self._setUpUi(self.content, self.widget)

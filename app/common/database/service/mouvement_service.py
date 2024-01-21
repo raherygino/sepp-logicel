@@ -31,5 +31,8 @@ class MouvementService(ServiceBase):
     
     def deleteByDateType(self, date:str, type:str):
         return self.mouvementDao.deleteByFields(date=date, type=type)
+    
+    def deleteByDateTypeSubType(self, date:str, type:str, subType:str):
+        return self.mouvementDao.deleteByFields(date=date, type=type, subType=subType)
 
     

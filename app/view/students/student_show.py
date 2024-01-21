@@ -24,8 +24,9 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
     yesSignal = pyqtSignal()
     cancelSignal = pyqtSignal()
 
-    def __init__(self, service, serviceMove, id, parent):
+    def __init__(self,interface, service, serviceMove, id, parent):
         super().__init__(parent=parent)
+        self.interface = interface
         self.studentId = id
         self.service = service
         self.student = self.service.findById(self.studentId)
@@ -159,8 +160,11 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         typs = sact.split("\n")
         typ = typs[0]
         subTyp = typs[1]
-        #print(daty+" type: "+typ+" subType: "+subTyp)
-        self.serviceMove.deleteByDateType(daty, typ)
+        if len(subTyp) == 0:
+            self.serviceMove.deleteByDateType(daty, typ)
+        else:
+            self.serviceMove.deleteByDateTypeSubType(daty, typ, subTyp)
+        self.interface.refreshTable()
 
     def eventFilter(self, obj, e: QEvent):
         if obj is self.window():

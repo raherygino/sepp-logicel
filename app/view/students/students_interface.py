@@ -246,7 +246,7 @@ class StudentInterface(GalleryInterface):
 
 
     def showDialogItem(self, id):
-        self.dialog = DialogStudentShow(self.studentService, self.moveService, id, self.parent)
+        self.dialog = DialogStudentShow(self, self.studentService, self.moveService, id, self.parent)
         self.dialog.yesButton.clicked.connect(lambda: self.exportData(self.dialog.student, self.dialog.d))
         self.dialog.show()
     
@@ -415,7 +415,7 @@ class StudentInterface(GalleryInterface):
 
     def showDialogMove(self, item: QModelIndex):
         id = self.table.item(item.row(), 0).text()
-        self.dialog = DialogStudentMove(self.studentService, self.moveService, id, self.parent)
+        self.dialog = DialogStudentMove(self, self.studentService, self.moveService, id, self.parent)
         btn = self.dialog.yesButton
         btn.clicked.connect(lambda: self.newMouvement(self.dialog.dataMouvement()))
         self.dialog.show()
