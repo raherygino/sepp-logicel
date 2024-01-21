@@ -64,7 +64,10 @@ class StudentInterface(GalleryInterface):
         self.searchLineStudent = SearchLineEdit(self)
         self.searchLineStudent.setPlaceholderText(QCoreApplication.translate(FORM, u"Recherche", None))
         self.searchLineStudent.setMaximumSize(QSize(240, 50))
-        self.searchLineStudent.textChanged.connect(self.searchStudent)
+        #self.searchLineStudent.textChanged.connect(self.checkSearchLine)
+        self.searchLineStudent.searchButton.clicked.connect(lambda:self.searchStudent(self.searchLineStudent.text()))
+        self.searchLineStudent.returnPressed.connect(lambda:self.searchStudent(self.searchLineStudent.text()))
+        self.searchLineStudent.clearButton.clicked.connect(self.refreshTable)
         
         col = Frame(HORIZONTAL, COL+str(1),parent=parent)
         
@@ -275,7 +278,7 @@ class StudentInterface(GalleryInterface):
                 self.refreshTable()
             else:
                 print("Error")
-    
+
     def searchStudent(self, text:str):
         if '\'' not in text:
             self.refreshTable(query=text)
@@ -420,9 +423,7 @@ class StudentInterface(GalleryInterface):
         btn.clicked.connect(lambda: self.newMouvement(self.dialog.dataMouvement()))
         self.dialog.show()
     
-    def newMouvement(self, mouvement:Mouvement):
-        service = MouvementService(self.db)
-        service.create(mouvement)
+    def refreshWithQuery(self):
         searchQuery = self.searchLineStudent.text()
         if searchQuery != "":
             self.refreshTable(query=searchQuery)
@@ -435,6 +436,12 @@ class StudentInterface(GalleryInterface):
                 self.tbStudent.refresh(self.table, listStudent.get("header"), listStudent.get("data"))
             else:
                 self.refreshTable()
+
+
+    def newMouvement(self, mouvement:Mouvement):
+        service = MouvementService(self.db)
+        service.create(mouvement)
+        self.refreshWithQuery()
         self.dialog.accept()
     
     def showItem(self, item: QModelIndex):

@@ -149,7 +149,21 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         if exitDialog.exec():
             self.deleteItem(item)
             data = self.serviceMove.listByStudentId(self.studentId)
-            self.refreshData(data)
+            #self.refreshData(data)
+            
+            searchQuery = self.interface.searchLineStudent.text()
+            if searchQuery != "":
+                self.interface.refreshTable(query=searchQuery)
+            else:
+                if self.interface.companySelected != 0 and self.interface.sectionSelected != 0:
+                    data_1 = self.service.listByFields(
+                        company=self.interface.companySelected, 
+                        section=self.interface.sectionSelected)
+                    listStudent = self.interface.listStudent(data_1)
+                    self.interface.tbStudent.refresh(self.interface.table, listStudent.get("header"), listStudent.get("data"))
+                else:
+                    self.interface.refreshTable()
+
             if len(self.setData(data)) == 1:
                 self.tableMove.setVisible(False)
                 self.noMove.setVisible(True)
