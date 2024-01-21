@@ -69,9 +69,10 @@ class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
                      "Remarque positive"]
         
         self.typeMove = Select("Type", self.typesMove, self.col)
-        self.typeMove.comboBox.currentTextChanged.connect(self.subTypeChanged)
+        self.typeMove.comboBox.currentTextChanged.connect(self.typeChanged)
 
         self.subTypeMove = Select("Sous type", [], self.col)
+        self.subTypeMove.comboBox.currentTextChanged.connect(self.subTypeChanged)
         self.subTypeMove.comboBox.setDisabled(True)
 
         self.row_3 = Frame("horizontal", "row_3", self.content)
@@ -80,14 +81,13 @@ class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
         self.dateMove = InputDatePicker("Date", self.row_3)
         self.dateMove.lineEdit.setDate(QDate(2023,1,1))
         self.dayMove = InputSpinBox("Nombre de jour",False, self.row_3)
-        self.dayMove.setEnabledLineEdit(False)
 
         self.row_2.addWidget(self.col)
         self.row_2.addWidget(self.row_3)
         
         self.content.addWidget(self.row_2)
 
-    def subTypeChanged(self, current):
+    def typeChanged(self, current):
         comb = self.subTypeMove.comboBox
         comb.items.clear()
         comb.removeItem(0)
@@ -115,6 +115,15 @@ class DialogStudentMove(MaskDialogBase, Ui_MessageBox):
             comb.clear()
             comb.setDisabled(True)
             self.dayMove.setEnabledLineEdit(True)
+
+        #print(comb.text())
+
+    def subTypeChanged(self,current):
+        if current == SUB_TYPE_MOVE["HORS_TOUR"] or current == "-" or current == SUB_TYPE_MOVE['EX_PHYS']:
+            self.dayMove.setEnabledLineEdit(True)
+        else:
+            self.dayMove.setEnabledLineEdit(False)
+
 
     def dataMouvement(self):
         typeMove = self.typeMove.text()

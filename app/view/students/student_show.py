@@ -1,9 +1,11 @@
 
-from PyQt5.QtCore import Qt, pyqtSignal, QObject, QEvent, QSize
-from PyQt5.QtGui import QColor
+from PyQt5.QtCore import Qt, pyqtSignal, QObject, QEvent, QSize, QModelIndex,QPoint
+from PyQt5.QtGui import QColor,QCursor
 from PyQt5.QtWidgets import QLabel, QFrame, QVBoxLayout, QHBoxLayout, QPushButton
 from qframelesswindow import FramelessDialog
-from qfluentwidgets import BodyLabel, StrongBodyLabel, PrimaryPushButton, SubtitleLabel, ImageLabel
+from qfluentwidgets import (BodyLabel, StrongBodyLabel,MenuAnimationType, PrimaryPushButton, 
+                            Action, SubtitleLabel, ImageLabel, RoundMenu, MessageBox)
+from qfluentwidgets import FluentIcon as FIF
 
 from ...components.dialog.mask import MaskDialogBase
 from ...components.dialog.dialog import Ui_MessageBox
@@ -22,7 +24,7 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
     yesSignal = pyqtSignal()
     cancelSignal = pyqtSignal()
 
-    def __init__(self, service, serviceMove, id, parent=None):
+    def __init__(self, service, serviceMove, id, parent):
         super().__init__(parent=parent)
         self.studentId = id
         self.service = service
@@ -82,34 +84,84 @@ class DialogStudentShow(MaskDialogBase, Ui_MessageBox):
         self.row_2.addWidget(SubtitleLabel('Mouvement'))
         self.d = self.serviceMove.listByStudentId(self.studentId)
         
-        list = [[]]
-        list.clear()
-        day = "0"
-        print()
-        for mv in self.d:
-            list.append([mv.date, f"{mv.type} {mv.subType}", mv.day])
-            if(len(mv.day) != 0):
-                day +=  "+"+mv.day
-        list.append(["Total", "",str(eval(day))])
-        table = Table(self.row_2, ["Date", "Mouvement", "Nombre de jour"], list)
-        self.row_2.addWidget(table.widget())
-        noMove = BodyLabel('Aucun mouvement')
-        self.row_2.addWidget(noMove)
-        noMove.setVisible(False)
+        self.table = Table(self.row_2, ["Date", "Mouvement", "Nombre de jour"], self.setData(self.d))
+        self.refreshData(self.d)
+
+        self.table.setSectionResizeMode()
+        self.tableMove = self.table.widget()
+        self.tableMove.clicked.connect(self.selectItem)
+        self.row_2.addWidget(self.table.widget())
+        self.noMove = BodyLabel('Aucun mouvement')
+        self.row_2.addWidget(self.noMove)
+        self.noMove.setVisible(False)
         self.layoutTitle.addWidget(self.title)
         self.content.addWidget(self.layoutTitle)
         self.content.addWidget(self.row)
         self.content.addWidget(self.row_2)
-        if len(list) == 1:
-            table.widget().setVisible(False)
-            noMove.setVisible(True)
+        if len(self.setData(self.d)) == 1:
+            self.tableMove.setVisible(False)
+            self.noMove.setVisible(True)
+
+    def setData(self, data):
+        list = [[]]
+        list.clear()
+        day = "0"
+        for mv in data:
+            list.append([mv.date, f"{mv.type}\n{mv.subType}", mv.day])
+            if(len(mv.day) != 0):
+                day +=  "+"+mv.day
+        list.append(["Total", "",str(eval(day))])
+        return list
+
+
+    def refreshData(self, data):
+        list = self.setData(data)
+        self.table.setData(self.table.widget(), ["Date", "Mouvement", "Nombre de jour"],list)
 
     def yesBtnEvent(self):
         self.accept()
 
     def getYesBtn(self):
         return self.yesButton
+    
+    
+    def selectItem(self, item: QModelIndex):
+        text = self.tableMove.item(item.row(), 0).text()
+        if text != "Total":
+            menu = RoundMenu(parent=self)
+            menu.addAction(Action(FIF.DELETE, 'Supprimer', triggered=lambda:self.confirmDelete(item)))
+            self.posCur = QCursor().pos()
+            cur_x = self.posCur.x()
+            cur_y = self.posCur.y()
+            menu.exec(QPoint(cur_x, cur_y), aniType=MenuAnimationType.DROP_DOWN)
+
+
+    def confirmDelete(self, item: QModelIndex):
         
+        exitDialog = MessageBox(
+            'Supprimer', 'Voulez vous supprimer vraiment?',
+            self
+        )
+        exitDialog.yesButton.setText('Oui')
+        exitDialog.cancelButton.setText('Non')
+
+        if exitDialog.exec():
+            self.deleteItem(item)
+            data = self.serviceMove.listByStudentId(self.studentId)
+            self.refreshData(data)
+            if len(self.setData(data)) == 1:
+                self.tableMove.setVisible(False)
+                self.noMove.setVisible(True)
+     
+    def deleteItem(self, item: QModelIndex):
+        daty = self.tableMove.item(item.row(), 0).text()
+        sact = self.tableMove.item(item.row(), 1).text()
+        typs = sact.split("\n")
+        typ = typs[0]
+        subTyp = typs[1]
+        #print(daty+" type: "+typ+" subType: "+subTyp)
+        self.serviceMove.deleteByDateType(daty, typ)
+
     def eventFilter(self, obj, e: QEvent):
         if obj is self.window():
             if e.type() == QEvent.Resize:

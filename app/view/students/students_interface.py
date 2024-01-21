@@ -193,11 +193,11 @@ class StudentInterface(GalleryInterface):
 
         header = [
             "ID","Matricule", "Niveau", "Nom",
-            "Prénom", "Genre",RM,
-            EX, PERM, CODIS, HORS_TOUR,
-            BEM, PEP, 
-            OTHER_SAC, ANM, 
-            LETTRE_FEL, OTHER_REM_POS]
+            "Prénom", "Genre",RM+" (Jour)",
+            EX+" (Jour)", PERM+" (Jour)", CODIS+" (fois)", HORS_TOUR+" (Jour)",
+            BEM+" (fois)", PEP+" (fois)", 
+            OTHER_SAC+" (fois)", ANM+" (Jour)", 
+            LETTRE_FEL+" (fois)", OTHER_REM_POS+" (fois)"]
         listStudent = [[]]
         listStudent.clear()
 
@@ -215,11 +215,11 @@ class StudentInterface(GalleryInterface):
                 stude.sumOfDaySubTypeMove(idStudent, EX),
                 stude.sumOfDayTypeMove(idStudent, PERM),
                 stude.countSubTypeMove(idStudent, CODIS),
-                stude.sumOfDayTypeMove(idStudent, HORS_TOUR),
+                stude.sumOfDaySubTypeMove(idStudent, HORS_TOUR),
                 stude.countSubTypeMove(idStudent, BEM),
                 stude.countSubTypeMove(idStudent, PEP),
                 stude.countSubTypeMove(idStudent, OTHER_SAC),
-                stude.countTypeMove(idStudent, ANM),
+                stude.sumOfDayTypeMove(idStudent, ANM),
                 stude.countSubTypeMove(idStudent, LETTRE_FEL),
                 stude.countSubTypeMove(idStudent, OTHER_REM_POS)
                 ]) 

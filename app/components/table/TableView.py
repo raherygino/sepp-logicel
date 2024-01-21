@@ -14,13 +14,16 @@ class Table():
         self.table.verticalHeader().hide()
         self.table.setHorizontalHeaderLabels(header)
         self.table.resizeColumnsToContents()
-        #self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.header = self.table.horizontalHeader()
+        #self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         #self.header.setSectionResizeMode(len(header) - 1, QHeaderView.Stretch)
         #self.header.setSectionResizeMode(1, QHeaderView.Stretch)
 
     def setRisizeMode(self, pos):
         self.header.setSectionResizeMode(pos, QHeaderView.Stretch)
+
+    def setSectionResizeMode(self):
+        self.header.setSectionResizeMode(len(self.h) - 1, QHeaderView.Stretch)
 
     
 

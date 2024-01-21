@@ -66,6 +66,21 @@ class DaoBase:
         self.query.prepare(sql)
         self.query.addBindValue(id)
         return self.query.exec()
+   
+    @finishQuery
+    def deleteByFields(self, **fields) -> bool:
+        """ delete a record """
+        sql = f"DELETE FROM {self.table}"
+
+        for i, key in enumerate(fields.keys()):
+            if i == 0:
+                sql += f" WHERE {key} = '{fields.get(key)}' "
+            else:
+                sql += f"AND {key} = '{fields.get(key)}' "
+
+        self.query.prepare(sql)
+        #self.query.addBindValue(id)
+        return self.query.exec()
 
     def listAll(self) -> List[Entity]:
         """ query all records """
