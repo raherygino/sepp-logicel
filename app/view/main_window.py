@@ -36,7 +36,7 @@ class MainWindow(FluentWindow):
         self.db = DB
         self.db.init()
         # create sub interface
-        #self.homeInterface = HomeInterface(self)
+        self.homeInterface = HomeInterface(self)
         self.studentInterface = StudentInterface(self)
     
         
@@ -100,7 +100,7 @@ class MainWindow(FluentWindow):
     def initNavigation(self):
         # add navigation items
         t = Translator()
-       # self.addSubInterface(self.homeInterface, FIF.HOME, "Home")
+        self.addSubInterface(self.homeInterface, FIF.HOME, "Home")
         self.addSubInterface(self.studentInterface, FIF.PEOPLE, "Elèves")
         '''
         self.addSubInterface(self.widgetsInterface, FIF.GAME, t.widgets)
