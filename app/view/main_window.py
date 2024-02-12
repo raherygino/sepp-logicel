@@ -13,6 +13,9 @@ from ..common.icon import Icon
 from ..common.signal_bus import signalBus
 from ..common.translator import Translator
 from ..common import resource
+from .home.home_interface import HomeInterface
+from ..models.model.prom_model import PromotionModel
+from ..presenter.prom_presenter import PromotionPresenter
 
 class Widget(QFrame):
 
@@ -32,13 +35,18 @@ class MainWindow(FluentWindow):
         self.initWindow()
 
         # create sub interface
-        self.homeInterface = Widget("Home Interface")
+        self.homeInterface = HomeInterface(self)
         self.iconInterface = Widget("Icon Interface")
         self.settingInterface = SettingInterface(self)
 
         # enable acrylic effect
         self.navigationInterface.setAcrylicEnabled(True)
         self.connectSignalToSlot()
+
+        promModel = PromotionModel()
+        promPresenter = PromotionPresenter(self.homeInterface, promModel)
+        self.homeInterface.presenter = promPresenter
+
         # add items to navigation interface
         self.initNavigation()
         self.splashScreen.finish()
