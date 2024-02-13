@@ -2,6 +2,7 @@ from qfluentwidgets import FluentIcon, RoundMenu, Action, MenuAnimationType, Dia
 from .new_prom_presenter import NewPromotionPresenter
 from ..models.model.prom_model import PromotionModel
 from ..components.link_card2 import LinkCard
+from ..common.functions import Function
 from PyQt5.QtCore import Qt
 
 class PromotionPresenter:
@@ -9,6 +10,7 @@ class PromotionPresenter:
     def __init__(self, view, model: PromotionModel):
         self.view = view
         self.model = model
+        self.func = Function()
         self.nPromPresenter = NewPromotionPresenter(view, model, self)
         self.fetchProm()
         
@@ -26,8 +28,11 @@ class PromotionPresenter:
         
         promotions = self.model.fetch_all_items(order="id DESC")
         for promotion in promotions:
+            logo = FluentIcon.PEOPLE
+            if promotion.logo != "":
+                logo = promotion.logo
             card = LinkCard(
-                FluentIcon.PEOPLE, 
+                logo, 
                 promotion.rank, 
                 promotion.name, 
                 self.view.banner.linkCardView)
@@ -61,4 +66,6 @@ class PromotionPresenter:
         w.setTitleBarVisible(False)
         if w.exec():
             self.model.delete_item(promotion.id)
+            if promotion.logo != "":
+                self.func.deleteFile(promotion.logo)
             self.fetchProm()

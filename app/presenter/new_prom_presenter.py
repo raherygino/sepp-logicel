@@ -2,6 +2,7 @@ from qfluentwidgets import FluentIcon
 from ..view.home.dialog.new_prom_dialog import NewPromotionDialog
 from ..models.model.prom_model import PromotionModel
 from ..models.entity.promotion import Promotion
+from ..common.functions import Function
 
 class NewPromotionPresenter:
 
@@ -9,6 +10,7 @@ class NewPromotionPresenter:
         self.view = view
         self.model = model
         self.parentPresenter = parentPresenter
+        self.func = Function()
         
     def dialogNew(self, event, **kwargs):
         dialog = NewPromotionDialog(self.view)
@@ -27,9 +29,16 @@ class NewPromotionPresenter:
             rank = dialog.rankLineEdit.text()
             logo = dialog.logoLineEdit.text()
             years = dialog.yearLineEdit.text()
+            nwLogo = logo
             if isUpdate:
-                self.model.update_item(promotion.id, name=name, rank=rank, logo=logo, years=years)
+                if promotion.logo != logo:
+                    self.func.deleteFile(promotion.logo)
+                    nwLogo = self.func.copyFileToFolderApp(logo, name=f"logo_{rank.replace(" ", "_")}")
+                self.model.update_item(promotion.id, name=name, rank=rank, logo=nwLogo, years=years)
             else:
-                prom = Promotion(name=name, rank=rank, logo=logo, years=years)
+                if (len(logo) != 0):
+                    nwLogo = self.func.copyFileToFolderApp(logo, name=f"logo_{rank.replace(" ", "_")}")
+                    
+                prom = Promotion(name=name, rank=rank, logo=nwLogo, years=years)
                 self.model.create(prom)
             self.parentPresenter.fetchProm()
