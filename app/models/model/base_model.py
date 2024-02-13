@@ -19,7 +19,7 @@ class Model:
             if (fieldType.find('str') != -1):
                 fieldType = "TEXT"
             else:
-                if (field.name.find('id_') != -1):
+                if (field.name == "id"):
                     fieldType = "INTEGER PRIMARY KEY"
                 else:
                     fieldType = "INTEGER"
@@ -29,9 +29,12 @@ class Model:
         cursor.execute(query)
         self.conn.commit()
 
-    def fetch_all_items(self):
+    def fetch_all_items(self, **kwargs):
+        query = f'SELECT * FROM {self.TABLE}'
+        if "order" in kwargs.keys():
+            query += f' ORDER BY {kwargs.get('order')}'
         cursor = self.conn.cursor()
-        cursor.execute(f'SELECT * FROM {self.TABLE}')
+        cursor.execute(query)
         data = cursor.fetchall()
         listItems = []
         listItems.clear()

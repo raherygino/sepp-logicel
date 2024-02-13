@@ -20,7 +20,7 @@ class BannerWidget(QWidget):
 
         self.vBoxLayout = QVBoxLayout(self)
         self.galleryLabel = QLabel('Elèves Inspecteurs et Agents de Police', self)
-        self.banner = QPixmap(':/gallery/images/header1.png')
+        self.banner = QPixmap('app/resource/images/header1.png')
         self.linkCardView = LinkCardView(self)
 
         self.galleryLabel.setObjectName('galleryLabel')
@@ -95,7 +95,3 @@ class HomeInterface(ScrollArea):
         self.vBoxLayout.setSpacing(40)
         self.vBoxLayout.addWidget(self.banner)
         self.vBoxLayout.setAlignment(Qt.AlignTop)
-
-    def showDialogNew(self):
-        dialog = NewPromotionDialog(self)
-        dialog.show()

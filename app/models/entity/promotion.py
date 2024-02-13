@@ -6,6 +6,7 @@ from dataclasses import dataclass
 class Promotion(Entity):
     """Promotion information """
     id: int = 0
-    name: str = None
-    rank: str = None
-    years: str = None
+    name: str = ""
+    rank: str = ""
+    years: str = ""
+    logo: str = ""
