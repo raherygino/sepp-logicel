@@ -10,13 +10,26 @@ class NewPromotionPresenter:
         self.model = model
         self.parentPresenter = parentPresenter
         
-    def dialogNew(self, event):
+    def dialogNew(self, event, **kwargs):
         dialog = NewPromotionDialog(self.view)
+        isUpdate = False
+        promotion = None
+        if len(kwargs) != 0:
+            isUpdate = True
+            promotion = kwargs.get("promotion")
+            dialog.nameLineEdit.setText(promotion.name)
+            dialog.rankLineEdit.setText(promotion.rank)
+            dialog.logoLineEdit.setText(promotion.logo)
+            dialog.yearLineEdit.setText(promotion.years)
+            dialog.yesButton.setText("Mettre à jour")
         if dialog.exec():
             name = dialog.nameLineEdit.text()
             rank = dialog.rankLineEdit.text()
             logo = dialog.logoLineEdit.text()
             years = dialog.yearLineEdit.text()
-            prom = Promotion(name=name, rank=rank, logo=logo, years=years)
-            self.model.create(prom)
+            if isUpdate:
+                self.model.update_item(promotion.id, name=name, rank=rank, logo=logo, years=years)
+            else:
+                prom = Promotion(name=name, rank=rank, logo=logo, years=years)
+                self.model.create(prom)
             self.parentPresenter.fetchProm()
