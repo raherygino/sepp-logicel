@@ -8,8 +8,9 @@ __pycache__/
 
 *.db
 
+*.json
+
 # Distribution / packaging
-.app/config/config.json
 .Python
 build/
 develop-eggs/
