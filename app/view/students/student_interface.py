@@ -14,13 +14,14 @@ class StudentInterface(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.mainWindow = parent
         self.tabCount = 1
         self.tabItems = []
         self.tabBar = TabBar(self)
         self.stackedWidget = QStackedWidget(self)
         self.tabView = QWidget(self)
         self.controlPanel = QFrame(self)
-
+        
         self.movableCheckBox = CheckBox(self.tr('IsTabMovable'), self)
         self.scrollableCheckBox = CheckBox(self.tr('IsTabScrollable'), self)
         self.shadowEnabledCheckBox = CheckBox(self.tr('IsTabShadowEnabled'), self)
@@ -134,9 +135,9 @@ class StudentInterface(QWidget):
         objName = text.replace(" ", "-")
         if objName not in self.tabItems:
             self.tabItems.append(objName)
-            widget = ListStudent(entity, self)
+            widget = ListStudent(self)
             studentModel = StudentModel()
-            StudentPresenter(widget, studentModel)
+            StudentPresenter(widget, studentModel, entity)
             self.addSubInterface(widget, text, ':/gallery/images/Smiling_with_heart.png')
             self.tabCount += 1
             self.stackedWidget.setCurrentWidget(widget)
