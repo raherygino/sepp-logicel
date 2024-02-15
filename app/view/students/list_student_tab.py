@@ -11,6 +11,7 @@ class ListStudent(QWidget):
         super().__init__(parent=parent)
         self.vBoxLayout = QVBoxLayout(self)
         self.hBoxLayout = QHBoxLayout()
+        self.parent = parent
         self.__initCommandBar()
         self.__initTableView(parent)
         self.vBoxLayout.setContentsMargins(0, 0, 0, 0)

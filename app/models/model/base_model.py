@@ -99,6 +99,26 @@ class Model:
                 nVal.set(field.name, val[i])
             listItems.append(nVal)
         return listItems
+    
+    def search_with_id(self, id, **kwargs):
+
+        id_col = dataclasses.fields(self.entity)[1].name
+        sql = f'SELECT * FROM {self.TABLE} WHERE {id_col} = "{id}" AND '
+        condition = ' OR '.join([f'{key} LIKE "%{kwargs.get(key)}%"' for key in kwargs.keys()])
+        sql += condition
+        cursor = self.conn.cursor()
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        listItems = []
+        listItems.clear()
+
+        for val in data:
+            nVal = self.entity.copy()
+            fieldsEntity = dataclasses.fields(nVal)
+            for i, field in enumerate(fieldsEntity):
+                nVal.set(field.name, val[i])
+            listItems.append(nVal)
+        return listItems
 
     def fetch_item_by_id(self, id_item):
         id_col = dataclasses.fields(self.entity)[0].name

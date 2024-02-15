@@ -1,3 +1,6 @@
+from qfluentwidgets import RoundMenu, Action, FluentIcon, MenuAnimationType, MessageBox
+from PyQt5.QtGui import QCursor
+from PyQt5.QtCore import QPoint
 from ..models import StudentModel, Student 
 from ..common import Function
 from ..view.students.list_student_tab import ListStudent
@@ -24,6 +27,26 @@ class StudentPresenter:
         self.view.addAction.triggered.connect(lambda: print("ok"))
         self.view.importAction.triggered.connect(lambda: self.importData())
         self.view.searchLineEdit.textChanged.connect(self.searchStudent)
+        self.view.tableView.contextMenuEvent = lambda event: self.mouseRightClick(event)
+        
+    def mouseRightClick(self, event):
+        id_item = self.view.tableView.selectedItems()[0].text()
+        action = MenuAction(self)
+        menu = RoundMenu(parent=self.view)
+        menu.addAction(Action(FluentIcon.FOLDER, 'Voir'))
+        menu.addAction(Action(FluentIcon.EDIT, 'Modifier'))
+        menu.addSeparator()
+        menu.addAction(Action(FluentIcon.SCROLL, 'Mouvement'))
+        menu.addSeparator()
+        menu.addAction(Action(FluentIcon.DELETE, 'Supprimer', triggered = lambda: action.delete(id_item)))
+        menu.menuActions()[-2].setCheckable(True)
+        menu.menuActions()[-2].setChecked(True)
+
+        self.posCur = QCursor().pos()
+        cur_x = self.posCur.x()
+        cur_y = self.posCur.y()
+
+        menu.exec(QPoint(cur_x, cur_y), aniType=MenuAnimationType.FADE_IN_DROP_DOWN)
         
     def importData(self):
         filename = self.func.importFile(self.view, "Importer base de données", "CSV File (*.csv)")
@@ -64,7 +87,26 @@ class StudentPresenter:
         return listStudent
         
     def searchStudent(self, text):
-        data = self.model.search(matricule=text, firstname=text)
+        data = self.model.search_with_id(self.promotion.id, matricule=text, firstname=text)
         self.view.tableView.setData(self.formatDataForTable(data))
         
+class MenuAction:
+    
+    def __init__(self,presenter) -> None:
+        self.model = presenter.model
+        self.view = presenter.view
+        self.presenter = presenter
         
+    def delete(self, id):
+        dialog = MessageBox("Supprimer", "Vous êtes sûr de vouloir supprimer?", self.view.parent.mainWindow)
+        dialog.yesButton.setText("Oui")
+        dialog.cancelButton.setText("Non")
+        if dialog.exec():
+            self.model.delete_item(id)
+            text = self.view.searchLineEdit.text()
+            if len(text) != 0:
+                self.presenter.searchStudent(text)
+            else:
+                self.presenter.fetchData()
+            self.presenter.func.toastSuccess("Supprimé", "Suppression avec réussite", self.view.parent)
+       
