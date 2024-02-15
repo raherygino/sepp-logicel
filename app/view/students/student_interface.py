@@ -6,6 +6,8 @@ from qfluentwidgets import (Pivot, qrouter, SegmentedWidget, TabBar, CheckBox, C
                             SegmentedToggleToolWidget, FluentIcon)
 from ...common.style_sheet import StyleSheet
 from .list_student_tab import ListStudent
+from ...presenter import StudentPresenter
+from ...models import StudentModel
 
 class StudentInterface(QWidget):
     """ Student interface """
@@ -133,6 +135,8 @@ class StudentInterface(QWidget):
         if objName not in self.tabItems:
             self.tabItems.append(objName)
             widget = ListStudent(entity, self)
+            studentModel = StudentModel()
+            StudentPresenter(widget, studentModel)
             self.addSubInterface(widget, text, ':/gallery/images/Smiling_with_heart.png')
             self.tabCount += 1
             self.stackedWidget.setCurrentWidget(widget)

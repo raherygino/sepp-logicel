@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidgetItem, QHeaderView
 from PyQt5.QtCore import Qt
 from qfluentwidgets import TitleLabel, CommandBar, FluentIcon, Action, \
     TransparentDropDownPushButton, setFont, RoundMenu, TableWidget
+from ...components import TableView
 
 class ListStudent(QWidget):
 
@@ -34,26 +35,7 @@ class ListStudent(QWidget):
         self.commandBar.addHiddenAction(Action(FluentIcon.SETTING, 'Settings', shortcut='Ctrl+S'))
         
         
-        self.tableView = TableWidget(self)
-
-        # NOTE: use custom item delegate
-        # self.tableView.setItemDelegate(CustomTableItemDelegate(self.tableView))
-
-        self.tableView.setWordWrap(False)
-        self.tableView.setRowCount(2)
-        self.tableView.setColumnCount(5)
-        songInfos = [
-            ['RAHERINOMENJANAHARY', 'Georginot Armelin', 'Developer', '1997', '5:04'],
-            ['爱你', '王心凌', '爱你', '2004', '3:39'],
-        ]
-        songInfos += songInfos
-        for i, songInfo in enumerate(songInfos):
-            for j in range(5):
-                self.tableView.setItem(i, j, QTableWidgetItem(songInfo[j]))
-
-        self.tableView.verticalHeader().hide()
-        self.tableView.setHorizontalHeaderLabels(['Title', 'Artist', 'Album', 'Year', 'Duration'])
-        self.tableView.resizeColumnsToContents()
+        self.tableView = TableView(self)
         #self.tableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         # self.tableView.setSortingEnabled(True)
 

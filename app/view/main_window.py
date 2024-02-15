@@ -47,10 +47,7 @@ class MainWindow(FluentWindow):
         self.connectSignalToSlot()
 
         promModel = PromotionModel()
-        studentModel = StudentModel()
-        
         PromotionPresenter(self.homeInterface, promModel, self)
-        StudentPresenter(self.studentInterface, studentModel)
 
         # add items to navigation interface
         self.initNavigation()
