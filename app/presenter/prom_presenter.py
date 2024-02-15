@@ -1,15 +1,16 @@
 from qfluentwidgets import FluentIcon, RoundMenu, Action, MenuAnimationType, Dialog
 from .new_prom_presenter import NewPromotionPresenter
-from ..models.model.prom_model import PromotionModel
+from ..models.model.prom_model import PromotionModel, Promotion
 from ..components.link_card2 import LinkCard
 from ..common.functions import Function
 from PyQt5.QtCore import Qt
 
 class PromotionPresenter:
 
-    def __init__(self, view, model: PromotionModel):
+    def __init__(self, view, model: PromotionModel, mainWindow):
         self.view = view
         self.model = model
+        self.mainView = mainWindow
         self.func = Function()
         self.nPromPresenter = NewPromotionPresenter(view, model, self)
         self.fetchProm()
@@ -36,9 +37,15 @@ class PromotionPresenter:
                 promotion.rank, 
                 promotion.name, 
                 self.view.banner.linkCardView)
-            card.contextMenuEvent = lambda event, promotion=promotion: self.menuCard(event, promotion)            
+            card.contextMenuEvent = lambda event, promotion=promotion: self.menuCard(event, promotion)
+            card.mouseDoubleClickEvent = lambda event, promotion=promotion: self.showPromotion(event, promotion)            
             self.view.banner.linkCardView.hBoxLayout.addWidget(card, 0, Qt.AlignLeft)
             
+    def showPromotion(self, event, promotion):
+        studentInterface = self.mainView.studentInterface
+        studentInterface.addTab(promotion)
+        self.mainView.switchTo(studentInterface)
+        
     def menuCard(self, event, promotion):
         menu = RoundMenu(self.view)
         menu.addAction(Action(FluentIcon.FOLDER, 'Voir'))

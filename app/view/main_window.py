@@ -16,6 +16,9 @@ from ..common import resource
 from .home.home_interface import HomeInterface
 from ..models.model.prom_model import PromotionModel
 from ..presenter.prom_presenter import PromotionPresenter
+from ..view import StudentInterface
+from ..models import StudentModel
+from ..presenter import StudentPresenter
 
 class Widget(QFrame):
 
@@ -36,7 +39,7 @@ class MainWindow(FluentWindow):
 
         # create sub interface
         self.homeInterface = HomeInterface(self)
-        self.iconInterface = Widget("Icon Interface")
+        self.studentInterface = StudentInterface(self)
         self.settingInterface = SettingInterface(self)
 
         # enable acrylic effect
@@ -44,8 +47,10 @@ class MainWindow(FluentWindow):
         self.connectSignalToSlot()
 
         promModel = PromotionModel()
-        promPresenter = PromotionPresenter(self.homeInterface, promModel)
-        self.homeInterface.presenter = promPresenter
+        studentModel = StudentModel()
+        
+        PromotionPresenter(self.homeInterface, promModel, self)
+        StudentPresenter(self.studentInterface, studentModel)
 
         # add items to navigation interface
         self.initNavigation()
@@ -59,7 +64,7 @@ class MainWindow(FluentWindow):
         # add navigation items
         t = Translator()
         self.addSubInterface(self.homeInterface, FIF.HOME, self.tr('Home'))
-        self.addSubInterface(self.iconInterface, Icon.EMOJI_TAB_SYMBOLS, t.icons)
+        self.addSubInterface(self.studentInterface, FIF.PEOPLE, "Students")
         self.navigationInterface.addSeparator()
 
         # add custom widget to bottom
