@@ -20,14 +20,36 @@ class StudentPresenter:
         self.promotion = promotion
         self.func = Function()
         self.view.tableView.setHorizontalHeaderLabels(self.HEADER_LABEL)
+        self.__init_combox_data()
         self.actions()
         self.fetchData()
+    
+    def __init_combox_data(self):
+        companyStudents = self.model.fetch_items_by_id(self.promotion.id, group_by="company")
+        sectionStudents = self.model.fetch_items_by_id(self.promotion.id, group_by="section")
+        self.setComboxData(self.view.comboBoxCompany, companyStudents, "Compagnie", "company")
+        self.setComboxData(self.view.comboBoxSection, sectionStudents, "Section", "section")
+        
+    def setComboxData(self, combox, data, label, key):
+        nComboxData = []
+        for item in data:
+            val = item.get(key)
+            companyLabel = f"{val}ère {label}" if val == 1 else f"{val}ème {label}"
+            nComboxData.append(companyLabel)
+        nComboxData.insert(0, label)
+        combox.addItems(nComboxData)
+        combox.setCurrentIndex(0)
         
     def actions(self):
         self.view.addAction.triggered.connect(lambda: print("ok"))
         self.view.importAction.triggered.connect(lambda: self.importData())
         self.view.searchLineEdit.textChanged.connect(self.searchStudent)
+        self.view.comboBoxCompany.currentTextChanged.connect(self.textChangedCombox)
+        self.view.comboBoxSection.currentTextChanged.connect(self.textChangedCombox)
         self.view.tableView.contextMenuEvent = lambda event: self.mouseRightClick(event)
+        
+    def textChangedCombox(self, text):
+        print(text)
         
     def mouseRightClick(self, event):
         id_item = self.view.tableView.selectedItems()[0].text()
@@ -48,6 +70,23 @@ class StudentPresenter:
 
         menu.exec(QPoint(cur_x, cur_y), aniType=MenuAnimationType.FADE_IN_DROP_DOWN)
         
+    def fetchData(self):
+        data = self.model.fetch_items_by_id(self.promotion.id)
+        self.view.tableView.setData(self.formatDataForTable(data))
+        
+    def formatDataForTable(self, data):
+        listStudent = []
+        for student in data:
+            listStudent.append([
+                student.id, student.matricule, student.level, student.lastname,
+                student.firstname, student.gender
+            ])
+        return listStudent
+        
+    def searchStudent(self, text):
+        data = self.model.search_with_id(self.promotion.id, matricule=text, firstname=text)
+        self.view.tableView.setData(self.formatDataForTable(data))
+    
     def importData(self):
         filename = self.func.importFile(self.view, "Importer base de données", "CSV File (*.csv)")
         if filename:
@@ -73,23 +112,6 @@ class StudentPresenter:
                 self.model.create_multiple(listStudent)
                 self.fetchData()
                 
-    def fetchData(self):
-        data = self.model.fetch_items_by_id(self.promotion.id)
-        self.view.tableView.setData(self.formatDataForTable(data))
-        
-    def formatDataForTable(self, data):
-        listStudent = []
-        for student in data:
-            listStudent.append([
-                student.id, student.matricule, student.level, student.lastname,
-                student.firstname, student.gender
-            ])
-        return listStudent
-        
-    def searchStudent(self, text):
-        data = self.model.search_with_id(self.promotion.id, matricule=text, firstname=text)
-        self.view.tableView.setData(self.formatDataForTable(data))
-        
 class MenuAction:
     
     def __init__(self,presenter) -> None:

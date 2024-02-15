@@ -29,6 +29,7 @@ class Model:
         cursor.execute(query)
         self.conn.commit()
 
+
     def fetch_all_items(self, **kwargs):
         query = f'SELECT * FROM {self.TABLE}'
         if "order" in kwargs.keys():
@@ -47,10 +48,15 @@ class Model:
             listItems.append(nVal)
         return listItems
     
-    def fetch_items_by_id(self, id_item):
+    def fetch_items_by_id(self, id_item,**kwargs):
         id_col = dataclasses.fields(self.entity)[1].name
+        sql = f'SELECT * FROM {self.TABLE} WHERE {id_col} = "{id_item}"'
+        if "order" in kwargs.keys():
+            sql += f' ORDER BY {kwargs.get('order')}'
+        if "group_by" in kwargs.keys():
+            sql += f' GROUP BY {kwargs.get('group_by')}'
         cursor = self.conn.cursor()
-        cursor.execute(f'SELECT * FROM {self.TABLE} WHERE {id_col} = "{id_item}"')
+        cursor.execute(sql)
         data = cursor.fetchall()
         listItems = []
         listItems.clear()

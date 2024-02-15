@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import Qt
-from qfluentwidgets import TitleLabel, CommandBar, FluentIcon, Action, \
-    TransparentDropDownPushButton, setFont, RoundMenu, SearchLineEdit
+from qfluentwidgets import ComboBox, CommandBar, FluentIcon, Action, \
+    ToggleToolButton, setFont, RoundMenu, SearchLineEdit
 from ...components import TableView
 from ...common.config import OptionsConfigItem
 
@@ -11,6 +11,7 @@ class ListStudent(QWidget):
         super().__init__(parent=parent)
         self.vBoxLayout = QVBoxLayout(self)
         self.hBoxLayout = QHBoxLayout()
+        self.hBoxLayout.setContentsMargins(5, 0, 12, 0)
         self.parent = parent
         self.__initCommandBar()
         self.__initTableView(parent)
@@ -33,10 +34,23 @@ class ListStudent(QWidget):
         
         self.searchLineEdit = SearchLineEdit(self)
         self.searchLineEdit.setPlaceholderText("Recherche")
-        self.searchLineEdit.setFixedWidth(300)
+        self.searchLineEdit.setFixedWidth(200)
+        
+        self.comboBoxCompany = ComboBox(self)
+        self.comboBoxCompany.setFixedWidth(150)
+        
+        self.comboBoxSection = ComboBox(self)
+        self.comboBoxSection.setFixedWidth(150)
+
+        # toggle tool button
+        self.toggleSelection = ToggleToolButton(FluentIcon.FILTER, self)
+        #self.toggleSelection.toggled.connect(self.setSelection)
         
         self.hBoxLayout.addWidget(self.commandBar)
         self.hBoxLayout.addWidget(self.searchLineEdit)
+        self.hBoxLayout.addWidget(self.comboBoxCompany)
+        self.hBoxLayout.addWidget(self.comboBoxSection)
+        self.hBoxLayout.addWidget(self.toggleSelection)
         self.vBoxLayout.addLayout(self.hBoxLayout)
         
     def __initTableView(self, parent):
