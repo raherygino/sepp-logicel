@@ -80,6 +80,25 @@ class Model:
                 nVal.set(field.name, val[i])
             listItems.append(nVal)
         return listItems
+    
+    def search(self, **kwargs):
+        
+        sql = f'SELECT * FROM {self.TABLE} WHERE '
+        condition = ' OR '.join([f'{key} LIKE "%{kwargs.get(key)}%"' for key in kwargs.keys()])
+        sql += condition
+        cursor = self.conn.cursor()
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        listItems = []
+        listItems.clear()
+
+        for val in data:
+            nVal = self.entity.copy()
+            fieldsEntity = dataclasses.fields(nVal)
+            for i, field in enumerate(fieldsEntity):
+                nVal.set(field.name, val[i])
+            listItems.append(nVal)
+        return listItems
 
     def fetch_item_by_id(self, id_item):
         id_col = dataclasses.fields(self.entity)[0].name
@@ -105,6 +124,17 @@ class Model:
         sql = f"INSERT INTO {self.TABLE}({fields}) VALUES ({qm})"
         cursor = self.conn.cursor()
         cursor.execute(sql, values)
+        self.conn.commit()
+    
+    def create_multiple(self, listData: list):
+        cursor = self.conn.cursor()
+        for entity in listData:
+            fieldsEntity = dataclasses.fields(entity)
+            qm = ','.join([f'?' for field in fieldsEntity[1:]])
+            values = [f'{entity.get(field.name)}' for field in fieldsEntity[1:]]
+            fields = ','.join([f'{field.name}' for field in fieldsEntity[1:]])
+            sql = f"INSERT INTO {self.TABLE}({fields}) VALUES ({qm})"
+            cursor.execute(sql, values)
         self.conn.commit()
 
     def update_item(self, item_id, **fields):
