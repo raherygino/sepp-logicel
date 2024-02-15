@@ -9,12 +9,12 @@ __pycache__/
 *.db
 
 # Distribution / packaging
+.app/config/config.json
 .Python
 build/
 develop-eggs/
 dist/
 docs/
-config/
 downloads/
 download/
 eggs/
