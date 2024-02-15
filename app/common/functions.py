@@ -1,6 +1,6 @@
 import os
 
-from PyQt5.QtCore import QFile, QIODevice
+from PyQt5.QtCore import QFile, QIODevice, Qt
 from PyQt5.QtWidgets import QFileDialog
 from ..models.db.database import Database
 from ..models.model.config_model import ConfigModel
@@ -9,6 +9,7 @@ from ..common.config import cfg
 from pathlib import Path
 import shutil
 from datetime import datetime
+from qfluentwidgets import InfoBar, InfoBarPosition
 
 class Function:
     USER_DIR = os.path.expanduser('~')
@@ -110,3 +111,17 @@ class Function:
     def randomName(self) -> str:
         currentTime = datetime.now().time()
         return str(currentTime).replace(":", "").replace(".", "")
+    
+    
+    def toastSuccess(self, title:str, content:str, parent):
+        
+        InfoBar.success(
+            title=title,
+            content=content,
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.TOP,
+            # position='Custom',   # NOTE: use custom info bar manager
+            duration=2000,
+            parent=parent
+        )
