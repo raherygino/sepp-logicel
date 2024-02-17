@@ -105,7 +105,7 @@ class StudentPresenter:
         menu.exec(QPoint(cur_x, cur_y), aniType=MenuAnimationType.FADE_IN_DROP_DOWN)
         
     def fetchData(self):
-        data = self.model.fetch_items_by_id(self.promotion.id)
+        data = self.model.fetch_items_by_id(self.promotion.id, order="matricule ASC")
         self.view.tableView.setData(self.formatDataForTable(data))
         
     def formatDataForTable(self, data):
@@ -172,12 +172,15 @@ class MenuAction:
         dialog.cancelButton.setText("Non")
         if dialog.exec():
             self.model.delete_by(promotion_id=self.presenter.promotion.id, matricule=matricule)
-            text = self.view.searchLineEdit.text()
-            if len(text) != 0:
-                self.presenter.searchStudent(text)
-            else:
-                self.presenter.fetchData()
+            self.fetchData()
             self.presenter.func.toastSuccess("Supprimé", "Suppression avec réussite", self.view.parent)
+            
+    def fetchData(self):
+        text = self.view.searchLineEdit.text()
+        if len(text) != 0:
+            self.presenter.searchStudent(text)
+        else:
+            self.presenter.fetchData()
             
     def update(self, matricule):
         oldStudent = self.model.fetch_item_by_cols(promotion_id=self.presenter.promotion.id, matricule=matricule)
@@ -203,5 +206,6 @@ class MenuAction:
                               company=student.company,
                               section=student.section,
                               number=student.number)
+            self.fetchData()
             self.presenter.func.toastSuccess("Mise à jour", "Mise à jour d'élève avec réussite!", self.view.parent)
        
