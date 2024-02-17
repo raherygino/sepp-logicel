@@ -1,6 +1,7 @@
 from typing import Iterable
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView
 from PyQt5 import QtWidgets
+from PyQt5.QtGui import QColor
 from ..common.config import cfg
 import darkdetect
 
@@ -18,10 +19,13 @@ class TableView(QTableWidget):
     
     def setQss(self, newTheme: str):
         theme = newTheme.lower()
+        color = QColor()
+        #print(color.
+        themeColor = f'rgba{str(cfg.get(cfg.themeColor).getRgb())}'
         if theme == "auto":
             theme = "light" if darkdetect.isLight() else "dark"
         with open(f'app/resource/{theme}.qss', encoding='utf-8') as f:
-            self.setStyleSheet(f.read())
+            self.setStyleSheet(f.read().replace("#327bcc", themeColor))
     
     def setHorizontalHeaderLabels(self, labels: Iterable[str | None]) -> None:
         self.setColumnCount(len(labels))

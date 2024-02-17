@@ -10,7 +10,7 @@ QTableWidget::item{
 	gridline-color: #9faeda;
 }
 QTableWidget::item:selected{
-	background-color: #074c98;
+	background-color: #327bcc;
     color: #f8f8f2;
 }
 QHeaderView::section{
@@ -27,9 +27,9 @@ QTableWidget::horizontalHeader {
 QHeaderView::section:horizontal	
 {
     border: 0.5px solid #454545;
-	background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(7, 76, 152, 255), stop:1 rgba(35, 109, 192, 255));
+	background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(200, 200, 200, 255), stop:1 rgba(215, 215, 215, 255));
 	padding: 3px;
-    color: #f8f8f2;
+    color: #454545;
 }
 QHeaderView::section:vertical
 {

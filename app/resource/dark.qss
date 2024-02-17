@@ -28,7 +28,7 @@ QTableWidget::horizontalHeader {
 QHeaderView::section:horizontal	
 {
     border: 0.5px solid #f4f4f4;
-	background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(7, 76, 152, 255), stop:1 rgba(35, 109, 192, 255));
+	background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(30, 30, 30, 255), stop:1 rgba(45, 45, 45, 255));
 	padding: 3px;
     color: #f8f8f2;
 }
