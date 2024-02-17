@@ -7,6 +7,7 @@ from ..common import Function
 from ..components import Dialog
 from ..view.students.list_student_tab import ListStudent
 from ..view.students.new_student_dialog import NewStudentDialog
+from ..view.students.show_student_dialog import ShowStudentDialog
 
 class StudentPresenter:
     
@@ -89,7 +90,7 @@ class StudentPresenter:
         matricule_item = self.view.tableView.selectedItems()[0].text()
         action = MenuAction(self)
         menu = RoundMenu(parent=self.view)
-        menu.addAction(Action(FluentIcon.FOLDER, 'Voir', triggered = action.add))
+        menu.addAction(Action(FluentIcon.FOLDER, 'Voir', triggered = lambda:action.show(matricule_item)))
         menu.addAction(Action(FluentIcon.EDIT, 'Modifier', triggered = lambda: action.update(matricule_item)))
         menu.addSeparator()
         menu.addAction(Action(FluentIcon.SCROLL, 'Mouvement'))
@@ -162,8 +163,8 @@ class MenuAction:
         self.view = presenter.view
         self.presenter = presenter
         
-    def add(self):
-        dialog = NewStudentDialog( self.view)
+    def show(self, matricule):
+        dialog = ShowStudentDialog(self.view)
         dialog.show()
         
     def delete(self, matricule):
