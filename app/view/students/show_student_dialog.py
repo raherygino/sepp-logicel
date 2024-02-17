@@ -25,7 +25,7 @@ class ShowStudentDialog(MessageBoxBase):
         self.label.setAlignment(Qt.AlignCenter)
         
         self.table = TableView(self)
-        self.table.setHorizontalHeaderLabels(["Date", "Mouvement", "Nombre"])
+        self.table.setHorizontalHeaderLabels(["Date", "Mouvement", "Nombre de jour"])
         self.vBoxLayout.addWidget(self.table)
         
         self.viewLayout.addLayout(self.vBoxLayout)

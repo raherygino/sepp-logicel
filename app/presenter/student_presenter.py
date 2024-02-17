@@ -170,9 +170,18 @@ class MenuAction:
        
     def show(self, matricule):
         student = self.dataStudent(matricule)
-        data = f'{student.level} {student.matricule}\n{student.lastname} {student.firstname}'
+        dataStudent = f'{student.level} {student.matricule}\n{student.lastname} {student.firstname}'
+        mouvements = self.presenter.modelMove.fetch_items_by_id(student.id)
+        dataMouvements = []
+        for mouvement in mouvements:
+            dataMouvements.append([
+                mouvement.date,
+                f'{mouvement.type} {mouvement.subType}',
+                mouvement.day
+            ])
         dialog = ShowStudentDialog(self.view)
-        dialog.label.setText(data)
+        dialog.table.setData(dataMouvements)
+        dialog.label.setText(dataStudent)
         dialog.show()
         
     def mouvement(self, matricule):
@@ -181,6 +190,7 @@ class MenuAction:
         dialog.subTitle.setText(f'{student.level} {student.lastname} {student.firstname}')
         if dialog.exec():
             mouvement = Mouvement(
+                0,
                 student.id,
                 dialog.typeEdit.combox.text(),
                 dialog.subTypeEdit.combox.text(),
@@ -188,7 +198,7 @@ class MenuAction:
                 dialog.dayMove.text())
             self.presenter.modelMove.create(mouvement)
             self.presenter.func.toastSuccess("Succès", "Ajout de mouvement de avec réussite", self.view.parent)
-            
+            self.fetchData()
          
     def delete(self, matricule):
         dialog = MessageBox(f"Supprimer", "Vous êtes sûr de vouloir supprimer?", self.view.parent.mainWindow)

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Mouvement(Entity):
-
+    id: int = 0
     idStudent: str = None
     type: str = None
     subType: str = None
