@@ -2,7 +2,7 @@ from qfluentwidgets import RoundMenu, Action, FluentIcon, MenuAnimationType, Mes
 from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import QPoint
 from PyQt5.QtWidgets import QLineEdit
-from ..models import StudentModel, Student 
+from ..models import StudentModel, Student, MouvementModel, Mouvement
 from ..common import Function
 from ..components import Dialog
 from ..view.students.list_student_tab import ListStudent
@@ -22,6 +22,7 @@ class StudentPresenter:
     def __init__(self, view:ListStudent, model: StudentModel, promotion):
         self.view = view
         self.model = model
+        self.modelMove = MouvementModel()
         self.promotion = promotion
         self.func = Function()
         self.view.tableView.setHorizontalHeaderLabels(self.HEADER_LABEL)
@@ -178,8 +179,17 @@ class MenuAction:
         student = self.dataStudent(matricule)
         dialog = NewMouvementDialog(self.view.parent)
         dialog.subTitle.setText(f'{student.level} {student.lastname} {student.firstname}')
-        dialog.show()
-        
+        if dialog.exec():
+            mouvement = Mouvement(
+                student.id,
+                dialog.typeEdit.combox.text(),
+                dialog.subTypeEdit.combox.text(),
+                dialog.dateEdit.date.text(),
+                dialog.dayMove.text())
+            self.presenter.modelMove.create(mouvement)
+            self.presenter.func.toastSuccess("Succès", "Ajout de mouvement de avec réussite", self.view.parent)
+            
+         
     def delete(self, matricule):
         dialog = MessageBox(f"Supprimer", "Vous êtes sûr de vouloir supprimer?", self.view.parent.mainWindow)
         dialog.yesButton.setText("Oui")
