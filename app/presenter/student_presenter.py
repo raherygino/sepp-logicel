@@ -8,6 +8,7 @@ from ..components import Dialog
 from ..view.students.list_student_tab import ListStudent
 from ..view.students.new_student_dialog import NewStudentDialog
 from ..view.students.show_student_dialog import ShowStudentDialog
+from ..view.students.new_movement_dialog import NewMouvementDialog
 
 class StudentPresenter:
     
@@ -93,7 +94,7 @@ class StudentPresenter:
         menu.addAction(Action(FluentIcon.FOLDER, 'Voir', triggered = lambda:action.show(matricule_item)))
         menu.addAction(Action(FluentIcon.EDIT, 'Modifier', triggered = lambda: action.update(matricule_item)))
         menu.addSeparator()
-        menu.addAction(Action(FluentIcon.SCROLL, 'Mouvement'))
+        menu.addAction(Action(FluentIcon.SCROLL, 'Mouvement', triggered = lambda: action.mouvement(matricule_item)))
         menu.addSeparator()
         menu.addAction(Action(FluentIcon.DELETE, 'Supprimer', triggered = lambda: action.delete(matricule_item)))
         menu.menuActions()[-2].setCheckable(True)
@@ -119,7 +120,7 @@ class StudentPresenter:
         return listStudent
         
     def searchStudent(self, text):
-        data = self.model.search_with_id(self.promotion.id, matricule=text, firstname=text)
+        data = self.model.search_with_id(self.promotion.id, matricule=text, firstname=text, lastname=text)
         self.view.tableView.setData(self.formatDataForTable(data))
     
     def importData(self):
@@ -163,11 +164,20 @@ class MenuAction:
         self.view = presenter.view
         self.presenter = presenter
         
+    def dataStudent(self, matricule):
+        return self.model.fetch_item_by_cols(promotion_id=self.presenter.promotion.id, matricule=matricule)
+       
     def show(self, matricule):
-        student = self.model.fetch_item_by_cols(promotion_id=self.presenter.promotion.id, matricule=matricule)
+        student = self.dataStudent(matricule)
         data = f'{student.level} {student.matricule}\n{student.lastname} {student.firstname}'
         dialog = ShowStudentDialog(self.view)
         dialog.label.setText(data)
+        dialog.show()
+        
+    def mouvement(self, matricule):
+        student = self.dataStudent(matricule)
+        dialog = NewMouvementDialog(self.view.parent)
+        dialog.subTitle.setText(f'{student.level} {student.lastname} {student.firstname}')
         dialog.show()
         
     def delete(self, matricule):
