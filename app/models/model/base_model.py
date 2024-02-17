@@ -106,13 +106,22 @@ class Model:
             listItems.append(nVal)
         return listItems
     
+    def count_by(self,**kwargs):
+        count = 0
+        if len(kwargs) != 0:
+            key = ''.join([f'{key}' for key in kwargs])
+            sql = f'SELECT * FROM {self.TABLE} WHERE {key} = "{kwargs.get(key)}"'
+            cursor = self.conn.cursor()
+            cursor.execute(sql)
+            count = len(cursor.fetchall())
+        return count
+            
     def search_with_id(self, id, **kwargs):
 
         id_col = dataclasses.fields(self.entity)[1].name
         sql = f'SELECT * FROM {self.TABLE} WHERE '
         condition = ' OR '.join([f'({id_col} = "{id}" AND {key} LIKE "%{kwargs.get(key)}%")' for key in kwargs.keys()])
         sql += condition
-        #print(sql)
         cursor = self.conn.cursor()
         cursor.execute(sql)
         data = cursor.fetchall()
@@ -184,6 +193,15 @@ class Model:
         id_col = dataclasses.fields(self.entity)[0].name
         cursor = self.conn.cursor()
         cursor.execute(f'DELETE FROM {self.TABLE} WHERE {id_col}=?', (item_id,))
+        self.conn.commit()
+
+    def delete_by(self,**kwargs):
+        
+        sql = f'DELETE FROM {self.TABLE} WHERE '
+        conditions = ' AND '.join([f'{key}="{kwargs.get(key)}"' for key in kwargs.keys()])
+        sql += conditions
+        cursor = self.conn.cursor()
+        cursor.execute(sql)
         self.conn.commit()
 
     def delete_with_cond(self, **kwargs):

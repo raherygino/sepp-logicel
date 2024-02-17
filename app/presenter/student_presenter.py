@@ -1,13 +1,16 @@
-from qfluentwidgets import RoundMenu, Action, FluentIcon, MenuAnimationType, MessageBox
+from qfluentwidgets import RoundMenu, Action, FluentIcon, MenuAnimationType, MessageBox, MessageDialog
 from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import QPoint
+from PyQt5.QtWidgets import QLineEdit
 from ..models import StudentModel, Student 
 from ..common import Function
+from ..components import Dialog
 from ..view.students.list_student_tab import ListStudent
+from ..view.students.new_student_dialog import NewStudentDialog
 
 class StudentPresenter:
     
-    HEADER_LABEL = ["ID", "Matricule", "Grade", "Nom", "Prénom(s)", "Genre",
+    HEADER_LABEL = ["Matricule", "Grade", "Nom", "Prénom(s)", "Genre",
                     "Repos médical ou convalescence (Jour)", "Exant d'effort physique (Jour)",
                     "Permission (Jour)", "CODIS (Fois)", "Bomelenge (Fois)", 
                     "Autre Sanction disciplinaire (fois)",
@@ -41,26 +44,52 @@ class StudentPresenter:
         combox.setCurrentIndex(0)
         
     def actions(self):
-        self.view.addAction.triggered.connect(lambda: print("ok"))
+        self.view.addAction.triggered.connect(lambda: self.addStudent())
         self.view.importAction.triggered.connect(lambda: self.importData())
         self.view.searchLineEdit.textChanged.connect(self.searchStudent)
         self.view.comboBoxCompany.currentTextChanged.connect(self.textChangedCombox)
         self.view.comboBoxSection.currentTextChanged.connect(self.textChangedCombox)
         self.view.tableView.contextMenuEvent = lambda event: self.mouseRightClick(event)
+    
+    def addStudent(self):
+        dialog = NewStudentDialog(self.view.parent)
+        if dialog.exec():
+            lastname = dialog.lastnameEdit.lineEdit(0).text()
+            firstname = dialog.firstnameEdit.lineEdit(0).text()
+            matricule = dialog.matriculeEdit.lineEdit(0).text()
+            level = dialog.gradeEdit.value()
+            gender = dialog.genderEdit.value()
+            student= Student(
+                promotion_id=self.promotion.id,
+                lastname=lastname,
+                firstname=firstname,
+                gender=gender,
+                level=level,
+                matricule=matricule,
+                company=matricule[0],
+                section=matricule[1],
+                number=matricule[2:4])
+            
+            if self.model.count_by(matricule=matricule) == 0:
+                self.model.create(student)
+                self.fetchData()
+            else:
+                self.func.errorSuccess("Matricule invalide", "Matricule exist déjà", self.view.parent)
+                
         
     def textChangedCombox(self, text):
         print(text)
         
     def mouseRightClick(self, event):
-        id_item = self.view.tableView.selectedItems()[0].text()
+        matricule_item = self.view.tableView.selectedItems()[0].text()
         action = MenuAction(self)
         menu = RoundMenu(parent=self.view)
-        menu.addAction(Action(FluentIcon.FOLDER, 'Voir'))
+        menu.addAction(Action(FluentIcon.FOLDER, 'Voir', triggered = action.add))
         menu.addAction(Action(FluentIcon.EDIT, 'Modifier'))
         menu.addSeparator()
         menu.addAction(Action(FluentIcon.SCROLL, 'Mouvement'))
         menu.addSeparator()
-        menu.addAction(Action(FluentIcon.DELETE, 'Supprimer', triggered = lambda: action.delete(id_item)))
+        menu.addAction(Action(FluentIcon.DELETE, 'Supprimer', triggered = lambda: action.delete(matricule_item)))
         menu.menuActions()[-2].setCheckable(True)
         menu.menuActions()[-2].setChecked(True)
 
@@ -78,7 +107,7 @@ class StudentPresenter:
         listStudent = []
         for student in data:
             listStudent.append([
-                student.id, student.matricule, student.level, student.lastname,
+                student.matricule, student.level, student.lastname,
                 student.firstname, student.gender
             ])
         return listStudent
@@ -95,15 +124,24 @@ class StudentPresenter:
                 for line in data:
                     items = line.strip().split(";")
                     matricule = items[0]
-                    name = items[1].split(" ")
+                    level = items[1]
+                    '''FOR PROMOTION SANDRATRA
+                    level = "EAP"
+                    if matricule.find("11") == 0 or \
+                        matricule.find("12") == 0 or \
+                        matricule.find("21") == 0 or \
+                        matricule.find("31") == 0:
+                        level = "EIP" '''
+                    name = items[2].split(" ")
                     lastname = name[0]
                     firstname = ' '.join([val for val in name[1:]]) if len(name) > 1 else ""
-                    genre = items[2]
+                    genre = items[3]
                     listStudent.append(Student(
                         promotion_id=self.promotion.id,
                         lastname=lastname,
                         firstname=firstname,
                         gender=genre,
+                        level=level,
                         matricule=matricule,
                         company=matricule[0],
                         section=matricule[1],
@@ -119,12 +157,16 @@ class MenuAction:
         self.view = presenter.view
         self.presenter = presenter
         
-    def delete(self, id):
-        dialog = MessageBox("Supprimer", "Vous êtes sûr de vouloir supprimer?", self.view.parent.mainWindow)
+    def add(self):
+        dialog = NewStudentDialog( self.view)
+        dialog.show()
+        
+    def delete(self, matricule):
+        dialog = MessageBox(f"Supprimer", "Vous êtes sûr de vouloir supprimer?", self.view.parent.mainWindow)
         dialog.yesButton.setText("Oui")
         dialog.cancelButton.setText("Non")
         if dialog.exec():
-            self.model.delete_item(id)
+            self.model.delete_by(promotion_id=self.presenter.promotion.id, matricule=matricule)
             text = self.view.searchLineEdit.text()
             if len(text) != 0:
                 self.presenter.searchStudent(text)
