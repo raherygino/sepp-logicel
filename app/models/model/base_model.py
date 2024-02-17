@@ -152,6 +152,23 @@ class Model:
             listItems.append(nVal)
         return listItems[0] if len(listItems) != 0 else None
 
+    def fetch_item_by_cols(self, **kwargs):
+        cursor = self.conn.cursor()
+        sql = f'SELECT * FROM {self.TABLE} WHERE '
+        sql += ' AND '.join([f'{key}="{kwargs.get(key)}"' for key in kwargs.keys()])
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        listItems = []
+        listItems.clear()
+
+        for val in data:
+            nVal = self.entity.copy()
+            fieldsEntity = dataclasses.fields(nVal)
+            for i, field in enumerate(fieldsEntity):
+                nVal.set(field.name, val[i])
+            listItems.append(nVal)
+        return listItems[0] if len(listItems) != 0 else None
+
     def create(self, entity: Entity):
         fieldsEntity = dataclasses.fields(entity)
         qm = ','.join([f'?' for field in fieldsEntity[1:]])

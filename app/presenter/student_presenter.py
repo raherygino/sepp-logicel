@@ -50,27 +50,32 @@ class StudentPresenter:
         self.view.comboBoxCompany.currentTextChanged.connect(self.textChangedCombox)
         self.view.comboBoxSection.currentTextChanged.connect(self.textChangedCombox)
         self.view.tableView.contextMenuEvent = lambda event: self.mouseRightClick(event)
+        
+    def dataStudentFromDialog(self, dialog):
+        lastname = dialog.lastnameEdit.lineEdit(0).text()
+        firstname = dialog.firstnameEdit.lineEdit(0).text()
+        matricule = dialog.matriculeEdit.lineEdit(0).text()
+        level = dialog.gradeEdit.value()
+        gender = dialog.genderEdit.value()
+        return Student(
+            promotion_id=self.promotion.id,
+            lastname=lastname,
+            firstname=firstname,
+            gender=gender,
+            level=level,
+            matricule=matricule,
+            company=matricule[0],
+            section=matricule[1],
+            number=matricule[2:4]
+        )
+            
+        
     
     def addStudent(self):
         dialog = NewStudentDialog(self.view.parent)
         if dialog.exec():
-            lastname = dialog.lastnameEdit.lineEdit(0).text()
-            firstname = dialog.firstnameEdit.lineEdit(0).text()
-            matricule = dialog.matriculeEdit.lineEdit(0).text()
-            level = dialog.gradeEdit.value()
-            gender = dialog.genderEdit.value()
-            student= Student(
-                promotion_id=self.promotion.id,
-                lastname=lastname,
-                firstname=firstname,
-                gender=gender,
-                level=level,
-                matricule=matricule,
-                company=matricule[0],
-                section=matricule[1],
-                number=matricule[2:4])
-            
-            if self.model.count_by(matricule=matricule) == 0:
+            student = self.dataStudentFromDialog(dialog)
+            if self.model.count_by(matricule=student.matricule) == 0:
                 self.model.create(student)
                 self.fetchData()
             else:
@@ -85,7 +90,7 @@ class StudentPresenter:
         action = MenuAction(self)
         menu = RoundMenu(parent=self.view)
         menu.addAction(Action(FluentIcon.FOLDER, 'Voir', triggered = action.add))
-        menu.addAction(Action(FluentIcon.EDIT, 'Modifier'))
+        menu.addAction(Action(FluentIcon.EDIT, 'Modifier', triggered = lambda: action.update(matricule_item)))
         menu.addSeparator()
         menu.addAction(Action(FluentIcon.SCROLL, 'Mouvement'))
         menu.addSeparator()
@@ -152,7 +157,7 @@ class StudentPresenter:
                 
 class MenuAction:
     
-    def __init__(self,presenter) -> None:
+    def __init__(self,presenter:Student) -> None:
         self.model = presenter.model
         self.view = presenter.view
         self.presenter = presenter
@@ -173,4 +178,30 @@ class MenuAction:
             else:
                 self.presenter.fetchData()
             self.presenter.func.toastSuccess("Supprimé", "Suppression avec réussite", self.view.parent)
+            
+    def update(self, matricule):
+        oldStudent = self.model.fetch_item_by_cols(promotion_id=self.presenter.promotion.id, matricule=matricule)
+        dialog = NewStudentDialog(self.view.parent)
+        dialog.lastnameEdit.lineEdit(0).setText(oldStudent.lastname)
+        dialog.firstnameEdit.lineEdit(0).setText(oldStudent.firstname)
+        dialog.matriculeEdit.lineEdit(0).setText(str(oldStudent.matricule))
+        if oldStudent.gender == "F":
+            dialog.genderEdit.combox.setCurrentIndex(1)
+        if oldStudent.level == "EAP":
+            dialog.gradeEdit.combox.setCurrentIndex(1)
+            
+        dialog.yesButton.setEnabled(True)
+        dialog.yesButton.setText("Mettre à jour")
+        if dialog.exec():
+            student = self.presenter.dataStudentFromDialog(dialog)
+            self.model.update_item(oldStudent.id, 
+                              lastname=student.lastname, 
+                              firstname=student.firstname,
+                              gender=student.gender,
+                              level=student.level,
+                              matricule=student.matricule,
+                              company=student.company,
+                              section=student.section,
+                              number=student.number)
+            self.presenter.func.toastSuccess("Mise à jour", "Mise à jour d'élève avec réussite!", self.view.parent)
        
