@@ -109,9 +109,10 @@ class Model:
     def search_with_id(self, id, **kwargs):
 
         id_col = dataclasses.fields(self.entity)[1].name
-        sql = f'SELECT * FROM {self.TABLE} WHERE {id_col} = "{id}" AND '
-        condition = ' OR '.join([f'{key} LIKE "%{kwargs.get(key)}%"' for key in kwargs.keys()])
+        sql = f'SELECT * FROM {self.TABLE} WHERE '
+        condition = ' OR '.join([f'({id_col} = "{id}" AND {key} LIKE "%{kwargs.get(key)}%")' for key in kwargs.keys()])
         sql += condition
+        #print(sql)
         cursor = self.conn.cursor()
         cursor.execute(sql)
         data = cursor.fetchall()
