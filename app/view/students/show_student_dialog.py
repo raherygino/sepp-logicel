@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout
 from PyQt5.QtCore import QSize, Qt
-from qfluentwidgets import MessageBoxBase, SubtitleLabel, ImageLabel, setTheme, Theme, BodyLabel
+from qfluentwidgets import MessageBoxBase, SubtitleLabel, ImageLabel,PrimaryPushButton, PushButton, FluentIcon, BodyLabel
 from ...components import TableView
 
 class ShowStudentDialog(MessageBoxBase):
@@ -26,16 +26,24 @@ class ShowStudentDialog(MessageBoxBase):
         
         self.table = TableView(self)
         self.table.setHorizontalHeaderLabels(["Date", "Mouvement", "Nombre"])
-        self.table.setData([["12/02/2024", "Permission", "12jours"]])
         self.vBoxLayout.addWidget(self.table)
         
         self.viewLayout.addLayout(self.vBoxLayout)
         self.buttonLayout.setSpacing(8)
-        self.buttonGroup.setFixedHeight(70)
-        self.buttonLayout.setContentsMargins(8, 8, 8, 8)
+        self.buttonGroup.setFixedHeight(50)
+        self.buttonLayout.setContentsMargins(8, 4, 8, 4)
         
-        self.yesButton.setText("Exporter")
-        self.cancelButton.setText("Fermer")
+        self.yesButton.setVisible(False)
+        self.cancelButton.setVisible(False)
+        
+        self.yesButton = PrimaryPushButton('OK', self, FluentIcon.ACCEPT)
+        self.yesButton.clicked.connect(self.accept)
+        self.buttonLayout.addWidget(self.yesButton)
+        
+        self.pushButton2 = PushButton('Exporter', self, FluentIcon.SHARE)
+        self.buttonLayout.addWidget(self.pushButton2)
+        
+        self.buttonLayout.setAlignment(Qt.AlignRight)
         
     def setLabelData(self, label, data, layout):
         title = SubtitleLabel(label, self)

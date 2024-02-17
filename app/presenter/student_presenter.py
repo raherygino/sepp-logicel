@@ -164,7 +164,10 @@ class MenuAction:
         self.presenter = presenter
         
     def show(self, matricule):
+        student = self.model.fetch_item_by_cols(promotion_id=self.presenter.promotion.id, matricule=matricule)
+        data = f'{student.level} {student.matricule}\n{student.lastname} {student.firstname}'
         dialog = ShowStudentDialog(self.view)
+        dialog.label.setText(data)
         dialog.show()
         
     def delete(self, matricule):
