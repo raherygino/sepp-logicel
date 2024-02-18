@@ -246,23 +246,24 @@ class StudentPresenter:
             self.worker_thread.finished.connect(self.worker_thread_finished)
             self.worker_thread.start()
     def mouseRightClick(self, event):
-        matricule_item = self.view.tableView.selectedItems()[0].text()
-        action = MenuAction(self)
-        menu = RoundMenu(parent=self.view)
-        menu.addAction(Action(FluentIcon.FOLDER, 'Voir', triggered = lambda:action.show(matricule_item)))
-        menu.addAction(Action(FluentIcon.EDIT, 'Modifier', triggered = lambda: action.update(matricule_item)))
-        menu.addSeparator()
-        menu.addAction(Action(FluentIcon.SCROLL, 'Mouvement', triggered = lambda: action.mouvement(matricule_item)))
-        menu.addSeparator()
-        menu.addAction(Action(FluentIcon.DELETE, 'Supprimer', triggered = lambda: action.delete(matricule_item)))
-        menu.menuActions()[-2].setCheckable(True)
-        menu.menuActions()[-2].setChecked(True)
+        selectedItems = self.view.tableView.selectedItems()
+        if (len(selectedItems) != 0):
+            matricule_item = self.view.tableView.selectedItems()[0].text()
+            action = MenuAction(self)
+            menu = RoundMenu(parent=self.view)
+            menu.addAction(Action(FluentIcon.FOLDER, 'Voir', triggered = lambda:action.show(matricule_item)))
+            menu.addAction(Action(FluentIcon.EDIT, 'Modifier', triggered = lambda: action.update(matricule_item)))
+            menu.addSeparator()
+            menu.addAction(Action(FluentIcon.SCROLL, 'Mouvement', triggered = lambda: action.mouvement(matricule_item)))
+            menu.addSeparator()
+            menu.addAction(Action(FluentIcon.DELETE, 'Supprimer', triggered = lambda: action.delete(matricule_item)))
+            menu.menuActions()[-2].setCheckable(True)
+            menu.menuActions()[-2].setChecked(True)
 
-        self.posCur = QCursor().pos()
-        cur_x = self.posCur.x()
-        cur_y = self.posCur.y()
-
-        menu.exec(QPoint(cur_x, cur_y), aniType=MenuAnimationType.FADE_IN_DROP_DOWN)
+            self.posCur = QCursor().pos()
+            cur_x = self.posCur.x()
+            cur_y = self.posCur.y()
+            menu.exec(QPoint(cur_x, cur_y), aniType=MenuAnimationType.FADE_IN_DROP_DOWN)
         
     def fetchData(self):
         data = self.model.fetch_items_by_id(self.promotion.id, order="matricule ASC")
@@ -437,6 +438,7 @@ class MenuAction:
                 ])
             
             table.setData(dataMouvements)
+            self.fetchData()
         
     def export_mouvement(self, student, mouvement):
         document = Document()
