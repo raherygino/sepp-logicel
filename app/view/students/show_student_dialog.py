@@ -107,8 +107,8 @@ class ShowStudentDialog(Dialog):
         self.yesButton.clicked.connect(self.accept)
         self.buttonLayout.addWidget(self.yesButton)
         
-        self.pushButton2 = PushButton('Exporter', self, FluentIcon.SHARE)
-        self.buttonLayout.addWidget(self.pushButton2)
+        self.exportButton = PushButton('Exporter', self, FluentIcon.SHARE)
+        self.buttonLayout.addWidget(self.exportButton)
         
         self.buttonLayout.setAlignment(Qt.AlignRight)
         

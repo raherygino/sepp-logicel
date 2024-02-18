@@ -10,6 +10,7 @@ from ..view.students.new_student_dialog import NewStudentDialog
 from ..view.students.show_student_dialog import ShowStudentDialog
 from ..view.students.new_movement_dialog import NewMouvementDialog
 import os
+from docx import Document
 
 class DataThread(QThread):
     update_progress = pyqtSignal(int)
@@ -161,7 +162,7 @@ class StudentPresenter:
         
     def export_data(self):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getSaveFileName(self.view,"Exporter",f"{os.path.expanduser('~')}\Documents","CSV File (*.csv)", options=options)
+        fileName, _ = QFileDialog.getSaveFileName(self.view,"Exporter",f"{os.path.expanduser('~')}","CSV File (*.csv)", options=options)
         self.data.insert(0, self.HEADER_LABEL)
         if fileName:
             content_csv = ""
@@ -401,8 +402,63 @@ class MenuAction:
             dialog.message.setVisible(True)
             dialog.table.setVisible(False)
             
+        dialog.exportButton.clicked.connect(lambda: self.export_mouvement(student, mouvements))    
         dialog.exec()
         
+    def export_mouvement(self, student, mouvement):
+        document = Document()
+        document.add_heading(f'Informations', level=1)
+        pData = f'Nom: {student.lastname}\n'
+        pData += f'Prénoms: {student.firstname}\n'
+        pData += f'Genre: {student.gender}\n'
+        pData += f'Niveau: {student.level}\n'
+        document.add_paragraph(pData)
+        document.add_heading(f'Mouvements', level=1)
+        
+        # get table data -------------
+        items = [[]]
+        items.clear()
+        day = "0"
+        for mouv in mouvement:
+            items.append([mouv.date, f"{mouv.type} {mouv.subType}", mouv.day])
+            if(len(mouv.day) != 0):
+                day +=  "+"+mouv.day
+        valDay = eval(day)
+        if valDay > 0:
+            items.append(["Total", "",str(valDay)])
+
+        if len(items) == 0:
+            document.add_paragraph("Aucun mouvement")
+        else:
+            # add table ------------------
+            table = document.add_table(1, 3)
+            table.style = "Table Grid"
+
+            # populate header row --------
+            heading_cells = table.rows[0].cells
+            heading_cells[0].text = 'Date'
+            heading_cells[1].text = 'Mouvement'
+            heading_cells[2].text = 'Nombre de jour'
+
+            # add a data row for each item
+            for item in items:
+                cells = table.add_row().cells
+                cells[0].text = str(item[0])
+                cells[1].text = item[1]
+                cells[2].text = item[2]
+    
+        # Save the document
+        filename = f"{os.path.expanduser('~')}"
+        fileName = self.dialogSaveFile("Exporter", filename, "Document Word (*.docx)")
+        if fileName:
+            document.save(filename)
+            os.startfile(filename)  
+        
+    def dialogSaveFile(self, title:str, dir:str, typeFile:str):
+        options = QFileDialog.Options()
+        fileName, _ = QFileDialog.getSaveFileName(self.view,title,dir,typeFile, options=options)
+        return fileName    
+    
     def mouvement(self, matricule):
         student = self.dataStudent(matricule)
         dialog = NewMouvementDialog(self.view.parent)
