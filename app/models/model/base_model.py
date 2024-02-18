@@ -121,6 +121,26 @@ class Model:
             listItems.append(nVal)
         return listItems
     
+    def fetch_items_by_col(self, id, **kwargs):
+        id_col = dataclasses.fields(self.entity)[1].name
+        listItems = []
+        if len(kwargs) != 0:
+            cols = ' AND '.join([f'{key}="{kwargs.get(key)}"' for key in kwargs])
+            sql = f'SELECT * FROM {self.TABLE} WHERE {id_col} = "{id}" AND '
+            sql += cols
+            cursor = self.conn.cursor()
+            cursor.execute(sql)
+            data = cursor.fetchall()
+            
+            for val in data:
+                nVal = self.entity.copy()
+                fieldsEntity = dataclasses.fields(nVal)
+                for i, field in enumerate(fieldsEntity):
+                    nVal.set(field.name, val[i])
+                listItems.append(nVal)
+            cursor.close()
+        return listItems
+    
     def search(self, **kwargs):
         
         sql = f'SELECT * FROM {self.TABLE} WHERE '

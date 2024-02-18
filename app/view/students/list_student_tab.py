@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import Qt
 from qfluentwidgets import ComboBox, CommandBar, FluentIcon, Action, \
-    ToggleToolButton, setFont, RoundMenu, SearchLineEdit, IndeterminateProgressBar
+    ToolButton, setFont, RoundMenu, SearchLineEdit, IndeterminateProgressBar
 from ...components import TableView
 from ...common.config import OptionsConfigItem
 
@@ -44,7 +44,7 @@ class ListStudent(QWidget):
         self.comboBoxSection.setFixedWidth(150)
 
         # toggle tool button
-        self.toggleSelection = ToggleToolButton(FluentIcon.FILTER, self)
+        self.toggleSelection = ToolButton(FluentIcon.CANCEL, self)
         #self.toggleSelection.toggled.connect(self.setSelection)
         
         self.hBoxLayout.addWidget(self.commandBar)

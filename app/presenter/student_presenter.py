@@ -112,6 +112,8 @@ class StudentPresenter:
         self.thread.update_progress.connect(print)
         self.thread.finished.connect(lambda: print("ok"))
         self.thread.start()'''
+        self.company = 0
+        self.section = 0
     
     def __init_combox_data(self):
         companyStudents = self.model.fetch_items_by_id(self.promotion.id, group_by="company")
@@ -133,14 +135,21 @@ class StudentPresenter:
         self.view.addAction.triggered.connect(lambda: self.addStudent())
         self.view.importAction.triggered.connect(lambda: self.importData())
         self.view.searchLineEdit.textChanged.connect(self.on_text_changed)
-        self.timer.setInterval(1000)
+        self.timer.setInterval(500)
         self.timer.timeout.connect(self.searchStudent)
         self.view.comboBoxCompany.currentTextChanged.connect(self.textChangedCombox)
         self.view.comboBoxSection.currentTextChanged.connect(self.textChangedCombox)
+        self.view.toggleSelection.clicked.connect(self.reset)
         self.view.tableView.contextMenuEvent = lambda event: self.mouseRightClick(event)
+        
+    def reset(self):
+        self.view.comboBoxCompany.setCurrentIndex(0)
+        self.view.comboBoxSection.setCurrentIndex(0)
+        self.view.searchLineEdit.setText("")
         
     def on_text_changed(self):
         # Restart the timer whenever text is changed
+        self.view.progressBar.setVisible(True)
         self.timer.start()
         
     def dataStudentFromDialog(self, dialog):
@@ -174,9 +183,38 @@ class StudentPresenter:
                 self.func.errorSuccess("Matricule invalide", "Matricule exist déjà", self.view.parent)
                 
         
-    def textChangedCombox(self, text):
-        print(text)
-        
+    def textChangedCombox(self, text:str):
+        label_company = "compagnie"
+        label_section = "section"
+        if text.lower() != label_company and text.lower() != label_section:
+            findLabel = text.split(" ")[1]
+            value = text[0:text.find("è")]
+            if findLabel.lower() == label_company:
+                self.company = value
+            else:
+                self.section = value
+        else:
+            if text.lower() == label_company:
+                self.company = 0
+            else:
+                self.section = 0
+        query = {}
+        if self.company != 0 and self.section != 0:
+            query = {"section":self.section, "company":self.company}
+        else:
+            if self.company == 0:
+                query = {"section":self.section}
+            if self.section == 0:
+                query = {"company": self.company}
+                  
+        if self.section == 0 and self.company == 0:
+            self.fetchData()
+        else:
+            data = self.model.fetch_items_by_col(self.promotion.id, **query)
+            self.worker_thread = DataThread(data, self.modelMove)
+            self.worker_thread.update_progress.connect(self.update_progress_bar)
+            self.worker_thread.finished.connect(self.worker_thread_finished)
+            self.worker_thread.start()
     def mouseRightClick(self, event):
         matricule_item = self.view.tableView.selectedItems()[0].text()
         action = MenuAction(self)
