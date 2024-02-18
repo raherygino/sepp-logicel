@@ -1,6 +1,6 @@
 from qfluentwidgets import RoundMenu, Action, FluentIcon, MenuAnimationType, MessageBox, Dialog
 from PyQt5.QtGui import QCursor
-from PyQt5.QtCore import QPoint, QThread, pyqtSignal
+from PyQt5.QtCore import QPoint, QThread, pyqtSignal, QTimer
 from PyQt5.QtWidgets import QLineEdit
 from ..models import StudentModel, Student, MouvementModel, Mouvement
 from ..common import Function
@@ -102,6 +102,7 @@ class StudentPresenter:
         self.model = model
         self.modelMove = MouvementModel()
         self.promotion = promotion
+        self.timer = QTimer()
         self.func = Function()
         self.view.tableView.setHorizontalHeaderLabels(self.HEADER_LABEL)
         self.__init_combox_data()
@@ -131,10 +132,16 @@ class StudentPresenter:
     def actions(self):
         self.view.addAction.triggered.connect(lambda: self.addStudent())
         self.view.importAction.triggered.connect(lambda: self.importData())
-        self.view.searchLineEdit.textChanged.connect(self.searchStudent)
+        self.view.searchLineEdit.textChanged.connect(self.on_text_changed)
+        self.timer.setInterval(1000)
+        self.timer.timeout.connect(self.searchStudent)
         self.view.comboBoxCompany.currentTextChanged.connect(self.textChangedCombox)
         self.view.comboBoxSection.currentTextChanged.connect(self.textChangedCombox)
         self.view.tableView.contextMenuEvent = lambda event: self.mouseRightClick(event)
+        
+    def on_text_changed(self):
+        # Restart the timer whenever text is changed
+        self.timer.start()
         
     def dataStudentFromDialog(self, dialog):
         lastname = dialog.lastnameEdit.lineEdit(0).text()
@@ -243,13 +250,18 @@ class StudentPresenter:
                 lettreFelVal,remarkPosVal])
         return listStudent
         
-    def searchStudent(self, text):
-        data = self.model.search_with_id(self.promotion.id, matricule=text, firstname=text, lastname=text)
+    def searchStudent(self):
+        text = self.view.searchLineEdit.text()
+        self.timer.stop()
+        if len(text) > 2:
+            data = self.model.search_with_id(self.promotion.id, matricule=text, firstname=text, lastname=text)
         #self.view.tableView.setData(self.formatDataForTable(data))
-        self.worker_thread = DataThread(data, self.modelMove)
-        self.worker_thread.update_progress.connect(self.update_progress_bar)
-        self.worker_thread.finished.connect(self.worker_thread_finished)
-        self.worker_thread.start()
+            self.worker_thread = DataThread(data, self.modelMove)
+            self.worker_thread.update_progress.connect(self.update_progress_bar)
+            self.worker_thread.finished.connect(self.worker_thread_finished)
+            self.worker_thread.start()
+        else:
+            self.fetchData()
     
     def importData(self):
         filename = self.func.importFile(self.view, "Importer base de données", "CSV File (*.csv)")
