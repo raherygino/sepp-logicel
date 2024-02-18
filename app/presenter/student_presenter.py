@@ -408,18 +408,19 @@ class MenuAction:
         dialog.exec()
         
     def mouseRightClickTable(self, event, student, table):
-        date = table.selectedItems()[0].text()
-        type_moves = table.selectedItems()[1].text().split(" - ")
-        type_move = type_moves[0]
-        sub_type_move = type_moves[1] if len(type_moves) > 1 else ""
-        day = table.selectedItems()[2].text()
-        menu = RoundMenu(parent=self.view)
-        menu.addAction(Action(FluentIcon.DELETE, 'Supprimer', triggered=lambda:self.delete_move(student, date, type_move, sub_type_move, day, table)))
-        self.posCur = QCursor().pos()
-        cur_x = self.posCur.x()
-        cur_y = self.posCur.y()
+        if len(table.selectedItems()) != 0:
+            date = table.selectedItems()[0].text()
+            type_moves = table.selectedItems()[1].text().split(" - ")
+            type_move = type_moves[0]
+            sub_type_move = type_moves[1] if len(type_moves) > 1 else ""
+            day = table.selectedItems()[2].text()
+            menu = RoundMenu(parent=self.view)
+            menu.addAction(Action(FluentIcon.DELETE, 'Supprimer', triggered=lambda:self.delete_move(student, date, type_move, sub_type_move, day, table)))
+            self.posCur = QCursor().pos()
+            cur_x = self.posCur.x()
+            cur_y = self.posCur.y()
 
-        menu.exec(QPoint(cur_x, cur_y), aniType=MenuAnimationType.FADE_IN_DROP_DOWN)
+            menu.exec(QPoint(cur_x, cur_y), aniType=MenuAnimationType.FADE_IN_DROP_DOWN)
     
     def delete_move(self, student, date, type_m, sub_type_m, day, table):
         mod = {"date":date, "type":type_m, "day":day}

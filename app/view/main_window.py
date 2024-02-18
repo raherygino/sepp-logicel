@@ -60,20 +60,10 @@ class MainWindow(FluentWindow):
     def initNavigation(self):
         # add navigation items
         t = Translator()
-        self.addSubInterface(self.homeInterface, FIF.HOME, self.tr('Home'))
-        self.addSubInterface(self.studentInterface, FIF.PEOPLE, "Students")
+        self.addSubInterface(self.homeInterface, FIF.HOME, self.tr('Accueil'))
+        self.addSubInterface(self.studentInterface, FIF.PEOPLE, "Elèves")
         self.navigationInterface.addSeparator()
 
-        # add custom widget to bottom
-        self.navigationInterface.addItem(
-            routeKey='price',
-            icon=Icon.PRICE,
-            text=t.price,
-            onClick=self.onSupport,
-            selectable=False,
-            tooltip=t.price,
-            position=NavigationItemPosition.BOTTOM
-        )
         self.addSubInterface(
             self.settingInterface, FIF.SETTING, self.tr('Settings'), NavigationItemPosition.BOTTOM)
 
@@ -93,7 +83,7 @@ class MainWindow(FluentWindow):
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
         self.move(w//2 - self.width()//2, h//2 - self.height()//2)
-        self.show()
+        self.showMaximized()
         QApplication.processEvents()
 
     def onSupport(self):

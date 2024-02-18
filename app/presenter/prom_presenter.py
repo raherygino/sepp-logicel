@@ -4,6 +4,7 @@ from ..models.model.prom_model import PromotionModel, Promotion
 from ..components.link_card2 import LinkCard
 from ..common.functions import Function
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QLayout, QWidget
 
 class PromotionPresenter:
 
@@ -16,18 +17,22 @@ class PromotionPresenter:
         self.fetchProm()
         
     def deleteBannerWidget(self):
-        layout = self.view.banner.linkCardView.hBoxLayout
-        while layout.count():
+        layout = self.view.flowLayout
+        #print(self.view.flowLayout._items)
+        #layout.childern
+        layout.takeAllWidgets()
+        '''while layout.count():
             item = layout.takeAt(0)
-            widget = item.widget()
-            widget.deleteLater()
+            #widget = item.widget()
+            item.deleteLater()'''
         
     def fetchProm(self):
         self.deleteBannerWidget()
-        self.btnAdd = self.view.banner.btnAdd()
+        self.btnAdd = LinkCard(FluentIcon.ADD, 'Ajouter', 'Ajouter une autre \npromotion', self.view)
         self.btnAdd.mouseReleaseEvent = lambda event: self.nPromPresenter.dialogNew(event)
         
         promotions = self.model.fetch_all_items(order="id DESC")
+        self.view.flowLayout.addWidget(self.btnAdd)
         for promotion in promotions:
             logo = FluentIcon.PEOPLE
             if promotion.logo != "":
@@ -36,10 +41,22 @@ class PromotionPresenter:
                 logo, 
                 promotion.rank, 
                 promotion.name, 
-                self.view.banner.linkCardView)
+                self.view)
             card.contextMenuEvent = lambda event, promotion=promotion: self.menuCard(event, promotion)
             card.mouseDoubleClickEvent = lambda event, promotion=promotion: self.showPromotion(event, promotion)            
-            self.view.banner.linkCardView.hBoxLayout.addWidget(card, 0, Qt.AlignLeft)
+            self.view.flowLayout.addWidget(card)
+        #self.view.flowLayout.addWidget(self.btnAdd)
+        #print(self.view.flowLayout.count())
+        '''widgets = []
+        for i in range(self.view.flowLayout.count()):
+            item = self.view.flowLayout.itemAt(i)
+            if isinstance(item, QLayout):
+                widgets.extend(item.widget().findChildren(QWidget))
+            else:
+                widget = item.widget()
+                if widget is not None:
+                    #widgets.append(widget)
+                    widget.deleteLayer()'''
             
     def showPromotion(self, event, promotion):
         studentInterface = self.mainView.studentInterface

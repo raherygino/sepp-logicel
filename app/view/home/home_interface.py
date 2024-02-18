@@ -1,35 +1,50 @@
-# coding:utf-8
-from PyQt5.QtCore import Qt, QRectF
-from PyQt5.QtGui import QPixmap, QPainter, QColor, QBrush, QPainterPath, QLinearGradient
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
-
-from qfluentwidgets import ScrollArea, isDarkTheme, FluentIcon
-from ...common.config import cfg, HELP_URL, REPO_URL, EXAMPLE_URL, FEEDBACK_URL
-from ...common.icon import Icon, FluentIconBase
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QScrollArea
+from PyQt5.QtGui import QPixmap, QPainter, QPainterPath, QLinearGradient,QColor, QBrush
+from PyQt5.QtCore import Qt, QRectF, QEasingCurve
+from qfluentwidgets import BodyLabel, PixmapLabel, isDarkTheme, FluentIcon, TitleLabel, FlowLayout, SmoothScrollArea, TransparentToolButton
 from ...components.link_card2 import LinkCardView, LinkCard
+from ...components.sample_card import SampleCardView
 from ...common.style_sheet import StyleSheet
-from .dialog.new_prom_dialog import NewPromotionDialog
 
-
-class BannerWidget(QWidget):
-    """ Banner widget """
+class HomeInterface(QWidget):
+    """ Main interface """
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.setFixedHeight(336)
-
-        self.vBoxLayout = QVBoxLayout(self)
-        self.galleryLabel = QLabel('Elèves Inspecteurs et Agents de Police', self)
+        self.vBoxLayout = QVBoxLayout()
         self.banner = QPixmap('app/resource/images/header1.png')
-        self.linkCardView = LinkCardView(self)
-
-        self.galleryLabel.setObjectName('galleryLabel')
-
         self.vBoxLayout.setSpacing(0)
-        self.vBoxLayout.setContentsMargins(0, 20, 0, 0)
-        self.vBoxLayout.addWidget(self.galleryLabel)
-        self.vBoxLayout.addWidget(self.linkCardView, 1, Qt.AlignBottom)
-        self.vBoxLayout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.vBoxLayout.setContentsMargins(30, 20, 0, 0)
+        self.setLayout(self.vBoxLayout)
+        self.vBoxLayout.setAlignment(Qt.AlignTop)
+
+        self.flowLayout = FlowLayout(needAni=True)
+        self.flowLayout.setAnimation(250, QEasingCurve.OutQuad)
+        self.flowLayout.setContentsMargins(0, 10, 30, 30)
+        self.flowLayout.setVerticalSpacing(20)
+        self.flowLayout.setHorizontalSpacing(10)
+        title = TitleLabel('Liste des promotions', self)
+        self.vBoxLayout.addWidget(title)
+
+        
+        #self.flowLayout.addWidget(self.cardNewEnv)
+        #print(self.flowLayout.takeAllWidgets())
+        # Create a QWidget to hold the layout
+        widget = QWidget()
+        widget.setLayout(self.flowLayout)
+        widget.setObjectName("parentCard")
+
+        # Create a QScrollArea and set the widget to be scrolled
+        scroll_area = SmoothScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setWidget(widget)
+        scroll_area.setStyleSheet("QScrollArea { border: none; background-color: rgba(255, 255, 25, 0.0);}")
+        widget.setStyleSheet("#parentCard { background-color: rgba(205, 25, 0, 0)}")
+
+        StyleSheet.LINK_CARD.apply(self)
+        # Set the main window layout
+        self.vBoxLayout.addWidget(scroll_area)
+        self.setObjectName("mainInterface")
 
     def paintEvent(self, e):
         super().paintEvent(e)
@@ -64,34 +79,3 @@ class BannerWidget(QWidget):
         pixmap = self.banner.scaled(
             self.size(), transformMode=Qt.SmoothTransformation)
         painter.fillPath(path, QBrush(pixmap))
-
-    def btnAdd(self) -> LinkCard:
-        card = LinkCard(FluentIcon.ADD, "Ajouter", "une promotion", self)
-        self.linkCardView.hBoxLayout.addWidget(card, 0, Qt.AlignLeft)
-        return card
-
-
-class HomeInterface(ScrollArea):
-    """ Home interface """
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.banner = BannerWidget(self)
-        self.view = QWidget(self)
-        self.vBoxLayout = QVBoxLayout(self.view)
-
-        self.__initWidget()
-
-    def __initWidget(self):
-        self.view.setObjectName('view')
-        self.setObjectName('homeInterface')
-        StyleSheet.HOME_INTERFACE.apply(self)
-
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setWidget(self.view)
-        self.setWidgetResizable(True)
-
-        self.vBoxLayout.setContentsMargins(0, 0, 0, 36)
-        self.vBoxLayout.setSpacing(40)
-        self.vBoxLayout.addWidget(self.banner)
-        self.vBoxLayout.setAlignment(Qt.AlignTop)
