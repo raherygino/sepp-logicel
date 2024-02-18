@@ -46,25 +46,24 @@ class NewMouvementDialog(MessageBoxBase):
     def typeChanged(self, current):
         comb = self.subTypeEdit.combox
         comb.items.clear()
-        comb.removeItem(0)
+        comb.clear()
         comb.setDisabled(False)
         self.dayMove.setEnabled(False)
         self.dayMove.clear()
 
         if (current == self.typesMove[1]):
-            comb.insertItems(0, self.subType[0])
+            comb.addItems(self.subType[0])
             comb.setCurrentIndex(0)
             self.dayMove.setEnabled(True)
             
         elif (current == self.typesMove[2]):
-            sanction = self.subType[1]
-            comb.insertItems(0, sanction)
+            comb.addItems(self.subType[1])
             comb.setCurrentIndex(0)
             self.dayMove.setEnabled(False)
 
         elif (current == self.typesMove[4]):
             remPositive = self.subType[2]
-            comb.insertItems(0, remPositive)
+            comb.addItems(remPositive)
             comb.setCurrentIndex(0)
             self.dayMove.setEnabled(False)
         else:
