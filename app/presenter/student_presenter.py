@@ -1,7 +1,7 @@
 from qfluentwidgets import RoundMenu, Action, FluentIcon, MenuAnimationType, MessageBox, Dialog
 from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import QPoint, QThread, pyqtSignal, QTimer
-from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QLineEdit, QFileDialog
 from ..models import StudentModel, Student, MouvementModel, Mouvement
 from ..common import Function
 from ..components import TableView
@@ -9,6 +9,7 @@ from ..view.students.list_student_tab import ListStudent
 from ..view.students.new_student_dialog import NewStudentDialog
 from ..view.students.show_student_dialog import ShowStudentDialog
 from ..view.students.new_movement_dialog import NewMouvementDialog
+import os
 
 class DataThread(QThread):
     update_progress = pyqtSignal(int)
@@ -116,6 +117,7 @@ class StudentPresenter:
         self.view.tableView.setHorizontalHeaderLabels(self.HEADER_LABEL)
         self.__init_combox_data()
         self.actions()
+        self.data = []
         self.fetchData()
         '''self.thread = model.test_thread()
         self.thread.update_progress.connect(print)
@@ -143,6 +145,7 @@ class StudentPresenter:
     def actions(self):
         self.view.addAction.triggered.connect(lambda: self.addStudent())
         self.view.importAction.triggered.connect(lambda: self.importData())
+        self.view.exportAction.triggered.connect(self.export_data)
         self.view.searchLineEdit.textChanged.connect(self.on_text_changed)
         self.timer.setInterval(500)
         self.timer.timeout.connect(self.searchStudent)
@@ -155,6 +158,23 @@ class StudentPresenter:
         self.view.comboBoxCompany.setCurrentIndex(0)
         self.view.comboBoxSection.setCurrentIndex(0)
         self.view.searchLineEdit.setText("")
+        
+    def export_data(self):
+        options = QFileDialog.Options()
+        fileName, _ = QFileDialog.getSaveFileName(self.view,"Exporter",f"{os.path.expanduser('~')}\Documents","CSV File (*.csv)", options=options)
+        self.data.insert(0, self.HEADER_LABEL)
+        if fileName:
+            content_csv = ""
+            for item in self.data:
+                line = ""
+                for val in item:
+                    line += f'{val};'
+                line += "\n"
+                content_csv += line
+            with open(fileName, 'w') as f:
+                f.write(content_csv)
+            os.startfile(fileName)
+            
         
     def on_text_changed(self):
         # Restart the timer whenever text is changed
@@ -260,6 +280,7 @@ class StudentPresenter:
     def worker_thread_finished(self):
         #self.view.progressBar.setValue(0)
         self.view.tableView.setData(self.worker_thread.listStudent)
+        self.data = self.worker_thread.listStudent
         self.view.progressBar.setVisible(False)
         #print("ok")
         
