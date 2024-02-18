@@ -19,8 +19,6 @@ class TableView(QTableWidget):
     
     def setQss(self, newTheme: str):
         theme = newTheme.lower()
-        color = QColor()
-        #print(color.
         themeColor = f'rgba{str(cfg.get(cfg.themeColor).getRgb())}'
         if theme == "auto":
             theme = "light" if darkdetect.isLight() else "dark"

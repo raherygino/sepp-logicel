@@ -115,9 +115,32 @@ class Model:
             cursor.execute(sql)
             count = len(cursor.fetchall())
         return count
+    
+    def count_by_with_id(self,id, **kwargs):
+        id_col = dataclasses.fields(self.entity)[1].name
+        count = 0
+        if len(kwargs) != 0:
+            cols = ' AND '.join([f'{key}="{kwargs.get(key)}"' for key in kwargs])
+            sql = f'SELECT * FROM {self.TABLE} WHERE {id_col} = "{id}" AND '
+            sql += cols
+            cursor = self.conn.cursor()
+            cursor.execute(sql)
+            count = len(cursor.fetchall())
+        return count
+    
+    def sum_by_with_id(self, id,col, **kwargs):
+        id_col = dataclasses.fields(self.entity)[1].name
+        sumOfCol = 0
+        sql = f'SELECT sum({col}) as cnt, {id_col} FROM {self.TABLE} WHERE {id_col} = "{id}"'
+        if len(kwargs) != 0:
+            key = ''.join([f'{key}' for key in kwargs])
+            sql += f' AND {key}="{kwargs.get(key)}"'
+        cursor = self.conn.cursor()
+        cursor.execute(sql)
+        sumOfCol = cursor.fetchall()[0][0]
+        return sumOfCol
             
     def search_with_id(self, id, **kwargs):
-
         id_col = dataclasses.fields(self.entity)[1].name
         sql = f'SELECT * FROM {self.TABLE} WHERE '
         condition = ' OR '.join([f'({id_col} = "{id}" AND {key} LIKE "%{kwargs.get(key)}%")' for key in kwargs.keys()])

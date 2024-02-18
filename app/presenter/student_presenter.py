@@ -1,10 +1,10 @@
-from qfluentwidgets import RoundMenu, Action, FluentIcon, MenuAnimationType, MessageBox, MessageDialog
+from qfluentwidgets import RoundMenu, Action, FluentIcon, MenuAnimationType, MessageBox, Dialog
 from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import QPoint
 from PyQt5.QtWidgets import QLineEdit
 from ..models import StudentModel, Student, MouvementModel, Mouvement
 from ..common import Function
-from ..components import Dialog
+from ..components import TableView
 from ..view.students.list_student_tab import ListStudent
 from ..view.students.new_student_dialog import NewStudentDialog
 from ..view.students.show_student_dialog import ShowStudentDialog
@@ -14,8 +14,8 @@ class StudentPresenter:
     
     HEADER_LABEL = ["Matricule", "Grade", "Nom", "Prénom(s)", "Genre",
                     "Repos médical ou convalescence (Jour)", "Exant d'effort physique (Jour)",
-                    "Permission (Jour)", "CODIS (Fois)", "Bomelenge (Fois)", 
-                    "Autre Sanction disciplinaire (fois)",
+                    "Permission (Jour)", "CODIS (Fois)", "Bomelenge (Fois)", "Hours Tours",
+                    "Perte Effet policier","Autre Sanction disciplinaire (fois)",
                     "Absent non motivé (Jour)", "Lettre de félicitation", 
                     "Autre remarque positive (fois)"]
     
@@ -113,10 +113,39 @@ class StudentPresenter:
         
     def formatDataForTable(self, data):
         listStudent = []
+        permission = NewMouvementDialog.typesMove[0]
+        rm = NewMouvementDialog.typesMove[1]
+        exant = NewMouvementDialog.subType[0][1]
+        anm = NewMouvementDialog.typesMove[3]
+        codis = NewMouvementDialog.subType[1][0]
+        horsTour = NewMouvementDialog.subType[1][1]
+        bemolenge = NewMouvementDialog.subType[1][2]
+        pertEfPol = NewMouvementDialog.subType[1][3]
+        sanc_disc = NewMouvementDialog.typesMove[2]
+        other = NewMouvementDialog.subType[1][4]
+        lettreFel = NewMouvementDialog.subType[2][0]
+        remarkPos = NewMouvementDialog.typesMove[4]
         for student in data:
+            rmVal = self.modelMove.sum_by_with_id(student.id,"day",type=rm)
+            exantVal = self.modelMove.sum_by_with_id(student.id,"day", subType=exant)
+            permissionVal = self.modelMove.sum_by_with_id(student.id,"day",type=permission)
+            anmVal = self.modelMove.sum_by_with_id(student.id,"day",type=anm)
+            codisVal = self.modelMove.count_by_with_id(student.id, subType=codis)
+            horsTourVal = self.modelMove.sum_by_with_id(student.id,"day",subType=horsTour)
+            bemolengeVal = self.modelMove.count_by_with_id(student.id ,subType=bemolenge)
+            pertEfPolVal = self.modelMove.count_by_with_id(student.id, subType=pertEfPol)
+            other_sanct = self.modelMove.count_by_with_id(student.id, type=sanc_disc, subType=other)
+            lettreFelVal = self.modelMove.count_by_with_id(student.id, subType=lettreFel)
+            remarkPosVal = self.modelMove.count_by_with_id(student.id, type=remarkPos, subType=other)
             listStudent.append([
                 student.matricule, student.level, student.lastname,
-                student.firstname, student.gender
+                student.firstname, student.gender,
+                rmVal if rmVal != None else "",
+                exantVal,
+                permissionVal if permissionVal != None else "",
+                codisVal,bemolengeVal,horsTourVal,pertEfPolVal , other_sanct,
+                anmVal if anmVal != None else "",lettreFelVal,remarkPosVal
+                
             ])
         return listStudent
         
@@ -179,10 +208,22 @@ class MenuAction:
                 f'{mouvement.type} {mouvement.subType}',
                 mouvement.day
             ])
-        dialog = ShowStudentDialog(self.view)
-        dialog.table.setData(dataMouvements)
+        dialog = ShowStudentDialog(self.view.parent.mainWindow)
         dialog.label.setText(dataStudent)
-        dialog.show()
+        if len(dataMouvements) > 0:
+            total = int(self.presenter.modelMove.sum_by_with_id(student.id, "day"))
+            if total > 0:
+                dataMouvements.append(["Total", "", total])
+            dialog.ImageMessage.setVisible(False)
+            dialog.message.setVisible(False)
+            dialog.table.setVisible(True)
+            dialog.table.setData(dataMouvements)
+        else:
+            dialog.ImageMessage.setVisible(True)
+            dialog.message.setVisible(True)
+            dialog.table.setVisible(False)
+            
+        dialog.exec()
         
     def mouvement(self, matricule):
         student = self.dataStudent(matricule)

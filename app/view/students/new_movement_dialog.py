@@ -3,13 +3,19 @@ from qfluentwidgets import MessageBoxBase, SubtitleLabel, BodyLabel
 from ...components import EditWithLabel
 
 class NewMouvementDialog(MessageBoxBase):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.typesMove = ["Permission", 
+    typesMove = ["Permission", 
                      "Repos médical ou convalescence",
                      "Sanction disciplinaire",
                      "Absent non motivé", 
                      "Remarque positive"]
+    subType = [
+        ["-", "Exant d'effort physique"],
+        ["CODIS", "Hors Tour", "Bemolenge", "Perte effet policier", "Autre"],
+        ["Lettre de felicitation", "Autre"]
+    ]
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.vBoxLayout = QVBoxLayout()
         self.title = SubtitleLabel("Mouvement", self)
         self.subTitle = BodyLabel("Elève Agent de Police")
@@ -46,18 +52,18 @@ class NewMouvementDialog(MessageBoxBase):
         self.dayMove.clear()
 
         if (current == self.typesMove[1]):
-            comb.insertItems(0, ["-", "Exant d'effort physique"])
+            comb.insertItems(0, self.subType[0])
             comb.setCurrentIndex(0)
             self.dayMove.setEnabled(True)
             
         elif (current == self.typesMove[2]):
-            sanction = ["CODIS", "Hors Tour", "Bemolenge", "Perte effet policier", "Autre"]
+            sanction = self.subType[1]
             comb.insertItems(0, sanction)
             comb.setCurrentIndex(0)
             self.dayMove.setEnabled(False)
 
         elif (current == self.typesMove[4]):
-            remPositive = ["Lettre de felicitation", "Autre"]
+            remPositive = self.subType[2]
             comb.insertItems(0, remPositive)
             comb.setCurrentIndex(0)
             self.dayMove.setEnabled(False)
