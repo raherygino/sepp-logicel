@@ -4,7 +4,7 @@ from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtWidgets import QApplication, QFrame, QHBoxLayout
 
 from qfluentwidgets import ( NavigationItemPosition, FluentWindow,
-                            SplashScreen, TitleLabel)
+                            SplashScreen, TitleLabel, Dialog)
 from qfluentwidgets import FluentIcon as FIF
 
 from .setting_interface import SettingInterface
@@ -65,19 +65,20 @@ class MainWindow(FluentWindow):
         self.navigationInterface.addSeparator()
 
         self.addSubInterface(
-            self.settingInterface, FIF.SETTING, self.tr('Settings'), NavigationItemPosition.BOTTOM)
+            self.settingInterface, FIF.SETTING, 'Parmètres', NavigationItemPosition.BOTTOM)
 
     def initWindow(self):
         self.resize(960, 780)
         self.setMinimumWidth(760)
-        self.setWindowIcon(QIcon(':/gallery/images/logo.png'))
-        self.setWindowTitle('PyQt-Fluent-Widgets')
+        self.setWindowIcon(QIcon('app/resource/images/logo_eniap.png'))
+        self.setWindowTitle('Gestion de comportement')
 
         self.setMicaEffectEnabled(cfg.get(cfg.micaEnabled))
 
         # create splash screen
         self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIconSize(QSize(106, 106))
+        self.splashScreen.setIcon(QIcon('app/resource/images/logo_eniap.png'))
+        self.splashScreen.setIconSize(QSize(160, 160))
         self.splashScreen.raise_()
 
         desktop = QApplication.desktop().availableGeometry()
@@ -97,3 +98,17 @@ class MainWindow(FluentWindow):
         super().resizeEvent(e)
         if hasattr(self, 'splashScreen'):
             self.splashScreen.resize(self.size())
+    
+    def closeEvent(self, event):
+        
+        exitDialog = Dialog(
+            'Quitter', 'Voulez vous quitter vraiment?',
+            self
+        )
+        exitDialog.setTitleBarVisible(False)
+        exitDialog.yesButton.setText('Oui')
+        exitDialog.cancelButton.setText('Non')
+        if exitDialog.exec():
+            event.accept()
+        else:
+            event.ignore()
