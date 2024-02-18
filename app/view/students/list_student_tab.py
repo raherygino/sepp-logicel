@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import Qt
 from qfluentwidgets import ComboBox, CommandBar, FluentIcon, Action, \
-    ToggleToolButton, setFont, RoundMenu, SearchLineEdit, ProgressBar
+    ToggleToolButton, setFont, RoundMenu, SearchLineEdit, IndeterminateProgressBar
 from ...components import TableView
 from ...common.config import OptionsConfigItem
 
@@ -56,7 +56,8 @@ class ListStudent(QWidget):
         
     def __initTableView(self, parent):
         
-        self.progressBar = ProgressBar(self)
+        self.progressBar = IndeterminateProgressBar(self)
+        self.progressBar.setVisible(False)
         self.tableView = TableView(self)
         parent.mainWindow.settingInterface.themeCard.optionChanged.connect(self.setTableTheme)
         

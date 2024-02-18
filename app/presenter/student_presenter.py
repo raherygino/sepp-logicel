@@ -11,18 +11,43 @@ from ..view.students.show_student_dialog import ShowStudentDialog
 from ..view.students.new_movement_dialog import NewMouvementDialog
 
 
-class WorkerThread(QThread):
+class DataThread(QThread):
     update_progress = pyqtSignal(int)
     finished = pyqtSignal()
 
-    def __init__(self, data, model, parent=None):
-        super(WorkerThread, self).__init__(parent)
+    def __init__(self, data, model:MouvementModel, parent=None):
+        super(DataThread, self).__init__(parent)
         self.data = data
         self.model = model
         self.listStudent = []
+        self.data2 = self.model.fetch_all_items()
+    
+        
+    def findMove(self, col, value, move):
+        return move.find(f'{col}=\'{value}\'') != -1
+    
+    def countMove(self, idStudent, key, valType, mouvements):
+        length = 0
+        cod = []
+        for move in mouvements:
+            if self.findMove('idStudent', idStudent, move):
+                if self.findMove(key, valType, move):
+                    cod.append(eval(move))
+        length = len(cod)
+        return length
+    
+    def sumMove(self, idStudent, key, valType, mouvements):
+        length = 0
+        cod = []
+        for move in mouvements:
+            if self.findMove('idStudent', idStudent, move):
+                if self.findMove(key, valType, move):
+                    mouvement = eval(move)
+                    length += int(mouvement.day)
+        
+        return length    
 
     def run(self):
-        
         permission = NewMouvementDialog.typesMove[0]
         rm = NewMouvementDialog.typesMove[1]
         exant = NewMouvementDialog.subType[0][1]
@@ -35,42 +60,33 @@ class WorkerThread(QThread):
         other = NewMouvementDialog.subType[1][4]
         lettreFel = NewMouvementDialog.subType[2][0]
         remarkPos = NewMouvementDialog.typesMove[4]
+        mouvements = []
+        # Update progress bar and emit signals
+        total = len(self.data2) + len(self.data)
+        for i, row in enumerate(self.data2):
+            # Simulate processing delay
+            self.msleep(10)
+            progress = int((i + 1) / total * 100)
+            self.update_progress.emit(progress)
+            mouvements.append(str(row))
+            
         for i, student in enumerate(self.data):
             if i < 10:
                 self.msleep(100)
             else:
                 self.msleep(0)
-            #rmVal = self.model.sum_by_with_id(student.id,"day",type=rm)
-            '''exantVal = self.model.sum_by_with_id(student.id,"day", subType=exant)
-            permissionVal = self.model.sum_by_with_id(student.id,"day",type=permission)
-            anmVal = self.model.sum_by_with_id(student.id,"day",type=anm)
-            codisVal = self.model.count_by_with_id(student.id, subType=codis)
-            horsTourVal = self.model.sum_by_with_id(student.id,"day",subType=horsTour)
-            bemolengeVal = self.model.count_by_with_id(student.id ,subType=bemolenge)
-            pertEfPolVal = self.model.count_by_with_id(student.id, subType=pertEfPol)
-            other_sanct = self.model.count_by_with_id(student.id, type=sanc_disc, subType=other)
-            lettreFelVal = self.model.count_by_with_id(student.id, subType=lettreFel)
-            remarkPosVal = self.model.count_by_with_id(student.id, type=remarkPos, subType=other)'''
+            rm = self.sumMove(student.id, 'type', 'Repos médical ou convalescence', mouvements)
+            codis = self.countMove(student.id, 'subType', 'CODIS', mouvements)
             self.listStudent.append([
                 student.matricule, student.level, student.lastname,
-                student.firstname, student.gender,
-                "","","","","",
+                student.firstname, student.gender, rm,
+                codis,"","","",
                 "","" , "","",
                 "",""])
-            progress = int((i + 1) / len(self.data) * 100)
+                    
+            progress = int((i + 1) / total * 100)
             self.update_progress.emit(progress)
-        #return listStudent
-        
-        # Update progress bar and emit signals
-        '''for i, row in enumerate(self.data):
-            # Simulate processing delay
-            self.msleep(0)
-            progress = int((i + 1) / len(self.data) * 100)
-            self.update_progress.emit(progress)
-            print(progress)'''
-
         self.finished.emit()
-
 
 class StudentPresenter:
     
@@ -177,17 +193,21 @@ class StudentPresenter:
         data = self.model.fetch_items_by_id(self.promotion.id, order="matricule ASC")
         #self.view.tableView.setData(self.formatDataForTable(data))
         
-        self.worker_thread = WorkerThread(data, self.modelMove)
+        self.worker_thread = DataThread(data, self.modelMove)
         self.worker_thread.update_progress.connect(self.update_progress_bar)
         self.worker_thread.finished.connect(self.worker_thread_finished)
         self.worker_thread.start()
         
     def update_progress_bar(self, value):
-        self.view.progressBar.setValue(value)
+        if value == 1:
+            self.view.progressBar.setVisible(True)
+        #self.view.progressBar.setValue(value)
         
     def worker_thread_finished(self):
-        self.view.progressBar.setValue(0)
+        #self.view.progressBar.setValue(0)
         self.view.tableView.setData(self.worker_thread.listStudent)
+        self.view.progressBar.setVisible(False)
+        #print("ok")
         
     def formatDataForTable(self, data):
         listStudent = []
@@ -226,7 +246,7 @@ class StudentPresenter:
     def searchStudent(self, text):
         data = self.model.search_with_id(self.promotion.id, matricule=text, firstname=text, lastname=text)
         #self.view.tableView.setData(self.formatDataForTable(data))
-        self.worker_thread = WorkerThread(data, self.modelMove)
+        self.worker_thread = DataThread(data, self.modelMove)
         self.worker_thread.update_progress.connect(self.update_progress_bar)
         self.worker_thread.finished.connect(self.worker_thread_finished)
         self.worker_thread.start()

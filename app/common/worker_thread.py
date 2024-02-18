@@ -9,27 +9,19 @@ class WorkerThread(QThread):
 
     def __init__(self, data, parent=None):
         super(WorkerThread, self).__init__(parent)
-
+        self.data = data
+        self.new_data = []
     def run(self):
-        # Connect to SQLite database
-        conn = sqlite3.connect('my_database.db')
-        cursor = conn.cursor()
         
-
-        # Fetch data from SQLite database
-        cursor.execute("SELECT * FROM users")
-        data = cursor.fetchall()
-        total_rows = len(data)
+        total_rows = len(self.data)
 
         # Update progress bar and emit signals
-        for i, row in enumerate(data):
+        for i, row in enumerate(self.data):
             # Simulate processing delay
             self.msleep(100)
             progress = int((i + 1) / total_rows * 100)
             self.update_progress.emit(progress)
-            print(progress)
-
-        conn.close()
+            self.new_data.append(row)
         self.finished.emit()
 
 '''class MainWindow(QMainWindow):
