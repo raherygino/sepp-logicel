@@ -370,6 +370,7 @@ class MenuAction:
     
     def __init__(self,presenter:Student) -> None:
         self.model = presenter.model
+        self.modelMove = presenter.modelMove
         self.view = presenter.view
         self.presenter = presenter
         
@@ -384,7 +385,7 @@ class MenuAction:
         for mouvement in mouvements:
             dataMouvements.append([
                 mouvement.date,
-                f'{mouvement.type} {mouvement.subType}',
+                f'{mouvement.type} - {mouvement.subType}' if len(mouvement.subType) != 0 and mouvement.subType != "-" else mouvement.type,
                 mouvement.day
             ])
         dialog = ShowStudentDialog(self.view.parent.mainWindow)
@@ -401,9 +402,41 @@ class MenuAction:
             dialog.ImageMessage.setVisible(True)
             dialog.message.setVisible(True)
             dialog.table.setVisible(False)
-            
+        dialog.table.contextMenuEvent = lambda event, student=student, table=dialog.table: self.mouseRightClickTable(event, student, table)
         dialog.exportButton.clicked.connect(lambda: self.export_mouvement(student, mouvements))    
         dialog.exec()
+        
+    def mouseRightClickTable(self, event, student, table):
+        date = table.selectedItems()[0].text()
+        type_moves = table.selectedItems()[1].text().split(" - ")
+        type_move = type_moves[0]
+        sub_type_move = type_moves[1] if len(type_moves) > 1 else ""
+        day = table.selectedItems()[2].text()
+        menu = RoundMenu(parent=self.view)
+        menu.addAction(Action(FluentIcon.DELETE, 'Supprimer', triggered=lambda:self.delete_move(student, date, type_move, sub_type_move, day, table)))
+        self.posCur = QCursor().pos()
+        cur_x = self.posCur.x()
+        cur_y = self.posCur.y()
+
+        menu.exec(QPoint(cur_x, cur_y), aniType=MenuAnimationType.FADE_IN_DROP_DOWN)
+    
+    def delete_move(self, student, date, type_m, sub_type_m, day, table):
+        mod = {"date":date, "type":type_m, "day":day}
+        if sub_type_m != "":
+            mod["subType"] = sub_type_m
+        w = Dialog("Supprimer", "Voulez-vous le supprimer vraiment", self.view.parent)
+        w.setTitleBarVisible(False)
+        if w.exec():
+            self.modelMove.delete_by(idStudent=student.id, **mod)
+            dataMouvements = []
+            for mouvement in self.modelMove.fetch_items_by_id(student.id):
+                dataMouvements.append([
+                    mouvement.date,
+                    f'{mouvement.type} - {mouvement.subType}' if len(mouvement.subType) != 0 and mouvement.subType != "-" else mouvement.type,
+                    mouvement.day
+                ])
+            
+            table.setData(dataMouvements)
         
     def export_mouvement(self, student, mouvement):
         document = Document()
