@@ -1,6 +1,6 @@
 from qfluentwidgets import RoundMenu, Action, FluentIcon, MenuAnimationType, MessageBox, Dialog
 from PyQt5.QtGui import QCursor
-from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import QPoint, QThread, pyqtSignal
 from PyQt5.QtWidgets import QLineEdit
 from ..models import StudentModel, Student, MouvementModel, Mouvement
 from ..common import Function
@@ -9,6 +9,68 @@ from ..view.students.list_student_tab import ListStudent
 from ..view.students.new_student_dialog import NewStudentDialog
 from ..view.students.show_student_dialog import ShowStudentDialog
 from ..view.students.new_movement_dialog import NewMouvementDialog
+
+
+class WorkerThread(QThread):
+    update_progress = pyqtSignal(int)
+    finished = pyqtSignal()
+
+    def __init__(self, data, model, parent=None):
+        super(WorkerThread, self).__init__(parent)
+        self.data = data
+        self.model = model
+        self.listStudent = []
+
+    def run(self):
+        
+        permission = NewMouvementDialog.typesMove[0]
+        rm = NewMouvementDialog.typesMove[1]
+        exant = NewMouvementDialog.subType[0][1]
+        anm = NewMouvementDialog.typesMove[3]
+        codis = NewMouvementDialog.subType[1][0]
+        horsTour = NewMouvementDialog.subType[1][1]
+        bemolenge = NewMouvementDialog.subType[1][2]
+        pertEfPol = NewMouvementDialog.subType[1][3]
+        sanc_disc = NewMouvementDialog.typesMove[2]
+        other = NewMouvementDialog.subType[1][4]
+        lettreFel = NewMouvementDialog.subType[2][0]
+        remarkPos = NewMouvementDialog.typesMove[4]
+        for i, student in enumerate(self.data):
+            if i < 10:
+                self.msleep(100)
+            else:
+                self.msleep(0)
+            #rmVal = self.model.sum_by_with_id(student.id,"day",type=rm)
+            '''exantVal = self.model.sum_by_with_id(student.id,"day", subType=exant)
+            permissionVal = self.model.sum_by_with_id(student.id,"day",type=permission)
+            anmVal = self.model.sum_by_with_id(student.id,"day",type=anm)
+            codisVal = self.model.count_by_with_id(student.id, subType=codis)
+            horsTourVal = self.model.sum_by_with_id(student.id,"day",subType=horsTour)
+            bemolengeVal = self.model.count_by_with_id(student.id ,subType=bemolenge)
+            pertEfPolVal = self.model.count_by_with_id(student.id, subType=pertEfPol)
+            other_sanct = self.model.count_by_with_id(student.id, type=sanc_disc, subType=other)
+            lettreFelVal = self.model.count_by_with_id(student.id, subType=lettreFel)
+            remarkPosVal = self.model.count_by_with_id(student.id, type=remarkPos, subType=other)'''
+            self.listStudent.append([
+                student.matricule, student.level, student.lastname,
+                student.firstname, student.gender,
+                "","","","","",
+                "","" , "","",
+                "",""])
+            progress = int((i + 1) / len(self.data) * 100)
+            self.update_progress.emit(progress)
+        #return listStudent
+        
+        # Update progress bar and emit signals
+        '''for i, row in enumerate(self.data):
+            # Simulate processing delay
+            self.msleep(0)
+            progress = int((i + 1) / len(self.data) * 100)
+            self.update_progress.emit(progress)
+            print(progress)'''
+
+        self.finished.emit()
+
 
 class StudentPresenter:
     
@@ -29,6 +91,10 @@ class StudentPresenter:
         self.__init_combox_data()
         self.actions()
         self.fetchData()
+        '''self.thread = model.test_thread()
+        self.thread.update_progress.connect(print)
+        self.thread.finished.connect(lambda: print("ok"))
+        self.thread.start()'''
     
     def __init_combox_data(self):
         companyStudents = self.model.fetch_items_by_id(self.promotion.id, group_by="company")
@@ -109,7 +175,19 @@ class StudentPresenter:
         
     def fetchData(self):
         data = self.model.fetch_items_by_id(self.promotion.id, order="matricule ASC")
-        self.view.tableView.setData(self.formatDataForTable(data))
+        #self.view.tableView.setData(self.formatDataForTable(data))
+        
+        self.worker_thread = WorkerThread(data, self.modelMove)
+        self.worker_thread.update_progress.connect(self.update_progress_bar)
+        self.worker_thread.finished.connect(self.worker_thread_finished)
+        self.worker_thread.start()
+        
+    def update_progress_bar(self, value):
+        self.view.progressBar.setValue(value)
+        
+    def worker_thread_finished(self):
+        self.view.progressBar.setValue(0)
+        self.view.tableView.setData(self.worker_thread.listStudent)
         
     def formatDataForTable(self, data):
         listStudent = []
@@ -140,18 +218,18 @@ class StudentPresenter:
             listStudent.append([
                 student.matricule, student.level, student.lastname,
                 student.firstname, student.gender,
-                rmVal if rmVal != None else "",
-                exantVal,
-                permissionVal if permissionVal != None else "",
-                codisVal,bemolengeVal,horsTourVal,pertEfPolVal , other_sanct,
-                anmVal if anmVal != None else "",lettreFelVal,remarkPosVal
-                
-            ])
+                rmVal,exantVal,permissionVal,codisVal,bemolengeVal,
+                horsTourVal,pertEfPolVal , other_sanct,anmVal,
+                lettreFelVal,remarkPosVal])
         return listStudent
         
     def searchStudent(self, text):
         data = self.model.search_with_id(self.promotion.id, matricule=text, firstname=text, lastname=text)
-        self.view.tableView.setData(self.formatDataForTable(data))
+        #self.view.tableView.setData(self.formatDataForTable(data))
+        self.worker_thread = WorkerThread(data, self.modelMove)
+        self.worker_thread.update_progress.connect(self.update_progress_bar)
+        self.worker_thread.finished.connect(self.worker_thread_finished)
+        self.worker_thread.start()
     
     def importData(self):
         filename = self.func.importFile(self.view, "Importer base de données", "CSV File (*.csv)")

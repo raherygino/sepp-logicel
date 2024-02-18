@@ -1,6 +1,38 @@
 from ..db.database import Database
 from ..entity.base_entity import Entity
 import dataclasses
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
+import sqlite3
+
+class WorkerThread(QThread):
+    update_progress = pyqtSignal(int)
+    finished = pyqtSignal()
+
+    def __init__(self, conn, sql, parent=None):
+        super(WorkerThread, self).__init__(parent)
+        self.conn = conn
+        self.sql = sql
+
+    def run(self):
+        # Connect to SQLite database
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        
+
+        # Fetch data from SQLite database
+        cursor.execute(self.sql)
+        data = cursor.fetchall()
+        total_rows = len(data)
+
+        # Update progress bar and emit signals
+        for i, row in enumerate(data):
+            # Simulate processing delay
+            self.msleep(1)
+            progress = int((i + 1) / total_rows * 100)
+            self.update_progress.emit(progress)
+
+        self.conn.close()
+        self.finished.emit()
 
 class Model:
     def __init__(self, table: str, entity:Entity):
@@ -29,6 +61,8 @@ class Model:
         cursor.execute(query)
         self.conn.commit()
 
+    def test_thread(self) -> WorkerThread:
+        return WorkerThread(self.conn, f"SELECT * FROM {self.TABLE}")
 
     def fetch_all_items(self, **kwargs):
         query = f'SELECT * FROM {self.TABLE}'
@@ -114,6 +148,7 @@ class Model:
             cursor = self.conn.cursor()
             cursor.execute(sql)
             count = len(cursor.fetchall())
+            cursor.close()
         return count
     
     def count_by_with_id(self,id, **kwargs):
@@ -126,6 +161,7 @@ class Model:
             cursor = self.conn.cursor()
             cursor.execute(sql)
             count = len(cursor.fetchall())
+            cursor.close()
         return count
     
     def sum_by_with_id(self, id,col, **kwargs):
@@ -138,7 +174,8 @@ class Model:
         cursor = self.conn.cursor()
         cursor.execute(sql)
         sumOfCol = cursor.fetchall()[0][0]
-        return sumOfCol
+        cursor.close()
+        return sumOfCol if sumOfCol != None else ""
             
     def search_with_id(self, id, **kwargs):
         id_col = dataclasses.fields(self.entity)[1].name
@@ -148,6 +185,7 @@ class Model:
         cursor = self.conn.cursor()
         cursor.execute(sql)
         data = cursor.fetchall()
+        cursor.close()
         listItems = []
         listItems.clear()
 
