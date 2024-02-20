@@ -6,6 +6,7 @@ from dataclasses import dataclass
 class Mouvement(Entity):
     id: int = 0
     idStudent: str = None
+    promotion_id: int = 0
     type: str = None
     subType: str = None
     date: str = None

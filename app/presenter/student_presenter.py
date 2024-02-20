@@ -47,7 +47,8 @@ class DataThread(QThread):
             if self.findMove('idStudent', idStudent, move):
                 if self.findMove(key, valType, move):
                     mouvement = eval(move)
-                    length += int(mouvement.day)
+                    if mouvement.day != "":
+                        length += int(mouvement.day)
         
         return length    
 
@@ -503,6 +504,7 @@ class MenuAction:
             mouvement = Mouvement(
                 0,
                 student.id,
+                self.presenter.promotion.id,
                 dialog.typeEdit.combox.text(),
                 dialog.subTypeEdit.combox.text(),
                 dialog.dateEdit.date.text(),
