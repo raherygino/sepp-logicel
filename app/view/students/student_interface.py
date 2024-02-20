@@ -82,7 +82,7 @@ class StudentInterface(QWidget):
             widget = ListStudent(self)
             studentModel = StudentModel()
             StudentPresenter(widget, studentModel, entity)
-            self.addSubInterface(widget, text, ':/gallery/images/Smiling_with_heart.png')
+            self.addSubInterface(widget, text, FluentIcon.PEOPLE)
             self.tabCount += 1
             self.stackedWidget.setCurrentWidget(widget)
 

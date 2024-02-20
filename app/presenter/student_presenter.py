@@ -148,6 +148,7 @@ class StudentPresenter:
         self.view.addAction.triggered.connect(lambda: self.addStudent())
         self.view.importAction.triggered.connect(lambda: self.importData())
         self.view.exportAction.triggered.connect(self.export_data)
+        self.view.deleteAction.triggered.connect(self.delete_data)
         self.view.searchLineEdit.textChanged.connect(self.on_text_changed)
         self.timer.setInterval(500)
         self.timer.timeout.connect(self.searchStudent)
@@ -176,7 +177,13 @@ class StudentPresenter:
             with open(fileName, 'w') as f:
                 f.write(content_csv)
             os.startfile(fileName)
-            
+    
+    def delete_data(self):
+        w = Dialog("Supprimer", "Vous êtes sur de supprimer toutes les élèves, Toutes ces données seront suprrimées aussi!")
+        w.setTitleBarVisible(False)
+        if w.exec():
+            self.view.parent.mainWindow.promModel.delete_all_student(self.promotion.id)
+            self.fetchData()
         
     def on_text_changed(self):
         # Restart the timer whenever text is changed

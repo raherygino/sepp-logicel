@@ -13,3 +13,7 @@ class PromotionModel(Model):
         self.model_student.delete_with_cond(promotion_id=item_id)
         self.move_model.delete_with_cond(promotion_id=item_id)
         return super().delete_item(item_id)
+    
+    def delete_all_student(self, item_id):
+        self.model_student.delete_with_cond(promotion_id=item_id)
+        self.move_model.delete_with_cond(promotion_id=item_id)

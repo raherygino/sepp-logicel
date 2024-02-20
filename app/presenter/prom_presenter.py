@@ -28,7 +28,7 @@ class PromotionPresenter:
         
     def fetchProm(self):
         self.deleteBannerWidget()
-        self.btnAdd = LinkCard(FluentIcon.ADD, 'Ajouter', 'Ajouter une autre \npromotion', self.view)
+        self.btnAdd = LinkCard(FluentIcon.ADD, 'Ajouter', 'Ajouter une autre promotion', self.view)
         self.btnAdd.mouseReleaseEvent = lambda event: self.nPromPresenter.dialogNew(event)
         
         promotions = self.model.fetch_all_items(order="id DESC")
@@ -89,6 +89,12 @@ class PromotionPresenter:
         w = Dialog(title, content, self.view)
         w.setTitleBarVisible(False)
         if w.exec():
+            pos = None
+            for i, item in enumerate(self.mainView.studentInterface.tabItems):
+                if item == promotion.rank.replace(" ", "-"):
+                    pos = i
+            if pos != None:
+                self.mainView.studentInterface.removeTab(pos)
             self.model.delete_item(promotion.id)
             if promotion.logo != "":
                 self.func.deleteFile(promotion.logo)

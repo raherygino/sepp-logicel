@@ -11,7 +11,7 @@ class LinkCard(QFrame):
 
     def __init__(self, icon, title, content, parent=None):
         super().__init__(parent=parent)
-        self.setFixedSize(198, 220)
+        self.setFixedSize(250, 220)
         self.icon = icon
         self.iconWidget = IconWidget(icon, self)
         self.title = SubtitleLabel(self)

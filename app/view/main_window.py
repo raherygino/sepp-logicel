@@ -46,8 +46,8 @@ class MainWindow(FluentWindow):
         self.navigationInterface.setAcrylicEnabled(True)
         self.connectSignalToSlot()
 
-        promModel = PromotionModel()
-        PromotionPresenter(self.homeInterface, promModel, self)
+        self.promModel = PromotionModel()
+        PromotionPresenter(self.homeInterface, self.promModel, self)
 
         # add items to navigation interface
         self.initNavigation()

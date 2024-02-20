@@ -28,10 +28,13 @@ class ListStudent(QWidget):
         self.addAction = Action(FluentIcon.ADD, "Ajouter", self)
         self.importAction = Action(FluentIcon.FOLDER_ADD, "Importer", self)
         self.exportAction = Action(FluentIcon.SHARE, "Exporter", self)
+        self.deleteAction = Action(FluentIcon.DELETE, "Supprimer tous", self)
         
         self.commandBar.addAction(self.addAction)
         self.commandBar.addAction(self.importAction)
         self.commandBar.addAction(self.exportAction)
+        self.commandBar.addSeparator()
+        self.commandBar.addAction(self.deleteAction)
         
         self.searchLineEdit = SearchLineEdit(self)
         self.searchLineEdit.setPlaceholderText("Recherche")
