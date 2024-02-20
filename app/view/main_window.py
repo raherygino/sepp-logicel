@@ -77,8 +77,8 @@ class MainWindow(FluentWindow):
 
         # create splash screen
         self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIcon(QIcon('app/resource/images/logo_eniap.png'))
-        self.splashScreen.setIconSize(QSize(160, 160))
+        self.splashScreen.setIcon(QIcon('app/resource/images/eniap.png'))
+        self.splashScreen.setIconSize(QSize(240, 240))
         self.splashScreen.raise_()
 
         desktop = QApplication.desktop().availableGeometry()
