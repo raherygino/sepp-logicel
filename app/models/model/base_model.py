@@ -144,8 +144,9 @@ class Model:
     def search(self, **kwargs):
         
         sql = f'SELECT * FROM {self.TABLE} WHERE '
-        condition = ' OR '.join([f'{key} LIKE "%{kwargs.get(key)}%"' for key in kwargs.keys()])
+        condition = ' OR '.join([f'{key} LIKE "%{kwargs.get(key).replace("\"", "")}%"' for key in kwargs.keys()])
         sql += condition
+        print(sql)
         cursor = self.conn.cursor()
         cursor.execute(sql)
         data = cursor.fetchall()
@@ -200,7 +201,7 @@ class Model:
     def search_with_id(self, id, **kwargs):
         id_col = dataclasses.fields(self.entity)[1].name
         sql = f'SELECT * FROM {self.TABLE} WHERE '
-        condition = ' OR '.join([f'({id_col} = "{id}" AND {key} LIKE "%{kwargs.get(key)}%")' for key in kwargs.keys()])
+        condition = ' OR '.join([f'({id_col} = "{id}" AND {key} LIKE "%{kwargs.get(key).replace("\"", "")}%")' for key in kwargs.keys()])
         sql += condition
         cursor = self.conn.cursor()
         cursor.execute(sql)
@@ -279,9 +280,9 @@ class Model:
 
         for i, key in enumerate(fields.keys()):
             if i == 0:
-                sql += f" {key} = \"{fields.get(key)}\" "
+                sql += f" {key} = \"{fields.get(key).replace("\"", "")}\" "
             else:
-                sql += f", {key} = \"{fields.get(key)}\" "
+                sql += f", {key} = \"{fields.get(key).replace("\"", "")}\" "
         sql += f"WHERE {id_col}={item_id}"
         cursor.execute(sql)
         self.conn.commit()

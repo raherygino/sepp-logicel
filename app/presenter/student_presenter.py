@@ -456,6 +456,7 @@ class MenuAction:
         pData += f'Prénoms: {student.firstname}\n'
         pData += f'Genre: {student.gender}\n'
         pData += f'Niveau: {student.level}\n'
+        pData += f'Matricule: {student.matricule}\n'
         document.add_paragraph(pData)
         document.add_heading(f'Mouvements', level=1)
         
@@ -493,10 +494,10 @@ class MenuAction:
     
         # Save the document
         filename = f"{os.path.expanduser('~')}"
-        fileName = self.dialogSaveFile("Exporter", filename, "Document Word (*.docx)")
+        fileName = self.dialogSaveFile("Exporter", "", "Document Word (*.docx)")
         if fileName:
-            document.save(filename)
-            os.startfile(filename)  
+            document.save(fileName)
+            os.startfile(fileName)  
         
     def dialogSaveFile(self, title:str, dir:str, typeFile:str):
         options = QFileDialog.Options()
