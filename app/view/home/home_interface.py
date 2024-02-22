@@ -12,7 +12,7 @@ class HomeInterface(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.vBoxLayout = QVBoxLayout()
-        self.banner = QPixmap('app/resource/images/header1.png')
+        self.banner = QPixmap(':/resource/images/header1.png')
         self.vBoxLayout.setSpacing(0)
         self.vBoxLayout.setContentsMargins(30, 20, 0, 0)
         self.setLayout(self.vBoxLayout)
