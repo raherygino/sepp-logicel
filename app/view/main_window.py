@@ -19,7 +19,6 @@ from ..presenter.prom_presenter import PromotionPresenter
 from ..view import StudentInterface
 from ..models import StudentModel
 from ..presenter import StudentPresenter
-from ..common import img
 
 class Widget(QFrame):
 
@@ -71,14 +70,14 @@ class MainWindow(FluentWindow):
     def initWindow(self):
         self.resize(960, 780)
         self.setMinimumWidth(760)
-        self.setWindowIcon(QIcon(':/img/images/logo_eniap.png'))
+        self.setWindowIcon(QIcon('app/resource/images/logo_eniap.png'))
         self.setWindowTitle('Gestion de comportement')
 
         self.setMicaEffectEnabled(cfg.get(cfg.micaEnabled))
 
         # create splash screen
         self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIcon(QIcon(':/img/images/eniap.png'))
+        self.splashScreen.setIcon(QIcon('app/resource/images/eniap.png'))
         self.splashScreen.setIconSize(QSize(240, 240))
         self.splashScreen.raise_()
         #:/img/images/default-file-icon.png

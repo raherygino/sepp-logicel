@@ -60,7 +60,7 @@ class ShowStudentDialog(Dialog):
         self.contentLabel.setVisible(False)
         self.titleLabel.setVisible(False)
         self.ImageLabel = ImageLabel(self)
-        self.ImageLabel.setImage(":/resource/images/user.png")
+        self.ImageLabel.setImage("app/resource/images/user.png")
         self.ImageLabel.setFixedSize(QSize(100,100))
         self.ImageLabel.setObjectName(u"ImageLabel")
         self.textLayout.addWidget(self.ImageLabel, 0, Qt.AlignCenter)
@@ -81,7 +81,7 @@ class ShowStudentDialog(Dialog):
         
 
         self.ImageMessage = ImageLabel(self)
-        self.ImageMessage.setImage(":/resource/images/default-file-icon.png")
+        self.ImageMessage.setImage("app/resource/images/default-file-icon.png")
         self.ImageMessage.setFixedSize(QSize(100,100))
         self.message = BodyLabel("Aucune mouvement", self)
         self.message.setAlignment(Qt.AlignCenter)
