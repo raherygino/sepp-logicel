@@ -65,7 +65,7 @@ class PromotionPresenter:
         
     def menuCard(self, event, promotion):
         menu = RoundMenu(self.view)
-        menu.addAction(Action(FluentIcon.FOLDER, 'Voir'))
+        menu.addAction(Action(FluentIcon.FOLDER, 'Voir', triggered=lambda event: self.showPromotion(event, promotion)))
         menu.addAction(
             Action(
                 FluentIcon.EDIT, 
