@@ -40,6 +40,17 @@ class DataThread(QThread):
         length = len(cod)
         return length
     
+    def countTypeNsubTypeMove(self, idStudent, key, valType, valSub, mouvements):
+        length = 0
+        cod = []
+        for move in mouvements:
+            if self.findMove('idStudent', idStudent, move):
+                if self.findMove(key, valType, move):
+                    if self.findMove("subType", valSub, move):
+                        cod.append(eval(move))
+        length = len(cod)
+        return length
+    
     def sumMove(self, idStudent, key, valType, mouvements):
         length = 0
         cod = []
@@ -87,14 +98,15 @@ class DataThread(QThread):
             bomelenge = self.countMove(student.id, 'subType', label_bemolenge, mouvements)
             hors_tour = self.sumMove(student.id, 'subType', label_hors_tour, mouvements)
             pert_eff_pol = self.countMove(student.id, 'subType', label_pert_eff_pol, mouvements)
-            
+            other_sanc = self.countTypeNsubTypeMove(student.id, "type", label_sanc_disc, label_other, mouvements)
+            other_remark = self.countTypeNsubTypeMove(student.id, "type", label_remark_pos, label_other, mouvements)
             anm = self.sumMove(student.id, 'type', label_anm, mouvements)
             lettre_fel = self.countMove(student.id, 'subType', label_lettre_fel, mouvements)
             self.listStudent.append([
                 student.matricule, student.level, student.lastname,
                 student.firstname, student.gender, rm,exant,permission,
                 codis,bomelenge, hors_tour, pert_eff_pol,
-                "", anm, lettre_fel,""])
+                other_sanc, anm, lettre_fel,other_remark])
                     
             progress = int((i + 1) / total * 100)
             self.update_progress.emit(progress)
