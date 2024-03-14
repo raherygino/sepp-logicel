@@ -10,4 +10,4 @@ class TypeComportementModel(Model):
         data = ["Suspendu de progression", "Sanction", "Remarque positive"]
         for val in data:
             if len(self.fetch_items_by_cond(name=val)) == 0:
-                self.create(TypeComportement(name=val))
+                self.create(TypeComportement(promotion_id=0, name=val))
