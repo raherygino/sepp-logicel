@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import Qt
 from qfluentwidgets import ComboBox, CommandBar, FluentIcon, Action, \
-    ToolButton, setFont, RoundMenu, SearchLineEdit, IndeterminateProgressBar
+    ToolButton, setFont, RoundMenu, SearchLineEdit, IndeterminateProgressBar, \
+    TransparentDropDownPushButton
 from ...components import TableView
 from ...common.config import OptionsConfigItem
 
@@ -19,18 +20,34 @@ class ListStudent(QWidget):
         self.vBoxLayout.addWidget(self.progressBar)
         self.vBoxLayout.addWidget(self.tableView)
         
+    def createDropDownButton(self, parent):
+        button = TransparentDropDownPushButton('Ajouter', self, FluentIcon.ADD)
+        button.setFixedHeight(34)
+        setFont(button, 12)
+
+        self.addAction = Action(FluentIcon.PEOPLE, "Elève", self)
+        self.addComp = Action(FluentIcon.DICTIONARY, "Comportement", self)
+        menu = RoundMenu(parent=parent)
+        menu.addActions([
+            self.addAction,
+            self.addComp
+        ])
+        button.setMenu(menu)
+        return button
+        
     def __initCommandBar(self):
         self.commandBar = CommandBar(self)
         self.commandBar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.commandBar.setButtonTight(True)
         setFont(self.commandBar, 14)
+        self.dropDownButton = self.createDropDownButton(self)
         
-        self.addAction = Action(FluentIcon.ADD, "Ajouter", self)
         self.importAction = Action(FluentIcon.FOLDER_ADD, "Importer", self)
         self.exportAction = Action(FluentIcon.SHARE, "Exporter", self)
         self.deleteAction = Action(FluentIcon.DELETE, "Supprimer tous", self)
         
-        self.commandBar.addAction(self.addAction)
+        self.commandBar.addWidget(self.dropDownButton)
+
         self.commandBar.addAction(self.importAction)
         self.commandBar.addAction(self.exportAction)
         self.commandBar.addSeparator()
