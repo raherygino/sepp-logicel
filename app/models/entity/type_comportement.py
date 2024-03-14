@@ -3,8 +3,6 @@ from .base_entity import Entity
 from dataclasses import dataclass
 
 @dataclass
-class SubComportement(Entity):
+class TypeComportement(Entity):
     id: int = 0
-    comportemen_comportement : int = 0
-    name: str = ""
-    abrv: str = ""
+    name : str = ""
