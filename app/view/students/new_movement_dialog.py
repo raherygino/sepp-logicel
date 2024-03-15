@@ -3,7 +3,7 @@ from qfluentwidgets import MessageBoxBase, SubtitleLabel, BodyLabel
 from ...components import EditWithLabel
 
 class NewMouvementDialog(MessageBoxBase):
-    typesMove = ["Permission", 
+    '''typesMove = ["Permission", 
                      "Repos médical ou convalescence",
                      "Sanction disciplinaire",
                      "Absent non motivé", 
@@ -12,7 +12,7 @@ class NewMouvementDialog(MessageBoxBase):
         ["-", "Exant d'effort physique"],
         ["CODIS", "Hors Tour", "Bemolenge", "Perte effet policier", "Autre"],
         ["Lettre de felicitation", "Autre"]
-    ]
+    ]'''
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -21,11 +21,11 @@ class NewMouvementDialog(MessageBoxBase):
         self.subTitle = BodyLabel("Elève Agent de Police")
         
         self.row = QHBoxLayout()
-        self.typeEdit = EditWithLabel("Type", self, combox=self.typesMove)
-        self.typeEdit.combox.currentTextChanged.connect(self.typeChanged)
+        self.typeEdit = EditWithLabel("Type", self, combox=[])
+        #self.typeEdit.combox.currentTextChanged.connect(self.typeChanged)
         self.subTypeEdit = EditWithLabel("Sous type", self, combox=[])
         self.subTypeEdit.combox.setEnabled(False)
-        self.subTypeEdit.combox.currentTextChanged.connect(self.subTypeChanged)
+        #self.subTypeEdit.combox.currentTextChanged.connect(self.subTypeChanged)
         self.row.addLayout(self.typeEdit)
         self.row.addLayout(self.subTypeEdit)
         
@@ -43,7 +43,7 @@ class NewMouvementDialog(MessageBoxBase):
         self.vBoxLayout.addLayout(self.row_2)
         self.viewLayout.addLayout(self.vBoxLayout)
 
-    def typeChanged(self, current):
+    '''def typeChanged(self, current):
         comb = self.subTypeEdit.combox
         comb.items.clear()
         comb.clear()
@@ -75,4 +75,4 @@ class NewMouvementDialog(MessageBoxBase):
         if current == "Hors Tour" or current == "-" or current == "Exant d'effort physique":
             self.dayMove.setEnabled(True)
         else:
-            self.dayMove.setEnabled(False)
+            self.dayMove.setEnabled(False)'''

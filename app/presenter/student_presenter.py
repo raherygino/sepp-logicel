@@ -17,12 +17,13 @@ from docx import Document
 
 class StudentPresenter:
     
-    HEADER_LABEL = ["Matricule", "Grade", "Nom", "Prénom(s)", "Genre",
+    HEADER_LABEL = ["Matricule", "Grade", "Nom", "Prénom(s)", "Genre"]
+    '''
                     "Repos médical ou convalescence (Jour)", "Exant d'effort physique (Jour)",
                     "Permission (Jour)", "CODIS (Fois)", "Bomelenge (Fois)", "Hours Tours",
                     "Perte Effet policier","Autre Sanction disciplinaire (fois)",
                     "Absent non motivé (Jour)", "Lettre de félicitation", 
-                    "Autre remarque positive (fois)"]
+                    "Autre remarque positive (fois)" '''
     
     def __init__(self, view:ListStudent, model: StudentModel, promotion):
         self.view = view
@@ -33,6 +34,7 @@ class StudentPresenter:
         self.promotion = promotion
         self.timer = QTimer()
         self.func = Function()
+        self.updateLabel()
         self.view.tableView.setHorizontalHeaderLabels(self.HEADER_LABEL)
         self.__init_combox_data()
         self.actions()
@@ -40,7 +42,15 @@ class StudentPresenter:
         self.fetchData()
         self.company = 0
         self.section = 0
-    
+        
+    def updateLabel(self):
+        comportement = self.compModel.fetch_items_by_id(self.promotion.id)
+        for comp in comportement:
+            self.HEADER_LABEL.append(comp.abrv)
+            print(len(comportement))
+            print(len(self.HEADER_LABEL))
+        print(self.HEADER_LABEL)
+        
     def __init_combox_data(self):
         companyStudents = self.model.fetch_items_by_id(self.promotion.id, group_by="company")
         sectionStudents = self.model.fetch_items_by_id(self.promotion.id, group_by="section")

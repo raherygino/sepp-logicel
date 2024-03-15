@@ -65,7 +65,7 @@ class DataThread(QThread):
         return length    
 
     def run(self):
-        label_permission = NewMouvementDialog.typesMove[0]
+        '''label_permission = NewMouvementDialog.typesMove[0]
         label_rm = NewMouvementDialog.typesMove[1]
         label_exant = NewMouvementDialog.subType[0][1]
         label_anm = NewMouvementDialog.typesMove[3]
@@ -76,7 +76,7 @@ class DataThread(QThread):
         label_sanc_disc = NewMouvementDialog.typesMove[2]
         label_other = NewMouvementDialog.subType[1][4]
         label_lettre_fel = NewMouvementDialog.subType[2][0]
-        label_remark_pos = NewMouvementDialog.typesMove[4]
+        label_remark_pos = NewMouvementDialog.typesMove[4]'''
         mouvements = []
         # Update progress bar and emit signals
         total = len(self.data2) + len(self.data)
@@ -92,7 +92,7 @@ class DataThread(QThread):
                 self.msleep(100)
             else:
                 self.msleep(0)
-            rm = self.sumMove(student.id, 'type', label_rm, mouvements)
+            '''rm = self.sumMove(student.id, 'type', label_rm, mouvements)
             exant = self.sumMove(student.id, 'subType', label_exant, mouvements)
             permission = self.sumMove(student.id, 'type', label_permission, mouvements)
             codis = self.countMove(student.id, 'subType', label_codis, mouvements)
@@ -102,13 +102,15 @@ class DataThread(QThread):
             other_sanc = self.countTypeNsubTypeMove(student.id, "type", label_sanc_disc, label_other, mouvements)
             other_remark = self.countTypeNsubTypeMove(student.id, "type", label_remark_pos, label_other, mouvements)
             anm = self.sumMove(student.id, 'type', label_anm, mouvements)
-            lettre_fel = self.countMove(student.id, 'subType', label_lettre_fel, mouvements)
+            lettre_fel = self.countMove(student.id, 'subType', label_lettre_fel, mouvements)'''
             self.listStudent.append([
                 student.matricule, student.level, student.lastname,
-                student.firstname, student.gender, rm,exant,permission,
-                codis,bomelenge, hors_tour, pert_eff_pol,
-                other_sanc, anm, lettre_fel,other_remark])
+                student.firstname, student.gender, 
+                ])
                     
+            '''rm,exant,permission,
+                codis,bomelenge, hors_tour, pert_eff_pol,
+                other_sanc, anm, lettre_fel,other_remark'''
             progress = int((i + 1) / total * 100)
             self.update_progress.emit(progress)
         self.finished.emit()
