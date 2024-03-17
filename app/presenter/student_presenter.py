@@ -1,29 +1,24 @@
-from qfluentwidgets import RoundMenu, Action, FluentIcon, MenuAnimationType, MessageBox, Dialog
+from qfluentwidgets import RoundMenu, Action, FluentIcon, MenuAnimationType, MessageBox, Dialog, InfoBadge, InfoBadgePosition
 from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import QPoint, QThread, pyqtSignal, QTimer
 from PyQt5.QtWidgets import QLineEdit, QFileDialog
 from ..models import StudentModel, Student, MouvementModel, \
     Mouvement, ComportementModel, Comportement, TypeComportementModel
-from ..common import Function
+from ..common import Function, col
 from ..components import TableView
 from ..view.students.list_student_tab import ListStudent
 from ..view.students.new_student_dialog import NewStudentDialog
 from ..view.students.show_student_dialog import ShowStudentDialog
 from ..view.students.new_movement_dialog import NewMouvementDialog
 from ..view.home.dialog.new_comp_dialog import NewComportementDialog
+from ..view.students.import_dialog import ImportDialog
 from .student_data_thread import DataThread
 import os
 from docx import Document
 
 class StudentPresenter:
     
-    HEADER_LABEL = ["Matricule", "Grade", "Nom", "Prénom(s)", "Genre"]
-    '''
-                    "Repos médical ou convalescence (Jour)", "Exant d'effort physique (Jour)",
-                    "Permission (Jour)", "CODIS (Fois)", "Bomelenge (Fois)", "Hours Tours",
-                    "Perte Effet policier","Autre Sanction disciplinaire (fois)",
-                    "Absent non motivé (Jour)", "Lettre de félicitation", 
-                    "Autre remarque positive (fois)" '''
+    HEADER_LABEL = ["Matricule", "Grade", "Nom", "Prénom(s)", "Genre", "Date de naissance", "Lieu de naissance"]
     
     def __init__(self, view:ListStudent, model: StudentModel, promotion):
         self.view = view
@@ -34,7 +29,6 @@ class StudentPresenter:
         self.promotion = promotion
         self.timer = QTimer()
         self.func = Function()
-        self.updateLabel()
         self.view.tableView.setHorizontalHeaderLabels(self.HEADER_LABEL)
         self.__init_combox_data()
         self.actions()
@@ -43,13 +37,13 @@ class StudentPresenter:
         self.company = 0
         self.section = 0
         
-    def updateLabel(self):
+    '''def updateLabel(self):
         comportement = self.compModel.fetch_items_by_id(self.promotion.id)
         for comp in comportement:
             self.HEADER_LABEL.append(comp.abrv)
             print(len(comportement))
             print(len(self.HEADER_LABEL))
-        print(self.HEADER_LABEL)
+        print(self.HEADER_LABEL)'''
         
     def __init_combox_data(self):
         companyStudents = self.model.fetch_items_by_id(self.promotion.id, group_by="company")
@@ -285,34 +279,48 @@ class StudentPresenter:
         if filename:
             with open(filename, "r") as data:
                 listStudent = []
-                for line in data:
-                    items = line.strip().split(";")
-                    matricule = items[0]
-                    level = items[1]
-                    '''FOR PROMOTION SANDRATRA
-                    level = "EAP"
-                    if matricule.find("11") == 0 or \
-                        matricule.find("12") == 0 or \
-                        matricule.find("21") == 0 or \
-                        matricule.find("31") == 0:
-                        level = "EIP" '''
-                    name = items[2].split(" ")
-                    lastname = name[0]
-                    firstname = ' '.join([val for val in name[1:]]) if len(name) > 1 else ""
-                    genre = items[3]
-                    listStudent.append(Student(
-                        promotion_id=self.promotion.id,
-                        lastname=lastname,
-                        firstname=firstname,
-                        gender=genre,
-                        level=level,
-                        matricule=matricule,
-                        company=matricule[0],
-                        section=matricule[1],
-                        number=matricule[2:4]
-                    ))
-                self.model.create_multiple(listStudent)
-                self.fetchData()
+                firstdata = []
+                all_item = []
+                keys = []
+                for key in col.keys():
+                    keys.append(key)
+                for i, line in enumerate(data):
+                    if i == 0:
+                        firstdata = line.split(";")
+                    else:
+                        items = line.strip().split(";")
+                        all_item.append(items)
+                        
+                dialog = ImportDialog(firstdata, Student(), self.view)
+                if dialog.exec():
+                    valCombox = []
+                    index_combox = []
+                    for i, comb in enumerate(dialog.combox):
+                        index = comb.currentIndex() - 1
+                        if index != -1:
+                            valCombox.append(keys[index])
+                        else:
+                            valCombox.append('-')
+                        index_combox.append(i)
+                    for item in all_item:
+                        entity = {"promotion_id" : self.promotion.id}
+                        for i, val_combox in enumerate(valCombox):
+                            if val_combox != "-":
+                                if i < len(item):
+                                    val = item[index_combox[i]]
+                                    entity[val_combox] = val
+                                    if val_combox == "matricule":
+                                        if len(val) == 4:
+                                            entity['company'] = val[0]
+                                            entity['section'] = val[1]
+                                            entity['number'] = val[2:]
+                        if len(entity.keys()) > 1:
+                            listStudent.append(Student(**entity))
+                    if len(listStudent) > 0:
+                        self.model.create_multiple(listStudent)
+                        self.fetchData()
+                    else:
+                        self.func.errorMessage("Erreur", "Vous n'avez pas choisi même pas une seule colonne pour les données", self.view)
                 
 class MenuAction:
     

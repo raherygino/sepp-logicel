@@ -58,15 +58,23 @@ class NewStudentDialog(MessageBoxBase):
         self.lastnameEdit = editWithLabel("Nom", self, placeholders=["Nom"])
         self.lastnameEdit.lineEdit(0).textChanged.connect(self.__isValid)
         self.firstnameEdit = editWithLabel("Prénom(s)", self, placeholders=["Prénom(s)"])
+        self.genderEdit = editWithLabel("Genre", self, combox=["M", "F"])
+        self.genderEdit.combox.setFixedWidth(60)
         self.row.addLayout(self.lastnameEdit)
         self.row.addLayout(self.firstnameEdit)
+        self.row.addLayout(self.genderEdit)
+        
+        self.birth = editWithLabel("Date et lieu de naissance", self, placeholders=["Date de naissance", "Lieu de naissance"])
+        self.parent = editWithLabel("Parent", self, placeholders=["Nom du père", "Nom de la mère"])
+        self.origin = editWithLabel("Origine", self, placeholders=["Ville d'origine", "Region d'origine"])
+        self.address = editWithLabel("Adresse", self, placeholders=["Ville", "Adresse"])
+        self.contact = editWithLabel("Contact", self, placeholders=["Téléphone", "Email"])
+        self.diplome = editWithLabel("Diplôme maximum", self, placeholders=["Diplôme", "Filière"])
         
         self.row_2 = QHBoxLayout()
-        self.genderEdit = editWithLabel("Genre", self, combox=["M", "F"])
         self.matriculeEdit = editWithLabel("Matricule", self, placeholders=["Matricule"])
         self.matriculeEdit.lineEdit(0).textChanged.connect(self.__isValid)
         self.gradeEdit = editWithLabel("Grade", self, combox=["EIP", "EAP"])
-        self.row_2.addLayout(self.genderEdit)
         self.row_2.addLayout(self.matriculeEdit)
         self.row_2.addLayout(self.gradeEdit)
 
@@ -74,6 +82,12 @@ class NewStudentDialog(MessageBoxBase):
         self.viewLayout.addWidget(self.titleLabel)
 
         self.viewLayout.addLayout(self.row)
+        self.viewLayout.addLayout(self.birth)
+        self.viewLayout.addLayout(self.parent)
+        self.viewLayout.addLayout(self.origin)
+        self.viewLayout.addLayout(self.address)
+        self.viewLayout.addLayout(self.contact)
+        self.viewLayout.addLayout(self.diplome)
         self.viewLayout.addLayout(self.row_2)
 
         self.yesButton.setEnabled(False)

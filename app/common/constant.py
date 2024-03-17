@@ -1,0 +1,22 @@
+col = { 
+       "lastname" : "Nom",
+       "firstname" : "Prénoms",
+       "gender" : "Genre",
+       "birthday" : "Date de naissance",
+       "birthplace" : "Lieu de naissance",
+       "city_origin" : "Ville d'origine",
+       "region_origin" : "Region d'orgine",
+       "city" : "Ville",
+       "address" : "Adresse",
+       "phone" : "Téléphone",
+       "email" : "Email",
+       "father_name" : "Nom du père",
+       "mother_name" : "Nom de la mère",
+       "diplome_max" : "Diplôme",
+       "speciality" : "Specialité",
+       "level": "Grade",
+       "company" : "Compagnie",
+       "section" : "Section",
+       "number" : "Numéro",
+       "matricule" : "Matricule"
+}

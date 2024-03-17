@@ -138,3 +138,16 @@ class Function:
             duration=2000,
             parent=parent
         )
+        
+    def errorMessage(self, title:str, content:str, parent):
+        
+        InfoBar.error(
+            title=title,
+            content=content,
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.TOP,
+            # position='Custom',   # NOTE: use custom info bar manager
+            duration=2000,
+            parent=parent
+        )
