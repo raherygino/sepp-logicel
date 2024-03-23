@@ -1,35 +1,29 @@
 # coding: utf-8
 from PyQt5.QtCore import QUrl, QSize, Qt
 from PyQt5.QtGui import QIcon, QDesktopServices
-from PyQt5.QtWidgets import QApplication, QFrame, QHBoxLayout
-
-from qfluentwidgets import ( NavigationItemPosition, FluentWindow,
-                            SplashScreen, TitleLabel, Dialog)
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
+from qfluentwidgets import NavigationItemPosition, FluentWindow, \
+                    SplashScreen, TitleLabel
 from qfluentwidgets import FluentIcon as FIF
 
-from .setting_interface import SettingInterface
+from .home import HomeInterface
+from .utils.setting_interface import SettingInterface
 from ..common.config import ZH_SUPPORT_URL, EN_SUPPORT_URL, cfg
 from ..common.icon import Icon
 from ..common.signal_bus import signalBus
 from ..common.translator import Translator
 from ..common import resource
-from .home.home_interface import HomeInterface
-from ..models.model.prom_model import PromotionModel
-from ..presenter.prom_presenter import PromotionPresenter
-from ..view import StudentInterface
-from ..models import StudentModel
-from ..presenter import StudentPresenter
 
-class Widget(QFrame):
+class ExampleInterface(QWidget):
 
-    def __init__(self, text: str, parent=None):
+    def __init__(self, text:str, parent=None):
         super().__init__(parent=parent)
+        self.vBoxLayout = QVBoxLayout()
+        self.setLayout(self.vBoxLayout)
         self.label = TitleLabel(text, self)
-        self.label.setAlignment(Qt.AlignCenter)
-        self.hBoxLayout = QHBoxLayout(self)
-        self.hBoxLayout.addWidget(self.label, 1, Qt.AlignCenter)
-        self.setObjectName(text.replace(' ', '-'))
-
+        self.vBoxLayout.addWidget(self.label)
+        self.vBoxLayout.setAlignment(Qt.AlignCenter)
+        self.setObjectName(text.replace(" ", "-"))
 
 class MainWindow(FluentWindow):
 
@@ -39,15 +33,13 @@ class MainWindow(FluentWindow):
 
         # create sub interface
         self.homeInterface = HomeInterface(self)
-        self.studentInterface = StudentInterface(self)
+        self.exampleInterface = ExampleInterface("Example", self)
         self.settingInterface = SettingInterface(self)
-
+        
         # enable acrylic effect
         self.navigationInterface.setAcrylicEnabled(True)
-        self.connectSignalToSlot()
 
-        self.promModel = PromotionModel()
-        PromotionPresenter(self.homeInterface, self.promModel, self)
+        self.connectSignalToSlot()
 
         # add items to navigation interface
         self.initNavigation()
@@ -55,32 +47,42 @@ class MainWindow(FluentWindow):
 
     def connectSignalToSlot(self):
         signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)
+        #signalBus.switchToSampleCard.connect(self.switchToSample)
         signalBus.supportSignal.connect(self.onSupport)
 
     def initNavigation(self):
         # add navigation items
         t = Translator()
-        self.addSubInterface(self.homeInterface, FIF.HOME, self.tr('Accueil'))
-        self.addSubInterface(self.studentInterface, FIF.PEOPLE, "Elèves")
-        self.navigationInterface.addSeparator()
+        self.addSubInterface(self.homeInterface, FIF.HOME, "Accueil")
+        self.addSubInterface(self.exampleInterface, FIF.APPLICATION, "Example")
 
+
+        # add custom widget to bottom
+        self.navigationInterface.addItem(
+            routeKey='price',
+            icon=Icon.PRICE,
+            text=t.price,
+            onClick=self.onSupport,
+            selectable=False,
+            tooltip=t.price,
+            position=NavigationItemPosition.BOTTOM
+        )
         self.addSubInterface(
-            self.settingInterface, FIF.SETTING, 'Parmètres', NavigationItemPosition.BOTTOM)
+            self.settingInterface, FIF.SETTING, 'Paramètres', NavigationItemPosition.BOTTOM)
 
     def initWindow(self):
         self.resize(960, 780)
         self.setMinimumWidth(760)
-        self.setWindowIcon(QIcon('app/resource/images/logo_eniap.png'))
-        self.setWindowTitle('Gestion de comportement')
+        self.setWindowIcon(QIcon(':/gallery/images/eniap.png'))
+        self.setWindowTitle('SEPP - Soft')
 
         self.setMicaEffectEnabled(cfg.get(cfg.micaEnabled))
 
         # create splash screen
         self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIcon(QIcon('app/resource/images/eniap.png'))
-        self.splashScreen.setIconSize(QSize(240, 240))
+        self.splashScreen.setIconSize(QSize(106, 106))
         self.splashScreen.raise_()
-        #:/img/images/default-file-icon.png
+
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
         self.move(w//2 - self.width()//2, h//2 - self.height()//2)
@@ -98,17 +100,3 @@ class MainWindow(FluentWindow):
         super().resizeEvent(e)
         if hasattr(self, 'splashScreen'):
             self.splashScreen.resize(self.size())
-    
-    def closeEvent(self, event):
-        
-        exitDialog = Dialog(
-            'Quitter', 'Voulez vous quitter vraiment?',
-            self
-        )
-        exitDialog.setTitleBarVisible(False)
-        exitDialog.yesButton.setText('Oui')
-        exitDialog.cancelButton.setText('Non')
-        if exitDialog.exec():
-            event.accept()
-        else:
-            event.ignore()

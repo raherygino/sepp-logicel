@@ -10,9 +10,9 @@ from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QStandardPaths
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog
 
-from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
-from ..common.signal_bus import signalBus
-from ..common.style_sheet import StyleSheet
+from ...common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
+from ...common.signal_bus import signalBus
+from ...common.style_sheet import StyleSheet
 
 
 class SettingInterface(ScrollArea):
@@ -220,8 +220,8 @@ class SettingInterface(ScrollArea):
             self.__onDownloadFolderCardClicked)
 
         # personalization
-        self.themeCard.optionChanged.connect(lambda ci: setTheme(cfg.get(ci)))
-        self.themeColorCard.colorChanged.connect(setThemeColor)
+        self.themeCard.optionChanged.connect(lambda ci: setTheme(cfg.get(ci), lazy=True))
+        self.themeColorCard.colorChanged.connect(lambda c: setThemeColor(c, lazy=True))
         self.micaCard.checkedChanged.connect(signalBus.micaEnableChanged)
 
         # about
