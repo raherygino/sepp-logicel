@@ -13,8 +13,11 @@ from ..common.icon import Icon
 from ..common.signal_bus import signalBus
 from ..common.translator import Translator
 from ..common import resource
+from .utils import ExampleInterface
+from ..presenter import ExamplePresenter
+from ..models import ExampleModel
 
-class ExampleInterface(QWidget):
+class ExampleInterface2(QWidget):
 
     def __init__(self, text:str, parent=None):
         super().__init__(parent=parent)
@@ -33,9 +36,10 @@ class MainWindow(FluentWindow):
 
         # create sub interface
         self.homeInterface = HomeInterface(self)
-        self.exampleInterface = ExampleInterface("Example", self)
+        self.exampleInterface = ExampleInterface(self)
         self.settingInterface = SettingInterface(self)
         
+        self.setPresenter()
         # enable acrylic effect
         self.navigationInterface.setAcrylicEnabled(True)
 
@@ -44,6 +48,9 @@ class MainWindow(FluentWindow):
         # add items to navigation interface
         self.initNavigation()
         self.splashScreen.finish()
+        
+    def setPresenter(self):
+        ExamplePresenter(self.exampleInterface, ExampleModel())
 
     def connectSignalToSlot(self):
         signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)
