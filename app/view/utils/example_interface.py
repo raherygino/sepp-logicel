@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from qfluentwidgets import ComboBox, CommandBar, FluentIcon, Action, \
     ToolButton, PushButton, RoundMenu, SearchLineEdit, IndeterminateProgressBar, \
-    TransparentDropDownPushButton, LineEdit, SmoothScrollArea, PixmapLabel
+    TransparentDropDownPushButton, LineEdit, SmoothScrollArea, PixmapLabel, SubtitleLabel, StrongBodyLabel
 from ...components import TableView, LineEditWithLabel, ComboxEditWithLabel
 from ...common.config import OptionsConfigItem
 
@@ -38,6 +38,8 @@ class ExampleInterface(QWidget):
             
     def __content(self):
         self.row = QHBoxLayout()
+        self.titleStatus = SubtitleLabel("I - ETAT CIVIL")
+        self.vBoxlayout.addWidget(self.titleStatus)
         #self.row.setAlignment(Qt.AlignTop)
         self.leftCol = QVBoxLayout()
         self.leftCol.setAlignment(Qt.AlignTop)
@@ -86,15 +88,33 @@ class ExampleInterface(QWidget):
         self.email = LineEditWithLabel("Email")
         self.contactEmergency = LineEditWithLabel("Contact en cas d'urgence")
         
+        self.row8 = QHBoxLayout()
+        self.row8.setAlignment(Qt.AlignLeft)
+        self.maritalStatus = ComboxEditWithLabel("Situation matrimoniale", ["Célibataire", "Marié(e) legitime", "Mari(é) selon coutume", "Divorcé(e)", "Veuf(ve)"])
+        self.maritalStatus.combox.setFixedWidth(300)
+        
+        self.titleConjoint = StrongBodyLabel("CONJOINT(E)")
+        
+        self.row9 = QHBoxLayout()
+        self.name_conjoint = LineEditWithLabel("Nom et prénoms")
+        self.profession_conjoint = LineEditWithLabel("Profession")
+        self.employer_conjoint = LineEditWithLabel("Employeur")
+        self.locality = LineEditWithLabel("Localité")
+        self.im = LineEditWithLabel("IM (si fonctionnaire)")
+        
+        self.titleChild = StrongBodyLabel("NOMBRE D'ENFANT A CHARGE")
+        
         self.addChild(self.row2,  [self.im, self.grade, self.length, self.genre, self.blood])
         self.addChild(self.row3,  [self.birthday, self.birthplace])
         self.addChild(self.row4,  [self.nameFather,self.jobFather,self.nameMother, self.jobMother])
         self.addChild(self.row5,  [self.numberCin, self.dateCin,  self.placeCin])
         self.addChild(self.row6,  [self.regionOrigin, self.ethnie])
         self.addChild(self.row7,  [self.address, self.phone, self.email, self.contactEmergency])
+        self.addChild(self.row8,  [self.maritalStatus])
+        self.addChild(self.row9,  [self.name_conjoint, self.profession_conjoint, self.employer_conjoint, self.locality, self.im])
         
         self.addChild(self.leftCol, [self.row2, self.row3, self.row4])
-        self.addChild(self.vBoxlayout, [self.row, self.row5, self.row6, self.row7])
+        self.addChild(self.vBoxlayout, [self.row, self.row5, self.row6, self.row7, self.row8, self.titleConjoint, self.row9, self.titleChild])
     
     def __content2(self):
         self.hBoxLayout = QHBoxLayout()
