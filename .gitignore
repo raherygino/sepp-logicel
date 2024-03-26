@@ -18,6 +18,7 @@ docs/
 downloads/
 download/
 eggs/
+examples/
 .eggs/
 .vscode/
 .idea/
