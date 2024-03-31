@@ -7,6 +7,7 @@ from qfluentwidgets import NavigationItemPosition, FluentWindow, \
 from qfluentwidgets import FluentIcon as FIF
 
 from .home import HomeInterface
+from .students import AddStudentInterface
 from .utils.setting_interface import SettingInterface
 from ..common.config import ZH_SUPPORT_URL, EN_SUPPORT_URL, cfg
 from ..common.icon import Icon
@@ -36,6 +37,7 @@ class MainWindow(FluentWindow):
 
         # create sub interface
         self.homeInterface = HomeInterface(self)
+        self.addStudentInterface = AddStudentInterface(self)
         self.exampleInterface = ExampleInterface(self)
         self.settingInterface = SettingInterface(self)
         
@@ -61,6 +63,7 @@ class MainWindow(FluentWindow):
         # add navigation items
         t = Translator()
         self.addSubInterface(self.homeInterface, FIF.HOME, "Accueil")
+        self.addSubInterface(self.addStudentInterface, FIF.ADD_TO, "Ajouter élève")
         self.addSubInterface(self.exampleInterface, FIF.APPLICATION, "Example")
 
 
