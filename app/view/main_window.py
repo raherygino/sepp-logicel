@@ -8,6 +8,7 @@ from qfluentwidgets import FluentIcon as FIF
 
 from .home import HomeInterface
 from .students import AddStudentInterface, ListStudentInterface
+from .promotion import ListPromInterface
 from .utils.setting_interface import SettingInterface
 from ..common.config import ZH_SUPPORT_URL, EN_SUPPORT_URL, cfg
 from ..common.icon import Icon
@@ -15,8 +16,8 @@ from ..common.signal_bus import signalBus
 from ..common.translator import Translator
 from ..common import resource
 from .utils import ExampleInterface
-from ..presenter import ExamplePresenter, StudentPresenter
-from ..models import ExampleModel, StudentModel
+from ..presenter import ExamplePresenter, StudentPresenter, PromotionPresenter
+from ..models import ExampleModel, StudentModel, PromotionModel
 
 class ExampleInterface2(QWidget):
 
@@ -37,7 +38,9 @@ class MainWindow(FluentWindow):
 
         # create sub interface
         self.homeInterface = HomeInterface(self)
+        self.listPromInterface = ListPromInterface(self)
         self.addStudentInterface = AddStudentInterface(self)
+        
         self.listStudentInterface = ListStudentInterface(self)
         self.exampleInterface = ExampleInterface(self)
         self.settingInterface = SettingInterface(self)
@@ -50,11 +53,13 @@ class MainWindow(FluentWindow):
 
         # add items to navigation interface
         self.initNavigation()
+        #self.navigationInterface.setVisible(False)
         self.splashScreen.finish()
         
     def setPresenter(self):
         ExamplePresenter(self.exampleInterface, ExampleModel())
         StudentPresenter(self.addStudentInterface, self.listStudentInterface, StudentModel())
+        PromotionPresenter(self.listPromInterface, PromotionModel())
 
     def connectSignalToSlot(self):
         signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)
@@ -65,6 +70,7 @@ class MainWindow(FluentWindow):
         # add navigation items
         t = Translator()
         self.addSubInterface(self.homeInterface, FIF.HOME, "Accueil")
+        self.addSubInterface(self.listPromInterface, FIF.CERTIFICATE, "Promotion")
         self.addSubInterface(self.addStudentInterface, FIF.ADD_TO, "Ajouter élève")
         self.addSubInterface(self.listStudentInterface, FIF.PEOPLE, "Liste des élèves")
         self.addSubInterface(self.exampleInterface, FIF.APPLICATION, "Example")
