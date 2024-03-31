@@ -4,26 +4,27 @@ from dataclasses import dataclass
 
 @dataclass
 class Student(Entity):
-    """Student information """
     id: int = 0
-    promotion_id: int = 0
-    lastname: str = ""
-    firstname: str = ""
-    gender: str = ""
+    name: str = ""
+    im: str = ""
+    matricule: str = ""
+    grade: str = ""
+    height: int = 0
+    genre: str = ""
+    blood: str = ""
     birthday: str = ""
     birthplace: str = ""
-    city_origin: str = ""
+    name_father: str = ""
+    job_father: str = ""
+    name_mother: str = ""
+    job_mother: str = ""
+    cin: str = ""
+    date_cin: str = ""
+    place_cin: str = ""
     region_origin: str = ""
-    city: str = ""
+    ethnie: str = ""
     address: str = ""
     phone: str = ""
     email: str = ""
-    father_name: str = ""
-    mother_name: str = ""
-    diplome_max: str = ""
-    speciality: str = ""
-    level: str = ""
-    company: int = 0
-    section: int = 0
-    number: int = 0
-    matricule: int = 0
+    phone2: str = ""
+    

@@ -3,10 +3,7 @@ from .base_entity import Entity
 from dataclasses import dataclass
 
 @dataclass
-class Promotion(Entity):
-    """Promotion information """
+class Example(Entity):
     id: int = 0
     name: str = ""
-    rank: str = ""
-    years: str = ""
-    logo: str = ""
+    age: int = ""

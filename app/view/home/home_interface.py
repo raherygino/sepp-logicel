@@ -1,19 +1,18 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QScrollArea
 from PyQt5.QtGui import QPixmap, QPainter, QPainterPath, QLinearGradient,QColor, QBrush
 from PyQt5.QtCore import Qt, QRectF, QEasingCurve
-from qfluentwidgets import BodyLabel, PixmapLabel, isDarkTheme, FluentIcon, TitleLabel, FlowLayout, SmoothScrollArea, TransparentToolButton
+from qfluentwidgets import BodyLabel, PixmapLabel, FluentIcon, isDarkTheme, ToolButton, TitleLabel, FlowLayout, SmoothScrollArea, TransparentToolButton
 from ...components.link_card2 import LinkCardView, LinkCard
 from ...components.sample_card import SampleCardView
 from ...common.style_sheet import StyleSheet
 from ...common import resource
 
 class HomeInterface(QWidget):
-    """ Main interface """
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.vBoxLayout = QVBoxLayout()
-        self.banner = QPixmap('app/resource/images/header1.png')
+        self.banner = QPixmap('app/resource/images/cover.jpg')
         self.vBoxLayout.setSpacing(0)
         self.vBoxLayout.setContentsMargins(30, 20, 0, 0)
         self.setLayout(self.vBoxLayout)
@@ -24,13 +23,13 @@ class HomeInterface(QWidget):
         self.flowLayout.setContentsMargins(0, 10, 30, 30)
         self.flowLayout.setVerticalSpacing(20)
         self.flowLayout.setHorizontalSpacing(10)
-        title = TitleLabel('Liste des promotions', self)
+        title = TitleLabel('Promotion Sandratra', self)
         self.vBoxLayout.addWidget(title)
 
         
         #self.flowLayout.addWidget(self.cardNewEnv)
         #print(self.flowLayout.takeAllWidgets())
-        # Create a QWidget to hold the layout
+        # z a QWidget to hold the layout
         widget = QWidget()
         widget.setLayout(self.flowLayout)
         widget.setObjectName("parentCard")

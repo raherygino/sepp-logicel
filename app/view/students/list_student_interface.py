@@ -2,23 +2,24 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import Qt
 from qfluentwidgets import ComboBox, CommandBar, FluentIcon, Action, \
     ToolButton, setFont, RoundMenu, SearchLineEdit, IndeterminateProgressBar, \
-    TransparentDropDownPushButton
+    TransparentDropDownPushButton, ProgressBar
 from ...components import TableView
 from ...common.config import OptionsConfigItem
 
-class ListStudent(QWidget):
+class ListStudentInterface(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.vBoxLayout = QVBoxLayout(self)
         self.hBoxLayout = QHBoxLayout()
-        self.hBoxLayout.setContentsMargins(5, 0, 12, 0)
+        self.hBoxLayout.setContentsMargins(5, 10, 12, 0)
         self.parent = parent
         self.__initCommandBar()
         self.__initTableView(parent)
         self.vBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.vBoxLayout.addWidget(self.progressBar)
         self.vBoxLayout.addWidget(self.tableView)
+        self.setObjectName("listStudentInterface")
         
     def createDropDownButton(self, parent):
         button = TransparentDropDownPushButton('Ajouter', self, FluentIcon.ADD)
@@ -76,10 +77,10 @@ class ListStudent(QWidget):
         
     def __initTableView(self, parent):
         
-        self.progressBar = IndeterminateProgressBar(self)
+        self.progressBar = ProgressBar(self)
         self.progressBar.setVisible(False)
         self.tableView = TableView(self)
-        parent.mainWindow.settingInterface.themeCard.optionChanged.connect(self.setTableTheme)
+        #parent.mainWindow.settingInterface.themeCard.optionChanged.connect(self.setTableTheme)
         
     def setTableTheme(self, config: OptionsConfigItem):
         self.tableView.setQss(config.value.value)
