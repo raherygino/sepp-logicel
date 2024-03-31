@@ -47,3 +47,21 @@ class Model:
                 nVal.set(field.name, val[i])
             listItems.append(nVal)
         return listItems
+    
+    def create(self, entity: Entity):
+        fieldsEntity = dataclasses.fields(entity)
+        qm = ','.join([f'?' for field in fieldsEntity[1:]])
+        values = [f'{entity.get(field.name)}' for field in fieldsEntity[1:]]
+        fields = ','.join([f'{field.name}' for field in fieldsEntity[1:]])
+        sql = f"INSERT INTO {self.TABLE}({fields}) VALUES ({qm})"
+        cursor = self.conn.cursor()
+        cursor.execute(sql, values)
+        self.conn.commit()
+    
+    def delete(self,**kwargs):
+        sql = f'DELETE FROM {self.TABLE} WHERE '
+        conditions = ' AND '.join([f'{key}="{kwargs.get(key)}"' for key in kwargs.keys()])
+        sql += conditions
+        cursor = self.conn.cursor()
+        cursor.execute(sql)
+        self.conn.commit()
