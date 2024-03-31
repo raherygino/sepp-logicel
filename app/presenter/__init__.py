@@ -1,2 +1,3 @@
 from .example_presenter import ExamplePresenter
 from .student_presenter import StudentPresenter
+from .promotion_presenter import PromotionPresenter
