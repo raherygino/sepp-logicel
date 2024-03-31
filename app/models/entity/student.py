@@ -1,0 +1,31 @@
+# coding:utf-8
+from .base_entity import Entity
+from dataclasses import dataclass
+
+@dataclass
+class Student(Entity):
+    id: int = 0
+    name: str = ""
+    im: str = ""
+    matricule: str = ""
+    grade: str = ""
+    height: int = 0
+    sexe: str = ""
+    blood: str = ""
+    birthday: str = ""
+    birthplace: str = ""
+    name_father: str = ""
+    profession_father: str = ""
+    name_mother: str = ""
+    profession_mother: str = ""
+    cin: str = ""
+    date_cin: str = ""
+    place_cin: str = ""
+    region_origin: str = ""
+    ethnie: str = ""
+    address: str = ""
+    phone: str = ""
+    email: str = ""
+    phone2: str = ""
+    phone2: str = ""
+    
