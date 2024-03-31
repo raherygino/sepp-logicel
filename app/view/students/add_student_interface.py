@@ -64,7 +64,7 @@ class AddStudentInterface(QWidget):
         self.im = LineEditWithLabel("IM")
         self.matricule = LineEditWithLabel("Matricule")
         self.grade = LineEditWithLabel("Grade")
-        self.length = LineEditWithLabel("Taille")
+        self.nHeight = LineEditWithLabel("Taille")
         self.genre = ComboxEditWithLabel("Sexe", ["Masculin", "Féminin"])
         self.blood = LineEditWithLabel("Groupe Sanguin")
         
@@ -320,7 +320,7 @@ class AddStudentInterface(QWidget):
         self.titleSpeciality = SubtitleLabel("IX - APTITUDES SPECIALES")
         self.editSpeciality = LineEditWithLabel("Aptitudes")
         
-        self.addChild(self.row2,   [self.im, self.grade, self.length, self.genre, self.blood])
+        self.addChild(self.row2,   [self.im, self.matricule, self.grade, self.nHeight, self.genre, self.blood])
         self.addChild(self.row3,   [self.birthday, self.birthplace])
         self.addChild(self.row4,   [self.nameFather,self.jobFather,self.nameMother, self.jobMother])
         self.addChild(self.row5,   [self.numberCin, self.dateCin,  self.placeCin])
