@@ -1,5 +1,6 @@
-from ..db.database import Database
+from ..db import Database
 from ..entity import Entity
+
 import dataclasses
 
 class Model:
@@ -28,3 +29,21 @@ class Model:
         query += "updated_at DATETIME, created_at DATETIME)"
         cursor.execute(query)
         self.conn.commit()
+    
+    def fetch_all(self, **kwargs):
+        query = f'SELECT * FROM {self.TABLE}'
+        if "order" in kwargs.keys():
+            query += f' ORDER BY {kwargs.get('order')}'
+        cursor = self.conn.cursor()
+        cursor.execute(query)
+        data = cursor.fetchall()
+        listItems = []
+        listItems.clear()
+
+        for val in data:
+            nVal = self.entity.copy()
+            fieldsEntity = dataclasses.fields(nVal)
+            for i, field in enumerate(fieldsEntity):
+                nVal.set(field.name, val[i])
+            listItems.append(nVal)
+        return listItems

@@ -9,7 +9,7 @@ from qfluentwidgets import ComboBox, PrimaryPushButton, CommandBar, FluentIcon, 
 from ...components import TableView, LineEditWithLabel, ComboxEditWithLabel
 from ...common.config import OptionsConfigItem
 
-class ExampleInterface(QWidget):
+class AddStudentInterface(QWidget):
     
     def __init__(self,  parent=None):
         super().__init__(parent=parent)
@@ -23,7 +23,7 @@ class ExampleInterface(QWidget):
         self.btnAdd = PrimaryPushButton("Ajouter", self)
         self.mainLayout.addWidget(self.btnAdd)
         self.setLayout(self.mainLayout)
-        self.setObjectName("exampleInterface")
+        self.setObjectName("addStudentInterface")
         
     def __contentWidgets(self) -> QWidget:
         scrollable_widget = QWidget()
@@ -46,7 +46,6 @@ class ExampleInterface(QWidget):
         self.row1 = QHBoxLayout()
         self.titleStatus = SubtitleLabel("I - ETAT CIVIL")
         self.vBoxlayout.addWidget(self.titleStatus)
-        #self.row.setAlignment(Qt.AlignTop)
         self.leftCol = QVBoxLayout()
         self.leftCol.setAlignment(Qt.AlignTop)
         
@@ -65,7 +64,7 @@ class ExampleInterface(QWidget):
         self.im = LineEditWithLabel("IM")
         self.matricule = LineEditWithLabel("Matricule")
         self.grade = LineEditWithLabel("Grade")
-        self.length = LineEditWithLabel("Taille")
+        self.nHeight = LineEditWithLabel("Taille")
         self.genre = ComboxEditWithLabel("Sexe", ["Masculin", "Féminin"])
         self.blood = LineEditWithLabel("Groupe Sanguin")
         
@@ -321,7 +320,7 @@ class ExampleInterface(QWidget):
         self.titleSpeciality = SubtitleLabel("IX - APTITUDES SPECIALES")
         self.editSpeciality = LineEditWithLabel("Aptitudes")
         
-        self.addChild(self.row2,   [self.im, self.grade, self.length, self.genre, self.blood])
+        self.addChild(self.row2,   [self.im, self.matricule, self.grade, self.nHeight, self.genre, self.blood])
         self.addChild(self.row3,   [self.birthday, self.birthplace])
         self.addChild(self.row4,   [self.nameFather,self.jobFather,self.nameMother, self.jobMother])
         self.addChild(self.row5,   [self.numberCin, self.dateCin,  self.placeCin])
@@ -357,24 +356,3 @@ class ExampleInterface(QWidget):
                                         self.row18, self.subTitleProgramming, self.row19, self.row19_2, self.row19_3 , self.subTitleDatabase, self.row20,  self.subTitleInfo, 
                                         self.comboBoxMultimedia, self.titleLang, self.tableLang, self.titlePremis, 
                                         self.row21, self.row22, self.titleSpeciality, self.editSpeciality])
-        
-    
-    def __content2(self):
-        self.hBoxLayout = QHBoxLayout()
-        self.hBoxLayout.setAlignment(Qt.AlignTop)
-        self.row = QHBoxLayout()
-        self.leftCol = QVBoxLayout()
-        self.leftCol.setAlignment(Qt.AlignTop)
-        self.name = LineEditWithLabel("Nom et prénoms")
-        self.im = LineEditWithLabel("IM")
-        self.leftCol.addLayout(self.name)
-        self.leftCol.addLayout(self.im)
-        self.label = PixmapLabel(self)
-        self.label.setPixmap(QPixmap("app/resource/images/user.png"))
-        self.addChild(self.leftCol,self.row)
-        self.addChild(self.leftCol,self.label)
-        self.row.addLayout(self.leftCol)
-        self.row.addWidget(self.label)
-        self.vBoxlayout.addLayout(self.row)
-        self.vBoxlayout.addLayout(self.hBoxLayout)
-        

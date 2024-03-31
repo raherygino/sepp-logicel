@@ -7,6 +7,7 @@ from qfluentwidgets import NavigationItemPosition, FluentWindow, \
 from qfluentwidgets import FluentIcon as FIF
 
 from .home import HomeInterface
+from .students import AddStudentInterface, ListStudentInterface
 from .utils.setting_interface import SettingInterface
 from ..common.config import ZH_SUPPORT_URL, EN_SUPPORT_URL, cfg
 from ..common.icon import Icon
@@ -14,8 +15,8 @@ from ..common.signal_bus import signalBus
 from ..common.translator import Translator
 from ..common import resource
 from .utils import ExampleInterface
-from ..presenter import ExamplePresenter
-from ..models import ExampleModel
+from ..presenter import ExamplePresenter, StudentPresenter
+from ..models import ExampleModel, StudentModel
 
 class ExampleInterface2(QWidget):
 
@@ -36,6 +37,8 @@ class MainWindow(FluentWindow):
 
         # create sub interface
         self.homeInterface = HomeInterface(self)
+        self.addStudentInterface = AddStudentInterface(self)
+        self.listStudentInterface = ListStudentInterface(self)
         self.exampleInterface = ExampleInterface(self)
         self.settingInterface = SettingInterface(self)
         
@@ -51,6 +54,7 @@ class MainWindow(FluentWindow):
         
     def setPresenter(self):
         ExamplePresenter(self.exampleInterface, ExampleModel())
+        StudentPresenter(self.addStudentInterface, self.listStudentInterface, StudentModel())
 
     def connectSignalToSlot(self):
         signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)
@@ -61,6 +65,8 @@ class MainWindow(FluentWindow):
         # add navigation items
         t = Translator()
         self.addSubInterface(self.homeInterface, FIF.HOME, "Accueil")
+        self.addSubInterface(self.addStudentInterface, FIF.ADD_TO, "Ajouter élève")
+        self.addSubInterface(self.listStudentInterface, FIF.PEOPLE, "Liste des élèves")
         self.addSubInterface(self.exampleInterface, FIF.APPLICATION, "Example")
 
 
