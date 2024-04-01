@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QHBoxLayout
 from PyQt5.QtGui import QPixmap, QPainter, QPainterPath, QLinearGradient,QColor, QBrush
-from PyQt5.QtCore import Qt, QRectF, QEasingCurve
+from PyQt5.QtCore import Qt, QRectF, QEasingCurve, pyqtSignal
 from qfluentwidgets import BodyLabel, PixmapLabel, FluentIcon, isDarkTheme, ToolButton, TitleLabel, FlowLayout, SmoothScrollArea, ComboBox
 from ...components.link_card2 import LinkCardView, LinkCard
 from ...components.sample_card import SampleCardView
@@ -9,8 +9,13 @@ from ...common import resource
 
 class HomeInterface(QWidget):
 
+    current_prom = pyqtSignal(int)
+    all_prom = pyqtSignal(list)
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.currentProm = 0
+        
         self.vBoxLayout = QVBoxLayout()
         self.banner = QPixmap('app/resource/images/cover.jpg')
         self.vBoxLayout.setSpacing(0)
@@ -44,11 +49,10 @@ class HomeInterface(QWidget):
         row2.setSpacing(12)
         row2.setAlignment(Qt.AlignCenter)
         label = BodyLabel("Promotion")
-        choicePromotion = ComboBox(self)
-        choicePromotion.setFixedWidth(200)
-        choicePromotion.addItems(["30ème promotion", "29ème promotion"])
+        self.choicePromotion = ComboBox(self)
+        self.choicePromotion.setFixedWidth(200)
         row2.addWidget(label)
-        row2.addWidget(choicePromotion)
+        row2.addWidget(self.choicePromotion)
         #self.vBoxLayout.addWidget(title)
         self.vBoxLayout.setSpacing(25)
         self.vBoxLayout.addLayout(row)

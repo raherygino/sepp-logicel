@@ -12,6 +12,7 @@ class ListPromInterface(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.parent = parent
         self.vBoxLayout = QVBoxLayout()
         self.banner = QPixmap('app/resource/images/cover.jpg')
         self.vBoxLayout.setSpacing(0)
