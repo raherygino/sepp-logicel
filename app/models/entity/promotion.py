@@ -7,6 +7,6 @@ class Promotion(Entity):
     """Promotion information """
     id: int = 0
     name: str = ""
-    rank: str = ""
+    rank: int = 0
     years: str = ""
     logo: str = ""
