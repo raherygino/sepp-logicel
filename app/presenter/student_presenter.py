@@ -7,35 +7,47 @@ class StudentPresenter:
     def __init__(self, addView:AddStudentInterface, listView:ListStudentInterface, model: StudentModel):
         self.addview = addView
         self.listView = listView
+        self.mainView = self.listView.parent
         self.model = model
-        self.__workerThread()
+        self.promotion_id = 0
+        self.__initTable()
         self.__actions()
+        self.__workerThread()
+        self.fetchData()
         
     def __workerThread(self):
         self.worker_thread = QThread()
-        self.worker = DatabaseWorker(self.model.fetch_all())
+        self.worker = DatabaseWorker(self.model.fetch_by_condition(promotion_id=self.promotion_id))
         self.worker.moveToThread(self.worker_thread)
         self.worker_thread.started.connect(self.worker.run)
         self.worker.progress.connect(self.update_progress)
         self.worker.result.connect(self.handle_result)
         self.worker.finished.connect(self.worker_thread.quit)
         
+    def __initTable(self):
+        labels = ["Matricule", "Grade", "Nom et prénoms", "Sexe", "Date de naissance", "Lieu de naissance", "CIN", ""]
+        self.listView.tableView.setHorizontalHeaderLabels(labels)
+        
     def __actions(self):
         self.addview.btnAdd.clicked.connect(lambda: self.addStudent())
         self.listView.importAction.triggered.connect(self.fetchData)
+        self.mainView.homeInterface.current_prom.connect(lambda value: self.setIdPromotion(value))
+    
+    def setIdPromotion(self, val):
+        self.promotion_id = val
+        self.worker.setData(self.model.fetch_by_condition(promotion_id=self.promotion_id))
+        self.fetchData()
         
     def update_progress(self, progress):
         self.listView.progressBar.setValue(int(progress))
         #self.progress_label.setText(f"{}%")
         
-    
     def handle_result(self, data:list[Student]):
         self.listView.progressBar.setVisible(False)
-        self.listView.tableView.setHorizontalHeaderLabels(['Nom et prénoms', 'Matricule'])
         listData = []
         listData.clear()
         for student in data:
-            listData.append([student.name, student.matricule])
+            listData.append([student.matricule, student.grade, student.name, student.genre, student.birthday, student.birthplace])
             
         self.listView.tableView.setData(listData)
         self.listView.progressBar.setValue(0)
@@ -44,10 +56,11 @@ class StudentPresenter:
     def valueOf(self, **kwargs):
         keyEdit = "lineEdit"
         keyCombox = "combox"
+        prefix = "self.addview."
         if keyEdit in kwargs:
-            stringVal = f"self.addview.{kwargs.get(keyEdit)}.lineEdit.text()"
+            stringVal = f"{prefix}{kwargs.get(keyEdit)}.{keyEdit}.text()"
         if keyCombox in kwargs:
-            stringVal = f"self.addview.{kwargs.get(keyCombox)}.combox.currentText()"
+            stringVal = f"{prefix}{kwargs.get(keyCombox)}.{keyCombox}.currentText()"
         return eval(stringVal)
     
     def fetchData(self):
@@ -79,7 +92,8 @@ class StudentPresenter:
         email = self.valueOf(lineEdit="email")
         phone2 = self.valueOf(lineEdit="contactEmergency")
         
-        '''student = Student(
+        student = Student(
+            promotion_id= self.promotion_id,
             name=name, im=im, matricule=matricule,
             grade=grade, genre=genre, height=height,
             blood=blood, birthday=birthday, birthplace=birthplace,
@@ -88,8 +102,8 @@ class StudentPresenter:
             date_cin=date_cin, place_cin=place_cin, 
             region_origin=region_origin, ethnie=ethnie, address=address, 
             phone=phone, email=email, phone2=phone2
-        )'''
+        )
         
-        #self.model.create(student)
-        #for i in range(300):
-            #self.model.create(Student(name=f"Person {i}", matricule=f"{i+1}"))
+        self.model.create(student)
+        '''for i in range(1200):
+            self.model.create(Student(promotion_id= self.promotion_id, name=f"Person {i}", matricule=f"{i+1}"))'''

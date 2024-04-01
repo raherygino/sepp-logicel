@@ -13,6 +13,9 @@ class DatabaseWorker(QObject):
     def __init__(self, dataFetch):
         super().__init__()
         self.dataFetch = dataFetch
+        
+    def setData(self, dataFetch):
+        self.dataFetch = dataFetch
 
     def run(self):
         # Simulate database operation
