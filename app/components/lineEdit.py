@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QVBoxLayout
-from qfluentwidgets import LineEdit, BodyLabel, ComboBox
+from qfluentwidgets import LineEdit, BodyLabel, ComboBox, CompactSpinBox
 
 
 class LineEditWithLabel(QVBoxLayout):
@@ -20,4 +20,13 @@ class ComboxEditWithLabel(QVBoxLayout):
         self.label = BodyLabel(label)
         self.addWidget(self.label)
         self.addWidget(self.combox)
+        
+class SpinBoxEditWithLabel(QVBoxLayout):
+    def __init__(self, label:str, parent=None):
+        super().__init__(parent)
+        self.setSpacing(2)
+        self.spinbox = CompactSpinBox(parent)
+        self.label = BodyLabel(label)
+        self.addWidget(self.label)
+        self.addWidget(self.spinbox)
         

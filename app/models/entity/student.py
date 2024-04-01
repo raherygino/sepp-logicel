@@ -5,6 +5,7 @@ from dataclasses import dataclass
 @dataclass
 class Student(Entity):
     id: int = 0
+    promotion_id : int = 0
     name: str = ""
     im: str = ""
     matricule: str = ""

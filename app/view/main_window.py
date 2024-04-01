@@ -8,6 +8,7 @@ from qfluentwidgets import FluentIcon as FIF
 
 from .home import HomeInterface
 from .students import AddStudentInterface, ListStudentInterface
+from .promotion import ListPromInterface
 from .utils.setting_interface import SettingInterface
 from ..common.config import ZH_SUPPORT_URL, EN_SUPPORT_URL, cfg
 from ..common.icon import Icon
@@ -15,8 +16,8 @@ from ..common.signal_bus import signalBus
 from ..common.translator import Translator
 from ..common import resource
 from .utils import ExampleInterface
-from ..presenter import ExamplePresenter, StudentPresenter
-from ..models import ExampleModel, StudentModel
+from ..presenter import *
+from ..models import ExampleModel, StudentModel, PromotionModel
 
 class ExampleInterface2(QWidget):
 
@@ -37,12 +38,13 @@ class MainWindow(FluentWindow):
 
         # create sub interface
         self.homeInterface = HomeInterface(self)
+        self.listPromInterface = ListPromInterface(self)
         self.addStudentInterface = AddStudentInterface(self)
+        
         self.listStudentInterface = ListStudentInterface(self)
         self.exampleInterface = ExampleInterface(self)
         self.settingInterface = SettingInterface(self)
         
-        self.setPresenter()
         # enable acrylic effect
         self.navigationInterface.setAcrylicEnabled(True)
 
@@ -50,12 +52,30 @@ class MainWindow(FluentWindow):
 
         # add items to navigation interface
         self.initNavigation()
+        self.setPresenter()
         self.splashScreen.finish()
         
     def setPresenter(self):
+        promotionModel = PromotionModel()
+        studentModel = StudentModel()
         ExamplePresenter(self.exampleInterface, ExampleModel())
-        StudentPresenter(self.addStudentInterface, self.listStudentInterface, StudentModel())
-
+        StudentPresenter(self.addStudentInterface, self.listStudentInterface, studentModel)
+        PromotionPresenter(self.listPromInterface, promotionModel)
+        HomePresenter(self.homeInterface, promotionModel, studentModel)
+        self.checkPromotion(promotionModel)
+            
+    def checkPromotion(self, promitionModel: PromotionModel):
+        promotions = promitionModel.fetch_all(order="rank DESC")
+        promAvailable = len(promotions) != 0
+        self.navigationInterface.setVisible(promAvailable)
+        if not promAvailable:
+            self.switchTo(self.listPromInterface)
+            self.homeInterface.current_prom.emit(0)
+        else:
+            if self.homeInterface.currentProm == 0:
+                self.homeInterface.current_prom.emit(int(promotions[len(promotions) - 1].rank))
+        self.homeInterface.all_prom.emit(promotions)
+        
     def connectSignalToSlot(self):
         signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)
         #signalBus.switchToSampleCard.connect(self.switchToSample)
@@ -65,6 +85,7 @@ class MainWindow(FluentWindow):
         # add navigation items
         t = Translator()
         self.addSubInterface(self.homeInterface, FIF.HOME, "Accueil")
+        self.addSubInterface(self.listPromInterface, FIF.CERTIFICATE, "Promotion")
         self.addSubInterface(self.addStudentInterface, FIF.ADD_TO, "Ajouter élève")
         self.addSubInterface(self.listStudentInterface, FIF.PEOPLE, "Liste des élèves")
         self.addSubInterface(self.exampleInterface, FIF.APPLICATION, "Example")
@@ -93,7 +114,7 @@ class MainWindow(FluentWindow):
 
         # create splash screen
         self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIconSize(QSize(106, 106))
+        self.splashScreen.setIconSize(QSize(260, 260))
         self.splashScreen.raise_()
 
         desktop = QApplication.desktop().availableGeometry()
