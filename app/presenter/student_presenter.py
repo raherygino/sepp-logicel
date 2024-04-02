@@ -35,7 +35,6 @@ class StudentPresenter:
     
     def setIdPromotion(self, val):
         self.promotion_id = val
-        self.worker.setData(self.model.fetch_by_condition(promotion_id=self.promotion_id))
         self.fetchData()
         
     def update_progress(self, progress):
@@ -65,6 +64,7 @@ class StudentPresenter:
     
     def fetchData(self):
         self.listView.progressBar.setVisible(True)
+        self.worker.setData(self.model.fetch_by_condition(promotion_id=self.promotion_id))
         self.worker_thread.start()
         
     def addStudent(self):
