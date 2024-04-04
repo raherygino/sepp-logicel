@@ -9,6 +9,9 @@ class Student(Entity):
     name: str = ""
     im: str = ""
     matricule: str = ""
+    company: int = 0
+    section: int = 0
+    number: str = ""
     grade: str = ""
     height: int = 0
     genre: str = ""

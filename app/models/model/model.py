@@ -68,6 +68,17 @@ class Model:
         cursor = self.conn.cursor()
         cursor.execute(sql, values)
         self.conn.commit()
+    
+    def create_multiple(self, listData: list):
+        cursor = self.conn.cursor()
+        for entity in listData:
+            fieldsEntity = dataclasses.fields(entity)
+            qm = ','.join([f'?' for field in fieldsEntity[1:]])
+            values = [f'{entity.get(field.name)}' for field in fieldsEntity[1:]]
+            fields = ','.join([f'{field.name}' for field in fieldsEntity[1:]])
+            sql = f"INSERT INTO {self.TABLE}({fields}) VALUES ({qm})"
+            cursor.execute(sql, values)
+        self.conn.commit()
         
     def update_item(self, item_id, **fields):
         cursor = self.conn.cursor()

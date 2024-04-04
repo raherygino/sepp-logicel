@@ -1,10 +1,13 @@
 from ..models import StudentModel, Student, DatabaseWorker
-from ..view.students import AddStudentInterface, ListStudentInterface
+from ..view.students import AddStudentInterface, ListStudentInterface, ImportDialog
 from PyQt5.QtCore import QThread
+from ..common.constant import col
+from ..common.functions import Function
 
 class StudentPresenter:
     
     def __init__(self, addView:AddStudentInterface, listView:ListStudentInterface, model: StudentModel):
+        self.func = Function()
         self.addview = addView
         self.listView = listView
         self.mainView = self.listView.parent
@@ -13,7 +16,6 @@ class StudentPresenter:
         self.__initTable()
         self.__actions()
         self.__workerThread()
-        self.fetchData()
         
     def __workerThread(self):
         self.worker_thread = QThread()
@@ -30,7 +32,7 @@ class StudentPresenter:
         
     def __actions(self):
         self.addview.btnAdd.clicked.connect(lambda: self.addStudent())
-        self.listView.importAction.triggered.connect(self.fetchData)
+        self.listView.importAction.triggered.connect(self.importData)
         self.mainView.homeInterface.current_prom.connect(lambda value: self.setIdPromotion(value))
     
     def setIdPromotion(self, val):
@@ -66,6 +68,57 @@ class StudentPresenter:
         self.listView.progressBar.setVisible(True)
         self.worker.setData(self.model.fetch_by_condition(promotion_id=self.promotion_id))
         self.worker_thread.start()
+        
+    def importData(self):
+        
+        filename = self.func.importFile(self.mainView, "Importer base de données", "CSV File (*.csv)")
+        if filename:
+            with open(filename, "r") as data:
+                listStudent = []
+                firstdata = []
+                all_item = []
+                keys = []
+                for key in col.keys():
+                    keys.append(key)
+                for i, line in enumerate(data):
+                    if i == 0:
+                        firstdata = line.split(";")
+                    else:
+                        items = line.strip().split(";")
+                        all_item.append(items)
+                dialog = ImportDialog(firstdata, Student(), self.mainView)
+                if dialog.exec():
+                    valCombox = []
+                    index_combox = []
+                    for i, comb in enumerate(dialog.combox):
+                        index = comb.currentIndex() - 1
+                        if index != -1:
+                            valCombox.append(keys[index])
+                        else:
+                            valCombox.append('-')
+                        index_combox.append(i)
+                    for item in all_item:
+                        entity = {"promotion_id" : self.promotion_id}
+                        for i, val_combox in enumerate(valCombox):
+                            if val_combox != "-":
+                                if i < len(item):
+                                    val = item[index_combox[i]]
+                                    entity[val_combox] = val
+                                    if val_combox == "matricule":
+                                        if len(val) == 4:
+                                            entity['company'] = val[0]
+                                            entity['section'] = val[1]
+                                            entity['number'] = val[2:]
+                        if len(entity.keys()) > 1:
+                            listStudent.append(Student(**entity))
+                    if len(listStudent) > 0:
+                        self.model.create_multiple(listStudent)
+                        self.fetchData()
+                        
+                    
+                
+        '''dialog = ImportDialog(["Nom", "Prénoms"], Student(), self.mainView)
+        dialog.exec()'''
         
     def addStudent(self):
         name = self.valueOf(lineEdit="name")
@@ -105,5 +158,6 @@ class StudentPresenter:
         )
         
         self.model.create(student)
+        self.fetchData()
         '''for i in range(1200):
             self.model.create(Student(promotion_id= self.promotion_id, name=f"Person {i}", matricule=f"{i+1}"))'''
