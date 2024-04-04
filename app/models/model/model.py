@@ -30,13 +30,41 @@ class Model:
         cursor.execute(query)
         self.conn.commit()
     
-    def fetch_all(self, **kwargs):
+    '''def fetch_all(self, **kwargs):
+        keywords = ["order", "group_by"]
         query = f'SELECT * FROM {self.TABLE}'
         if "order" in kwargs.keys():
             query += f' ORDER BY {kwargs.get('order')}'
         cursor = self.conn.cursor()
         cursor.execute(query)
+        return self.resultToEntity(cursor.fetchall())'''
+    
+    def fetch_all(self, **kwargs):
+        is_kwargs = len(kwargs) != 0
+        keywords = ["order", "group"]
+        keys = []
+        query = f'SELECT * FROM {self.TABLE}'
+        if is_kwargs:
+            cond = ""
+            order = ""
+            orders = []
+            for key in kwargs.keys():
+                if key not in keywords:
+                    cond += f'AND {key}="{kwargs.get(key)}" '
+                    keys.append(key)
+                else:
+                    if key == "order":
+                        order += f" ORDER BY {kwargs.get(key)} DESC"
+                    elif key == "group":
+                        order += f" GROUP BY {kwargs.get(key)}"
+                    orders.append(key)
+            query += " WHERE "+cond[4:] if "order" not in keys and "group" not in keys else ""
+            query = query.replace("WHERE","") if query.find("\"") == -1 else query
+            query += order if "order" in orders or "group" in orders else ""
+        cursor = self.conn.cursor()
+        cursor.execute(query)
         return self.resultToEntity(cursor.fetchall())
+        
     
     def fetch_by_condition(self, **kwargs):
         query = f'SELECT * FROM {self.TABLE}'

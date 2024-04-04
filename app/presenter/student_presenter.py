@@ -64,9 +64,27 @@ class StudentPresenter:
             stringVal = f"{prefix}{kwargs.get(keyCombox)}.{keyCombox}.currentText()"
         return eval(stringVal)
     
+    def comboxData(self, keyword, label):
+        students = self.model.fetch_all(promotion_id=self.promotion_id, group=keyword)
+        dataVal = []
+        dataLabel = []
+        for i, student in enumerate(students):
+            dataVal.append(student.get(keyword))
+            dataLabel.append(f"{student.get(keyword)} {"ère" if i == 0 else "ème"} {label}")
+        return {
+            "data": dataVal,
+            "label": dataLabel
+        }   
+    
     def fetchData(self):
         self.listView.progressBar.setVisible(True)
-        self.worker.setData(self.model.fetch_by_condition(promotion_id=self.promotion_id))
+        self.companies = self.comboxData("company", "Companie")
+        self.sections = self.comboxData("section", "Section")
+        self.listView.comboBoxCompany.clear()
+        self.listView.comboBoxCompany.addItems(self.companies.get("label"))
+        self.listView.comboBoxSection.clear()
+        self.listView.comboBoxSection.addItems(self.sections.get("label"))
+        self.worker.setData(self.model.fetch_all(promotion_id=self.promotion_id))
         self.worker_thread.start()
         
     def importData(self):

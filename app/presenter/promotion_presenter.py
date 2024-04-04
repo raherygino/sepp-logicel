@@ -24,7 +24,7 @@ class PromotionPresenter:
         self.deleteBannerWidget()
         self.btnAdd = LinkCard(FluentIcon.ADD, 'Ajouter', 'Ajouter une autre promotion', self.view)
         self.btnAdd.mouseReleaseEvent = lambda event: self.showDialogNew(event)
-        promotions = self.model.fetch_all(order="id DESC")
+        promotions = self.model.fetch_all(order="id")
         
         self.maxRank = self.model.max_col("rank")
         self.view.flowLayout.addWidget(self.btnAdd)

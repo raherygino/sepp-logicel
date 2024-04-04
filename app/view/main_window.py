@@ -65,7 +65,7 @@ class MainWindow(FluentWindow):
         self.checkPromotion(promotionModel)
             
     def checkPromotion(self, promitionModel: PromotionModel):
-        promotions = promitionModel.fetch_all(order="rank DESC")
+        promotions = promitionModel.fetch_all(order="rank")
         promAvailable = len(promotions) != 0
         self.navigationInterface.setVisible(promAvailable)
         if not promAvailable:
