@@ -1,6 +1,6 @@
 from ..models import StudentModel, Student, DatabaseWorker
 from ..view.students import AddStudentInterface, ListStudentInterface, ImportDialog
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, QTimer
 from ..common.constant import col
 from ..common.functions import Function
 
@@ -13,13 +13,17 @@ class StudentPresenter:
         self.mainView = self.listView.parent
         self.model = model
         self.promotion_id = 0
+        self.timer = QTimer()
         self.__initTable()
         self.__actions()
         self.__workerThread()
         
     def __workerThread(self):
+        
+        self.timer.setInterval(500)
+        self.timer.timeout.connect(self.searchStudent)
         self.worker_thread = QThread()
-        self.worker = DatabaseWorker(self.model.fetch_by_condition(promotion_id=self.promotion_id))
+        self.worker = DatabaseWorker(self.model.fetch_all(promotion_id=self.promotion_id))
         self.worker.moveToThread(self.worker_thread)
         self.worker_thread.started.connect(self.worker.run)
         self.worker.progress.connect(self.update_progress)
@@ -33,6 +37,7 @@ class StudentPresenter:
     def __actions(self):
         self.addview.btnAdd.clicked.connect(lambda: self.addStudent())
         self.listView.importAction.triggered.connect(self.importData)
+        self.listView.searchLineEdit.textChanged.connect(self.onQueryChanged)
         self.mainView.homeInterface.current_prom.connect(lambda value: self.setIdPromotion(value))
     
     def setIdPromotion(self, val):
@@ -84,8 +89,22 @@ class StudentPresenter:
         self.listView.comboBoxCompany.addItems(self.companies.get("label"))
         self.listView.comboBoxSection.clear()
         self.listView.comboBoxSection.addItems(self.sections.get("label"))
-        self.worker.setData(self.model.fetch_all(promotion_id=self.promotion_id))
+        self.setData(self.model.fetch_all(promotion_id=self.promotion_id))
+        
+    def setData(self, data):
+        self.worker.setData(data)
         self.worker_thread.start()
+        
+    
+    def onQueryChanged(self, text):
+        # Restart the timer whenever text is changed
+        self.listView.progressBar.setVisible(True)
+        self.timer.start()
+        
+    def searchStudent(self):
+        self.timer.stop()
+        text = self.listView.searchLineEdit.text()
+        self.setData(self.model.search("promotion", self.promotion_id, name=text, matricule=text))
         
     def importData(self):
         

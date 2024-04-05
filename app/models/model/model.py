@@ -30,15 +30,6 @@ class Model:
         cursor.execute(query)
         self.conn.commit()
     
-    '''def fetch_all(self, **kwargs):
-        keywords = ["order", "group_by"]
-        query = f'SELECT * FROM {self.TABLE}'
-        if "order" in kwargs.keys():
-            query += f' ORDER BY {kwargs.get('order')}'
-        cursor = self.conn.cursor()
-        cursor.execute(query)
-        return self.resultToEntity(cursor.fetchall())'''
-    
     def fetch_all(self, **kwargs):
         is_kwargs = len(kwargs) != 0
         keywords = ["order", "group"]
@@ -64,17 +55,17 @@ class Model:
         cursor = self.conn.cursor()
         cursor.execute(query)
         return self.resultToEntity(cursor.fetchall())
-        
     
-    def fetch_by_condition(self, **kwargs):
-        query = f'SELECT * FROM {self.TABLE}'
-        if len(kwargs) != 0:
-            cond = ' AND '.join([f'{key}="{kwargs.get(key)}"' for key in kwargs.keys()])
-            query += " WHERE "+cond
+    def search(self,prefix=None, id=None, **kwargs):
+        sql = f'SELECT * FROM {self.TABLE} WHERE '
+        if prefix != None:
+            sql += f"{prefix}_id='{id}' AND "
+        condition = ' OR '.join([f'{key} LIKE "%{kwargs.get(key).replace("\"", "")}%"' for key in kwargs.keys()])
+        sql += condition
         cursor = self.conn.cursor()
-        cursor.execute(query)
+        cursor.execute(sql)
         return self.resultToEntity(cursor.fetchall())
-    
+        
     def max_col(self, col, **kwargs) -> int:
         query = f'SELECT max({col}) as maxim FROM {self.TABLE}'
         cond = ""
