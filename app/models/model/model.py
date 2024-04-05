@@ -65,7 +65,18 @@ class Model:
         cursor = self.conn.cursor()
         cursor.execute(sql)
         return self.resultToEntity(cursor.fetchall())
-        
+      
+    def count(self, **kwargs):
+        query = f"SELECT count(id) as cnt FROM {self.TABLE}"
+        cond = ""
+        if len(kwargs) != 0:
+            cond = ' AND '.join([f'{key}="{kwargs.get(key)}"' for key in kwargs.keys()])
+            query += f" WHERE {cond}"
+        cursor = self.conn.cursor()
+        cursor.execute(query)
+        data = cursor.fetchall()[0][0]
+        return data if data != None else 0
+    
     def max_col(self, col, **kwargs) -> int:
         query = f'SELECT max({col}) as maxim FROM {self.TABLE}'
         cond = ""

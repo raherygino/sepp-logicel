@@ -14,6 +14,14 @@ class HomePresenter:
         self.view.current_prom.connect(lambda value: self.changePromotion(value))
         self.view.all_prom.connect(lambda prom: self.getAllPromotion(prom))
         self.view.choicePromotion.currentTextChanged.connect(lambda text: self.setProm(text))
+        self.view.refresh.connect(self.isRefreshed)
+        
+    def isRefreshed(self):
+        self.view.cardEffectif.content.setText(str(self.studentModel.count()))
+        self.view.cardEffectifEip.content.setText(str(self.studentModel.count(grade="EIP")))
+        self.view.cardEffectifEap.content.setText(str(self.studentModel.count(grade="EAP")))
+        self.view.cardEffectifMan.content.setText(str(self.studentModel.count(genre="M")))
+        self.view.cardEffectifWoman.content.setText(str(self.studentModel.count(genre="F")))
     
     def setProm(self, prom):
         self.view.current_prom.emit(int(prom))

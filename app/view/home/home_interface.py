@@ -11,6 +11,7 @@ class HomeInterface(QWidget):
 
     current_prom = pyqtSignal(int)
     all_prom = pyqtSignal(list)
+    refresh = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)

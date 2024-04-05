@@ -92,6 +92,7 @@ class StudentPresenter:
         self.listView.comboBoxSection.clear()
         self.listView.comboBoxSection.addItems(self.sections.get("label"))
         self.setData(self.model.fetch_all(promotion_id=self.promotion_id))
+        self.mainView.homeInterface.refresh.emit()
         
     def setData(self, data):
         self.worker.setData(data)
