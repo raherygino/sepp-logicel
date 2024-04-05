@@ -3,6 +3,7 @@ from ..view.students import AddStudentInterface, ListStudentInterface, ImportDia
 from PyQt5.QtCore import QThread, QTimer
 from ..common.constant import col
 from ..common.functions import Function
+from qfluentwidgets import MessageDialog
 
 class StudentPresenter:
     
@@ -37,6 +38,7 @@ class StudentPresenter:
     def __actions(self):
         self.addview.btnAdd.clicked.connect(lambda: self.addStudent())
         self.listView.importAction.triggered.connect(self.importData)
+        self.listView.deleteAction.triggered.connect(self.confirmDelete)
         self.listView.searchLineEdit.textChanged.connect(self.onQueryChanged)
         self.mainView.homeInterface.current_prom.connect(lambda value: self.setIdPromotion(value))
     
@@ -151,11 +153,6 @@ class StudentPresenter:
                     if len(listStudent) > 0:
                         self.model.create_multiple(listStudent)
                         self.fetchData()
-                        
-                    
-                
-        '''dialog = ImportDialog(["Nom", "Prénoms"], Student(), self.mainView)
-        dialog.exec()'''
         
     def addStudent(self):
         name = self.valueOf(lineEdit="name")
@@ -196,5 +193,13 @@ class StudentPresenter:
         
         self.model.create(student)
         self.fetchData()
-        '''for i in range(1200):
-            self.model.create(Student(promotion_id= self.promotion_id, name=f"Person {i}", matricule=f"{i+1}"))'''
+        
+    def confirmDelete(self):
+        dialog = MessageDialog("Supprimer", "Voulez-vous tous supprimer?", self.mainView)
+        dialog.yesButton.clicked.connect(self.deleteAll)
+        dialog.exec()
+        
+    def deleteAll(self):
+        self.model.delete(promotion_id=self.promotion_id)
+        self.fetchData()
+        
