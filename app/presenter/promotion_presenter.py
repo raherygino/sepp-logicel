@@ -76,7 +76,7 @@ class PromotionPresenter:
                     nwLogo = self.func.copyFileToFolderApp(dialog.logoPath, name=f"logo_{rank.replace(" ", "_")}")
                     
             promotion = Promotion(rank=rank, name=name, years=year, logo=nwLogo)
-            proms = self.model.fetch_by_condition(rank=rank)
+            proms = self.model.fetch_all(rank=rank)
             if len(kwargs):
                 oldProm = kwargs.get("promotion")
                 if len(proms) == 0:
